@@ -1,0 +1,102 @@
+
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+
+
+
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  
+}
+.container h2 {
+  margin-bottom: 20px;
+}
+.container input[type="text"],
+.container input[type="email"],
+.container input[type="number"],
+.container input[type="date"],
+.container input[type="password"] {
+  width: 99%;
+  padding: 10px;
+  margin-left: 10px;
+  margin: 5px 0 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.container input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.container input[type="submit"]:hover {
+  background-color: #45a049;
+}
+.container label{
+  color: black;
+}
+
+.error-message {
+  color: red; /* Troque "red" pela cor que preferir */
+  font-weight: bold; /* Opcional para destaque */
+  font-size: 18px; /* Ajuste conforme necessário */
+}
+
+.mybutton {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

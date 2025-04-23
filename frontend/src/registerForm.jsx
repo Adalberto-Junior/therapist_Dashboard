@@ -6,7 +6,7 @@ import api from "./api";
 import { useNavigate } from "react-router-dom";
 import './App.css';
 
-const RegisterForm = () => {
+export default function RegisterForm () {
   const { register, handleSubmit,watch, formState: { errors } } = useForm();
   // const navigate = useNavigate();
 
@@ -18,6 +18,7 @@ const RegisterForm = () => {
     //alert(`Form submitted:\n${JSON.stringify(data, null, 2)}`);
     try {
       // Envia os dados do formulário para o backend
+      console.log("Dados do formulário:", data);
       const response = await api.post("/register", data);
       localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
       // console.log(response.data.token); // Verifica o token retornado
@@ -42,7 +43,7 @@ const RegisterForm = () => {
       }
     }
   };
-
+  
   return (
     <div className='container'>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -131,7 +132,6 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
 
 /*
 import React, { useState } from 'react';
