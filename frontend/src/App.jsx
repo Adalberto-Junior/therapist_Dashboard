@@ -4,6 +4,7 @@ import RegisterForm from './registerForm.jsx'
 import NoPage from './pages/NoPage.jsx'
 import LoginForm from './pages/login.jsx'
 import Protected from './pages/protected.jsx'
+import Home from './pages/Home.jsx'
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -20,7 +21,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" >
-          {/* <Route index element={<Home />} /> */}
+          <Route index element={<Home />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="protected" element={<Protected />} />

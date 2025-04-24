@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import api from "./api";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
-import './App.css';
+import '../App.css';
 
 export default function RegisterForm () {
   const { register, handleSubmit,watch, formState: { errors } } = useForm();
@@ -126,95 +125,3 @@ export default function RegisterForm () {
     </div>
   );
 };
-
-
-/*
-import React, { useState } from 'react';
-import  { useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-import './App.css';
-
-const RegisterForm = () => {
-  const { register, errors  } = useForm();
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    databirth: '',
-
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
-    alert('Form submitted:', formData)
-  };
-
-  return (
-    <div className='container'>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            ref={ register({
-              required: "O campo precisa ter no máximo 20 caracteres.",
-              maxLength: 20
-            })}
-          />
-          <ErrorMessage errors = { errors } name="username" />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && <span style={{ color: "red" }}>
-          *Email* is mandatory </span>}
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="bithday">Date of Birth:</label>
-          <input
-            type="data"
-            id="databirth"
-            name="databirth"
-            value={formData.databirth}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Register</button>
-      </form>
-    </div>
-  );
-};
-
-export default RegisterForm;
-*/

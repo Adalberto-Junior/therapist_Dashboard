@@ -22,7 +22,7 @@ users = db["user"]
 def create_token(user_id):
     payload = {
         "user_id": str(user_id),
-        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=20)
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 

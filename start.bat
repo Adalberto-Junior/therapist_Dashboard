@@ -17,8 +17,8 @@ start "Backend" cmd /k "python app.py"
 cd ../frontend
 echo 🔄 Iniciando frontend React...
 
- cmd /k "npm run dev"
+cmd /k "npm run dev"
 
 
-:: Voltar à raiz
+:: Voltar à rai
 cd ..

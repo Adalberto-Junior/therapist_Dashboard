@@ -29,10 +29,12 @@ export default function LoginForm () {
     <div className='container'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
+            name="email"
+            placeholder="Email"
             {...register("email", {
                 required: "Email é obrigatório.",
                 pattern: {
@@ -44,15 +46,17 @@ export default function LoginForm () {
           <ErrorMessage errors={errors} name="email" render={({ message }) => <p>{message}</p>} />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
+            name="password"
+            placeholder="Password"
             {...register("password", { required: "Password is required" })}
           />
           <ErrorMessage errors={errors} name="password" render={({ message }) => <p>{message}</p>} />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" className='mybutton'>Login</button>
         <p>Não tem conta? <a href="/register">Registe-se</a></p>
       </form>
     </div>

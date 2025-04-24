@@ -44,12 +44,8 @@
 }
 
 
-
-
-
-
 .container {
-  background-color: #fff;
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -58,22 +54,27 @@
 }
 .container h2 {
   margin-bottom: 20px;
+  color: black;
 }
 .container input[type="text"],
 .container input[type="email"],
 .container input[type="number"],
 .container input[type="date"],
 .container input[type="password"] {
-  width: 99%;
+  width: 100%;
   padding: 10px;
-  margin-left: 10px;
-  margin: 5px 0 20px 0;
+  margin: 1px 0 30px;
+  box-sizing: border-box;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: #ffffff; /* Branco */
+  color: #000000 !important; /* Preto */
 }
+
 .container input[type="submit"] {
   background-color: #4CAF50;
-  color: white;
+  color: red;
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -84,7 +85,34 @@
 }
 .container label{
   color: black;
+  text-indent: 0%;
 }
+.container p{
+  color: black;
+  text-indent: 0%;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Isso pode ajudar a tornar o ícone visível */
+}
+input[type="password"] {
+  -webkit-appearance: none; /* Remove aparência padrão do navegador */
+  appearance: none;
+}
+
+
+ .container1 {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+.container1 input {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+} 
 
 .error-message {
   color: red; /* Troque "red" pela cor que preferir */
@@ -99,4 +127,8 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 16px;
+  margin: 6px 0 20px;
+  transition: background-color 0.3s ease;
+  width: 100%;
 }
