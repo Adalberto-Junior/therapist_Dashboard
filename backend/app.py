@@ -1,19 +1,31 @@
-from flask import Flask, request, jsonify
-from flask import send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
+from flask_pymongo import PyMongo
 from flask_cors import CORS
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 import bcrypt
 import jwt
 import datetime
 import os
 from dotenv import load_dotenv
+from auth import auth_bp
 
+# Load environment variables
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "mysecretkey")
 
 app = Flask(__name__)
 CORS(app)
+
+# Configurações
+app.config["MONGO_URI"] = "mongodb://localhost:27017/casa_viva"
+app.config["SECRET_KEY"] = SECRET_KEY
+
+# Inicializa Mongo
+mongo = PyMongo(app)
+
+# Registra Blueprint de autenticação
+app.register_blueprint(auth_bp)
+
 
 client = MongoClient("mongodb://localhost:27017/")
 db = client["test"]

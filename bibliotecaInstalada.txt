@@ -1,0 +1,8 @@
+backend:
+    pip install flask-pymongo
+    pip install flask
+
+
+frontend:
+    react
+    
