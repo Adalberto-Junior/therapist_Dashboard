@@ -1,10 +1,14 @@
+#=========================================================================
+# Flaskr - Authentication Routes
 ### This file is part of the Flaskr project.
 # Author: Adalberto Júnior
 # Date: 2025-04-30
 # Description: This file contains the routes for the authentication system.
 # It includes the login and logout routes, as well as the registration route.
 # It also includes the functions for checking if a user is logged in and for getting the current user.
+#=========================================================================
 
+# Import necessary modules and packages
 from flask import request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId

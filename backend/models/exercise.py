@@ -1,3 +1,16 @@
+#=====================================================================
+# File: exercise.py
+# Created by: Adalberto Jr
+# Created date: 30/04/2025
+# Version: 1.0
+# Python: 3.10
+# Local: Universidade de Aveiro
+# Description: This module is responsible for managing the exercise data.
+#              It includes functions to create, update, delete and get exercise data.
+#=====================================================================
+#
+
+# # Import necessary modules and packages
 from flask import current_app as app
 from bson.objectid import ObjectId
 from bson import json_util
@@ -12,7 +25,7 @@ def create_exercise(data):
     """
 
     # Convert JSON string to dictionary
-    data = json.loads(data)
+    #data = json.loads(data)
     mongo = app.extensions['pymongo']
     exercises = mongo.db.exercise
     result = exercises.insert_one(data)
@@ -25,7 +38,7 @@ def crearte_many_exercise(data):
     :return: The IDs of the created exercises.
     """
     # Convert JSON string to dictionary
-    data = json.loads(data)
+    #data = json.loads(data)
     # Convert the data to a list of dictionaries if it's not already
     if not isinstance(data, list):
         data = [data]
@@ -72,6 +85,15 @@ def get_exercise_by_user(user_name):
     """
     mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name})
+
+def get_exercise_by_health_user(user_id):
+    """
+    Get all exercises by health user ID.
+    :param user_id: The ID of the health user.
+    :return: A list of exercises as dictionaries.
+    """
+    mongo = app.extensions['pymongo']
+    return mongo.db.exercise.find({"user": ObjectId(user_id)})
 
 def get_exercise_by_user_and_type(user_name, type):
     """

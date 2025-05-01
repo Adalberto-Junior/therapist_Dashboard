@@ -13,12 +13,20 @@
 #============================================================================================ 
 
 import json
-
+from bson.objectid import ObjectId
+from pymongo import errors
 class CreatDocumentToDB:
 
     def __init__(self):
         self.data = {}
 
+    def ensure_objectid(self,value):
+        if isinstance(value, ObjectId):
+            return value
+        try:
+            return ObjectId(value)
+        except errors.InvalidId:
+            return None  # ou raise ValueError("ID inválido")
 
     def userDocument(self, name, email, password,profession, date_of_birth):
         """
@@ -40,7 +48,7 @@ class CreatDocumentToDB:
                     "date_of_birth": date_of_birth, # date_of_birth is the date of birth of the user
                 }
         data = json.dumps(self.data)
-        return data
+        return self.data
     
     
     def curentUserDocument(self,userId, name, email,profession,):
@@ -59,7 +67,7 @@ class CreatDocumentToDB:
                     "profession": profession,   # profession is the type of therapist: speech therapist, psychologist, etc
                 }
         data = json.dumps(self.data)
-        return data
+        return self.data
     
     
     def schedulingDocument(self, title, date, time, local, description, guest, type, user):
@@ -84,11 +92,21 @@ class CreatDocumentToDB:
                     "description": description,
                     "guest": guest,                 # guest is the name of the therapist or other guest
                     "type": type,                   # type is the type of therapy: remote or presential?
-                    "user": user                    # user is the id of the user
+                    "user": self.ensure_objectid(user)                    # user is the id of the user
                 }
-        return json.dumps(self.data)
+        return self.data
     
-    def exerciseDocument(self, type, name, description, steps, userName):
+    def exerciseDocument(self, type, name, description, steps, userName, user):
+        """
+        Create a document for the exercise.
+        :param type: The type of the exercise.
+        :param name: The name of the exercise.
+        :param description: The description of the exercise.
+        :param steps: The steps of the exercise.
+        :param userName: The name of the user.
+        :param user: The user id.
+        :return: JSON string of the document.
+        """
         self.data.clear()
         self.data = {
                     "type": type,                                    # type is the type of exercise: speech, reading, writing, etc
@@ -96,8 +114,9 @@ class CreatDocumentToDB:
                     "description": description,
                     "steps": steps,                      # steps is a list of dictionaries
                     "userName": userName,                # userName is the name of the user
+                    "user": self.ensure_objectid(user),                        # user is the id of the user
                 }
-        return json.dumps(self.data)
+        return self.data
     
     def stepSentence_WordDocument(self, step, description, word = None, sentence = None):
         self.data.clear()
@@ -207,4 +226,4 @@ class CreatDocumentToDB:
 
                 }
         data = json.dumps(self.data)
-        return data
+        return self.data

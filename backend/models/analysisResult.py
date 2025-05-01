@@ -1,8 +1,22 @@
+#===================================================================
+# File: analysisResult.py
+# Created by: Adalberto Jr
+# Created date: 30/04/2025
+# Version: 1.0
+# Python: 3.10
+# Local: Universidade de Aveiro
+# Description: This module is responsible for managing the analysis results.
+#              It includes functions to create, update, delete and get results.
+#===================================================================
+# #
+
+# Import necessary modules and packages
 from flask import current_app as app
 from bson.objectid import ObjectId
 from bson import json_util
 import json
 from datetime import datetime
+from . import users as user_model
 
 def get_result_by_id(result_id):
     """
@@ -206,3 +220,56 @@ def get_resultId_by_recording_user_date_and_step(recording_id, user_id, date, st
         return str(result['_id'])
     else:
         return None
+    
+
+def get_result_by_useremail(email):
+    """
+    Get all results for a specific user by their email.
+    :param email: The email of the user.
+    :return: A cursor to the results.
+    """
+    mongo = app.extensions['pymongo']
+    user = user_model.get_user_by_email(email)
+    if user:
+        return mongo.db.results.find({"user": ObjectId(user['_id'])})
+    else:
+        return None
+
+def get_result_by_useremail_and_date(email, date):
+    """
+    Get all results for a specific user by their email and date.
+    :param email: The email of the user.
+    :param date: The date of the results.
+    :return: A cursor to the results.
+    """
+    mongo = app.extensions['pymongo']
+    user = user_model.get_user_by_email(email)
+    if user:
+        return mongo.db.results.find({"user": ObjectId(user['_id']), "date": date})
+    else:
+        return None
+
+def get_result_by_useremail_and_date_and_step(email, date, step):
+    """
+    Get all results for a specific user by their email, date, and step.
+    :param email: The email of the user.
+    :param date: The date of the results.
+    :param step: The step number.
+    :return: A cursor to the results.
+    """
+    mongo = app.extensions['pymongo']
+    user = user_model.get_user_by_email(email)
+    if user:
+        return mongo.db.results.find({"user": ObjectId(user['_id']), "date": date, "step": step})
+    else:
+        return None
+
+def get_result_by_user_and_processingtype(user_id, processing_type):
+    """
+    Get all results for a specific user and processing type.
+    :param user_id: The ID of the user.
+    :param processing_type: The processing type of the results.
+    :return: A cursor to the results.
+    """
+    mongo = app.extensions['pymongo']
+    return mongo.db.results.find({"user": ObjectId(user_id), "processing_type": processing_type})  

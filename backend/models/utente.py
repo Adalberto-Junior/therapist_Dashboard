@@ -22,7 +22,7 @@ def create_health_user(data):
     :param data: JSON string containing user data.
     :return: The ID of the created user.
     """
-    data = json.loads(data)
+    #data = json.loads(data)
     mongo = app.extensions['pymongo']
     utente = mongo.db.health_user
     result = utente.insert_one(data)

@@ -1,4 +1,20 @@
-from flask import Flask, request, jsonify, send_from_directory
+#======================================================================
+# Casa Viva - Backend
+# File: app.py
+# Created by: Adalberto Jr
+# Created date: 30/04/2025
+# Version: 1.0
+# Python: 3.10
+# Local: Universidade de Aveiro
+# Description: This file is the main entry point for the Flask application.
+#              It initializes the Flask app, sets up the database connection,
+#              and registers the routes for the application.
+# This file is part of the Casa Viva project.
+#=======================================================================
+#
+
+# Import necessary modules and packages
+from flask import Flask, request, jsonify, send_from_directory, Blueprint
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from bson.objectid import ObjectId
@@ -8,6 +24,7 @@ import datetime
 import os
 from dotenv import load_dotenv
 from auth import auth_bp
+from utente import utente_bp
 
 # Load environment variables
 load_dotenv()
@@ -23,10 +40,16 @@ app.config["SECRET_KEY"] = SECRET_KEY
 # Inicializa Mongo
 mongo = PyMongo(app)
 
-# Registra Blueprint de autenticação
-app.register_blueprint(auth_bp)
+# Registra Blueprint das rotas
+api_bp = Blueprint('api', __name__, url_prefix='/casa_viva')
+api_bp.register_blueprint(auth_bp)
+api_bp.register_blueprint(utente_bp)
+app.register_blueprint(api_bp)
 
+#app.register_blueprint(auth_bp)
+#app.register_blueprint(utente_bp)
 
+"""""
 client = MongoClient("mongodb://localhost:27017/")
 db = client["test"]
 users = db["user"]
@@ -103,6 +126,7 @@ def get_user():
 @app.route("/casa_viva/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "ok"})
+"""
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
