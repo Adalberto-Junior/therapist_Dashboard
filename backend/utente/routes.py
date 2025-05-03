@@ -64,7 +64,7 @@ def register_utente():
     cellphone = data.get('health_user_cellphone')
     address = data.get('health_user_address')
 
-    if utente_bp.get_health_user_by_email(email):
+    if utente_model.get_health_user_by_email(email):
         return jsonify({"error": " Já há utente com este email registrado"}), 400
 
     docuemnto = CreatDocumentToDB()

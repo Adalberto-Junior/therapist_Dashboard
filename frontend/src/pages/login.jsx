@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import api from "../api"; 
 import { useNavigate } from "react-router-dom";
-import '../App.css';
+import '../App.css'; // Importando o CSS tradicional
 
 export default function LoginForm () {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -26,11 +26,14 @@ export default function LoginForm () {
   };
 
   return (
-    <div className='container'>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    // <div className='container' >
+    <div className="container mx-auto max-w-md mt-10 p-5 bg-gray-100">
+      <h2 className="text-2xl font-bold text-center mb-5">Login</h2>
+      <form  onSubmit={handleSubmit(onSubmit) } className="flex flex-col">
         <div>
           <label htmlFor="email">Email</label>
           <input
+            className="w-full bg-white text-black p-2 border border-gray-300 rounded-md mb-4"
             type="email"
             id="email"
             name="email"
@@ -48,6 +51,7 @@ export default function LoginForm () {
         <div>
           <label htmlFor="password">Password</label>
           <input
+            className="w-full bg-white text-black p-2 border border-gray-300 rounded-md mb-4"
             type="password"
             id="password"
             name="password"
@@ -56,9 +60,11 @@ export default function LoginForm () {
           />
           <ErrorMessage errors={errors} name="password" render={({ message }) => <p>{message}</p>} />
         </div>
-        <button type="submit" className='mybutton'>Login</button>
-        <p>Não tem conta? <a href="/register">Registe-se</a></p>
+        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Entrar</button>
+        <div className="mt-4 text-center">
+          <p>Não tem uma conta? <a href="/register" className="text-blue-500">Registrar</a></p>
+        </div>
       </form>
     </div>
   );
-}
+};

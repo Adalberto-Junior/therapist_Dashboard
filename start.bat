@@ -12,13 +12,13 @@ call venv\Scripts\activate
 :: Rodar Flask (em segundo plano)
 echo 🔥 Iniciando backend Flask...
 start "Backend" cmd /k "python app.py"
+::wt --window 0 --title "Backend" cmd /k "venv\Scripts\activate && python app.py"
 
 :: Voltar à raiz e iniciar React
 cd ../frontend
 echo 🔄 Iniciando frontend React...
 
-cmd /k "npm run dev"
-
-
+start "Frontend" cmd /k "npm run dev"
+::wt --window 0 --title "Frontend" cmd /k "npm run dev"
 :: Voltar à rai
 cd ..
