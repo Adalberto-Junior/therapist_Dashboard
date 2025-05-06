@@ -196,12 +196,11 @@ class CreatDocumentToDB:
         return json.dumps(self.data)
 
 
-    def healthUserDocument(self, name, email, password, date_of_birth, therapist,observation, medical_condition,health_user_number, cellphone, address):
+    def healthUserDocument(self, name, email, date_of_birth, therapist,observation, medical_condition,health_user_number, cellphone, address):
         """
         Create a document for the health user.
         :param name: The name of the user.
         :param email: The email of the user.
-        :param password: The password of the user.
         :param date_of_birth: The date of birth of the user.
         :param therapist: The therapist of the user.
         :param observation: The observation of the user.
@@ -215,7 +214,6 @@ class CreatDocumentToDB:
         self.data = {
                     "name": name,
                     "email": email,
-                    "password": password,       # password must be hashed
                     "date_of_birth": date_of_birth, # date_of_birth is the date of birth of the user
                     "therapist": therapist,
                     "observation": observation,   

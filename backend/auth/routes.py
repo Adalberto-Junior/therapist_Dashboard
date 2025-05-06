@@ -9,6 +9,7 @@
 #=========================================================================
 
 # Import necessary modules and packages
+import base64
 from flask import request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
@@ -16,9 +17,9 @@ import bcrypt
 import jwt
 import datetime
 from . import auth_bp
-from models import users as user_model
+# from models import users as user_model
+from models import therapist as therapist_model
 from models.creatDocument import *
-
 
 def create_token(user_id,user_name):
     """
@@ -49,6 +50,17 @@ def decode_token(token):
     except jwt.ExpiredSignatureError:
         return None
 
+def hash_password(password):
+    salt = bcrypt.gensalt()  # salt
+    hashed = bcrypt.hashpw(password.encode(), salt)
+    hashed = base64.b64encode(hashed).decode('utf-8')
+    return hashed
+
+def verify_password(password, hashed):
+    if isinstance(hashed, str):
+        hashed = hashed.encode()  # Codifica para bytes
+    
+    return bcrypt.checkpw(password.encode(), base64.b64decode(hashed))
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -64,15 +76,16 @@ def register():
     profession = data.get('profession')
     date_birth = data.get('date_birth')
 
-    if user_model.get_user_by_email(email):
+    if therapist_model.get_therapist_by_email(email):
         return jsonify({"error": "Email já registrado"}), 400
 
 
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    # hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_pw = hash_password(password)
 
     docuemnto = CreatDocumentToDB()
     doc = docuemnto.userDocument(name=name, email=email, profession=profession, date_of_birth=date_birth, password=hashed_pw,)
-    user_id = user_model.create_user(doc)
+    user_id = therapist_model.create_therapist(doc)
 
     return jsonify({"message": "Utilizador registrado", "id": str(user_id)}), 201
 
@@ -87,8 +100,8 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
-    user = user_model.get_user_by_email(email)
-    if not user or not bcrypt.checkpw(password.encode('utf-8'), user['password']):
+    user = therapist_model.get_therapist_by_email(email)
+    if not user or not verify_password(password, user['password']):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
     #payload = {
@@ -96,7 +109,8 @@ def login():
     #    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=12)
     #}
     # token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
-    token = create_token(user['_id'])
+    token = create_token(user['_id'], user['name'])
+    print(token)
     
     return jsonify({'token': token, 'user': {'id': str(user['_id']), 'name': user['name']}})
 
@@ -120,7 +134,7 @@ def get_profile():
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    user = user_model.get_user_by_id(user_id)
+    user = therapist_model.get_therapist_by_id(user_id)
 
     if not user:
         return jsonify({"error": "Utilizador não encontrado"}), 404

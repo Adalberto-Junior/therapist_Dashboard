@@ -15,7 +15,11 @@ from flask import current_app as app
 from bson.objectid import ObjectId
 from bson import json_util
 import json
+import sys
 from datetime import datetime
+
+sys.path.append("..")
+from extensions import mongo
 
 def create_exercise(data):
     """
@@ -26,7 +30,7 @@ def create_exercise(data):
 
     # Convert JSON string to dictionary
     #data = json.loads(data)
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     exercises = mongo.db.exercise
     result = exercises.insert_one(data)
     return str(result.inserted_id)
@@ -43,7 +47,7 @@ def crearte_many_exercise(data):
     if not isinstance(data, list):
         data = [data]
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     exercises = mongo.db.exercise
     result = exercises.insert_many(data)
     return str(result.inserted_ids)
@@ -55,7 +59,7 @@ def get_exercise_by_id(exercise_id):
     :return: The exercise data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find_one({"_id": ObjectId(exercise_id)})
 
 def get_exercise_by_name(name):
@@ -64,7 +68,7 @@ def get_exercise_by_name(name):
     :param name: The name of the exercise.
     :return: The exercise data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find_one({"name": name})
 
 def get_exercise_by_type(type):
@@ -74,7 +78,7 @@ def get_exercise_by_type(type):
     :return: The exercise data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find_one({"type": type})
 
 def get_exercise_by_user(user_name):
@@ -83,7 +87,7 @@ def get_exercise_by_user(user_name):
     :param user_name: The name of the user.
     :return: A list of exercises as dictionaries.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name})
 
 def get_exercise_by_health_user(user_id):
@@ -92,7 +96,7 @@ def get_exercise_by_health_user(user_id):
     :param user_id: The ID of the health user.
     :return: A list of exercises as dictionaries.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"user": ObjectId(user_id)})
 
 def get_exercise_by_user_and_type(user_name, type):
@@ -102,7 +106,7 @@ def get_exercise_by_user_and_type(user_name, type):
     :param type: The type of the exercise.
     :return: A list of exercises as dictionaries.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name, "type": type})
 
 def get_exercise_by_user_and_name(user_name, name):
@@ -112,7 +116,7 @@ def get_exercise_by_user_and_name(user_name, name):
     :param name: The name of the exercise.
     :return: The exercise data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name, "name": name})
 
 def get_exercise_by_user_and_name_and_type(user_name, name, type):
@@ -124,7 +128,7 @@ def get_exercise_by_user_and_name_and_type(user_name, name, type):
     :return: The exercise data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name, "name": name, "type": type})
 
 def update_exercise(exercise_id, data):
@@ -136,7 +140,7 @@ def update_exercise(exercise_id, data):
     """
     # Convert JSON string to dictionary
     data = json.loads(data)
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.update_one({"_id": ObjectId(exercise_id)}, {"$set": data})
     return result.modified_count > 0
 
@@ -149,7 +153,7 @@ def update_exercise_by_name(name, data):
     """
     # Convert JSON string to dictionary
     data = json.loads(data)
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.update_one({"name": name}, {"$set": data})
     return result.modified_count > 0
 
@@ -160,7 +164,7 @@ def delete_exercise(exercise_id):
     :return: True if the deletion was successful, False otherwise.
     """
     
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.delete_one({"_id": ObjectId(exercise_id)})
     return result.deleted_count > 0
 
@@ -171,7 +175,7 @@ def delete_exercise_by_name(name):
     :return: True if the deletion was successful, False otherwise.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.delete_one({"name": name})
     return result.deleted_count > 0
 
@@ -181,7 +185,7 @@ def delete_exercise_by_user(user_name):
     :param user_name: The name of the user.
     :return: True if the deletion was successful, False otherwise.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.delete_many({"userName": user_name})
     return result.deleted_count > 0
 
@@ -193,7 +197,7 @@ def delete_exercise_by_user_and_name(user_name, name):
     :param name: The name of the exercise.
     :return: True if the deletion was successful, False otherwise.
     """ 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.delete_many({"userName": user_name, "name": name})
     return result.deleted_count > 0
 
@@ -205,7 +209,7 @@ def delete_exercise_by_user_and_name_and_type(user_name, name, type):
     :param type: The type of the exercise.
     :return: True if the deletion was successful, False otherwise.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.delete_many({"userName": user_name, "name": name, "type": type})
     return result.deleted_count > 0
 
@@ -217,7 +221,7 @@ def get_exercise_id_by_user_and_name_and_type(user_name, name, type):
     :param type: The type of the exercise.
     :return: The ID of the exercise as a string, or None if not found.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.find_one({"userName": user_name, "name": name, "type": type})
     if result:
         return str(result['_id'])

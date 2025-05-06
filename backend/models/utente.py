@@ -11,10 +11,13 @@
 #
 # Import necessary modules and packages
 import json
+import sys
 from flask import current_app as app
 from bson.objectid import ObjectId
 from bson import json_util
 from datetime import datetime
+
+from extensions import mongo
 
 def create_health_user(data):
     """
@@ -23,7 +26,7 @@ def create_health_user(data):
     :return: The ID of the created user.
     """
     #data = json.loads(data)
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     utente = mongo.db.health_user
     result = utente.insert_one(data)
     return str(result.inserted_id)
@@ -34,7 +37,7 @@ def get_health_user_by_id(user_id):
     :param user_id: The ID of the user.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"_id": ObjectId(user_id)})
 
 def get_health_user_by_email(email):
@@ -43,7 +46,7 @@ def get_health_user_by_email(email):
     :param email: The email of the user.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"email": email})
 
 def get_health_user_by_username(username):
@@ -52,7 +55,7 @@ def get_health_user_by_username(username):
     :param username: The username of the user.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"username": username})
 
 def update_health_user(user_id, data):
@@ -62,7 +65,7 @@ def update_health_user(user_id, data):
     :param data: Dictionary containing the updated user data.
     :return: True if the update was successful, False otherwise.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.health_user.update_one({"_id": ObjectId(user_id)}, {"$set": data})
     return result.modified_count > 0
 
@@ -72,7 +75,7 @@ def delete_health_user(user_id):
     :param user_id: The ID of the user.
     :return: True if the deletion was successful, False otherwise.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.health_user.delete_one({"_id": ObjectId(user_id)})
     return result.deleted_count > 0
 
@@ -82,7 +85,7 @@ def delete_health_user_by_email(email):
     :param email: The email of the user.
     :return: True if the deletion was successful, False otherwise.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.health_user.delete_one({"email": email})
     return result.deleted_count > 0
 
@@ -93,7 +96,7 @@ def get_all_health_users_by_therapist(therapist_id):
     :param therapist_id: The ID of the therapist.
     :return: A list of user data as dictionaries.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find({"therapist": ObjectId(therapist_id)})
 
 def get_health_user_by_email_and_therapist(email, therapist_id):
@@ -103,7 +106,7 @@ def get_health_user_by_email_and_therapist(email, therapist_id):
     :param therapist_id: The ID of the therapist.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"email": email, "therapist": ObjectId(therapist_id)})
 
 def get_health_user_by_username_and_therapist(username, therapist_id):
@@ -113,7 +116,7 @@ def get_health_user_by_username_and_therapist(username, therapist_id):
     :param therapist_id: The ID of the therapist.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"username": username, "therapist": ObjectId(therapist_id)})
 
 def get_health_user_by_email_and_username_and_therapist(email, username, therapist_id):
@@ -124,7 +127,7 @@ def get_health_user_by_email_and_username_and_therapist(email, username, therapi
     :param therapist_id: The ID of the therapist.
     :return: The user data as a dictionary.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.health_user.find_one({"email": email, "username": username, "therapist": ObjectId(therapist_id)})
 
 

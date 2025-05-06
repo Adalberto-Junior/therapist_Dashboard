@@ -2,9 +2,9 @@
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import api from "./api";
-import { useNavigate } from "react-router-dom";
-import './App.css';
+import api from "../../api";
+// import { useNavigate } from "react-router-dom";
+import '../../App.css';
 
 export default function RegisterForm () {
   const { register, handleSubmit,watch, formState: { errors } } = useForm();
@@ -15,9 +15,10 @@ export default function RegisterForm () {
     try {
       // Envia os dados do formulário para o backend
       console.log("Dados do formulário:", data);
-      const response = await api.post("/register", data);
+      const response = await api.post("/auth/register", data);
       localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
-
+      // Redireciona para a página protegida após o registro
+      navigate("/protected"); // Descomente se você tiver uma página protegida para redirecionar
       console.log(response.data);
       alert("Utilizador registado com sucesso!");
     } catch (error) {
@@ -36,13 +37,13 @@ export default function RegisterForm () {
       <h2>Registar</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="username">Nome do Utilizador</label>
+          <label htmlFor="name">Nome do Utilizador</label>
           <input
             type="text"
-            id="username"
-            name="username"
-            placeholder="Nome do Utilizador"
-            {...register("username", {
+            id="name"
+            name="name"
+            placeholder="User Name"
+            {...register("name", {
               required: "O Nome do Utilizador é obrigatório.",
               maxLength: {
                 value: 50,
@@ -51,7 +52,7 @@ export default function RegisterForm () {
             })}
             
           />
-          <ErrorMessage errors={errors} name="username"  render={({ message }) => <span className="error-message">{message}</span>} />
+          <ErrorMessage errors={errors} name="name"  render={({ message }) => <span className="error-message">{message}</span>} />
         </div>
         <div>
           <label htmlFor="email">Email</label>
@@ -77,7 +78,7 @@ export default function RegisterForm () {
             type="password"
             id="password"
             name="password"
-            placeholder="Palavra-Passe"
+            placeholder="Password"
             {...register("password", {
               required: "Palavra-passe é obrigatória.",
               minLength: {
@@ -98,7 +99,7 @@ export default function RegisterForm () {
             type="password"
             id="confirmPassword"
             name="confirmPassword"
-            placeholder="Confirmar Palavra-Passe"
+            placeholder="Confirm Password"
             {...register("confirmPassword", {
               required: "A confirmação da palavra-passe é obrigatória.",
               validate: (value) =>
@@ -108,20 +109,38 @@ export default function RegisterForm () {
           <ErrorMessage errors={errors} name="confirmPassword" render={({ message }) => (<span className="error-message">{message}</span> )}/>
         </div>
         <div>
-          <label htmlFor="databirth">Data de Nascimento</label>
+          <label htmlFor="profession">Profissão</label>
+          <input
+            type="text"
+            id="profession"
+            name="profession"
+            placeholder="Profession"
+            {...register("profession", {
+              required: "A profissão é obrigatória.",
+              maxLength: {
+                value: 50,
+                message: "O campo precisa ter no máximo 50 caracteres."
+              }
+            })}
+            
+          />
+          <ErrorMessage errors={errors} name="profession"  render={({ message }) => <span className="error-message">{message}</span>} />
+        </div>
+        <div>
+          <label htmlFor="date_birth">Data de Nascimento</label>
           <input
             type="date"
-            id="databirth"
-            name="databirth"
-            {...register("databirth", {
+            id="date_birth"
+            name="date_birth"
+            {...register("date_birth", {
               required: "Data de nascimento é obrigatória."
             })}
 
           />
-          <ErrorMessage errors={errors} name="databirth"  render={({ message }) => <span className="error-message">{message}</span>} />
+          <ErrorMessage errors={errors} name="date_birth"  render={({ message }) => <span className="error-message">{message}</span>} />
         </div>
-        <button type="submit" className='mybutton'>Register</button>
-        <p className="text-black bg-white">Já tem conta? <a href="/login">Iniciar Sessão</a></p>
+        <button type="submit" className='mybutton'>Registar</button>
+        <p className="text-black bg-white">Já tem conta? <a href="/">Iniciar Sessão</a></p>
       </form>
     </div>
   );

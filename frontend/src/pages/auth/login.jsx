@@ -2,19 +2,20 @@
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import api from "../api"; 
+import api from "../../api"; 
 import { useNavigate } from "react-router-dom";
-import '../App.css'; // Importando o CSS tradicional
+import '../../App.css'; // Importando o CSS tradicional
 
 export default function LoginForm () {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
-      const response = await api.post("/login", data);
+      const response = await api.post("/auth/login", data);
       localStorage.setItem("token", response.data.token);
-      // navigate("/protected"); // Redireciona para a página protegida após o login
+      alert("Login successful:", response.data);
+      navigate("/protected"); // Redireciona para a página protegida após o login
     } catch (error) {
       console.error("Login failed:", error);
         if (error.response && error.response.status === 401) {

@@ -25,6 +25,7 @@ import os
 from dotenv import load_dotenv
 from auth import auth_bp
 from utente import utente_bp
+from extensions import mongo
 
 # Load environment variables
 load_dotenv()
@@ -34,11 +35,12 @@ app = Flask(__name__)
 CORS(app)
 
 # Configurações
-app.config["MONGO_URI"] = "mongodb://localhost:27017/casa_viva"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/Casa_Viva"
 app.config["SECRET_KEY"] = SECRET_KEY
 
 # Inicializa Mongo
-mongo = PyMongo(app)
+# mongo = PyMongo(app)
+mongo.init_app(app)
 
 # Registra Blueprint das rotas
 api_bp = Blueprint('api', __name__, url_prefix='/casa_viva')
@@ -167,5 +169,5 @@ def serve(path):
 """
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True, port=5000)
     # app.run(debug=True)

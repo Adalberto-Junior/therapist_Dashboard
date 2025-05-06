@@ -1,5 +1,5 @@
 #=========================================================================
-# File: exercise.py
+# File: users.py
 # Created by: Adalberto Jr
 # Created date: 30/04/2025
 # Version: 1.0
@@ -13,9 +13,13 @@
 
 # # Import necessary modules and packages
 import json
+import sys
 from flask import current_app as app
 from bson.objectid import ObjectId
 from bson import json_util
+
+sys.path.append("..")
+from extensions import mongo
 
 def create_user(data):
     """
@@ -24,8 +28,9 @@ def create_user(data):
     :return: The ID of the created user.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     users = mongo.db.user
+    # users = mongo.db.therapist
     result = users.insert_one(data)
     return str(result.inserted_id)
 
@@ -36,7 +41,7 @@ def get_user_by_email(email):
     :return: The user data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.user.find_one({"email": email})
 
 def get_user_by_id(user_id):
@@ -46,7 +51,7 @@ def get_user_by_id(user_id):
     :return: The user data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.user.find_one({"_id": ObjectId(user_id)})
 
 def get_user_by_username(username):
@@ -56,7 +61,7 @@ def get_user_by_username(username):
     :return: The user data as a dictionary.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.user.find_one({"username": username})
 
 def updateUser(user_id, data):
@@ -67,7 +72,7 @@ def updateUser(user_id, data):
     :return: True if the update was successful, False otherwise.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.user.update_one({"_id": ObjectId(user_id)}, {"$set": data})
     return result.modified_count > 0
 
@@ -79,7 +84,7 @@ def updateUserByEmail(email, data):
     :return: True if the update was successful, False otherwise.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.user.update_one({"email": email}, {"$set": data})
     return result.modified_count > 0
 
@@ -90,7 +95,7 @@ def deleteUser(user_id):
     :return: True if the deletion was successful, False otherwise.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.user.delete_one({"_id": ObjectId(user_id)})
     return result.deleted_count > 0
 
@@ -101,7 +106,7 @@ def deleteUserByEmail(email):
     :return: True if the deletion was successful, False otherwise.
     """
 
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     result = mongo.db.user.delete_one({"email": email})
     return result.deleted_count > 0
 
@@ -110,7 +115,7 @@ def get_all_users():
     Get all users from the database.
     :return: A cursor to the user data.
     """
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     return mongo.db.user.find()
 
 def get_all_users_json():
@@ -119,7 +124,7 @@ def get_all_users_json():
     :return: A JSON string containing all user data.
     """
     # Get all users from the database
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     users = mongo.db.user.find()
     return json.loads(json_util.dumps(users))
 
@@ -130,7 +135,7 @@ def get_userId(email):
     :return: The user ID as a string, or None if not found.
     """
     
-    mongo = app.extensions['pymongo']
+    # mongo = app.extensions['pymongo']
     user = mongo.db.user.find_one({"email": email})
     if user:
         return str(user['_id'])

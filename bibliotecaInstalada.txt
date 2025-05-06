@@ -6,4 +6,5 @@ backend:
 frontend:
     react
     npm install @mui/material @emotion/react @emotion/styled @mui/lab
+    npm install react-phone-number-input --save
     

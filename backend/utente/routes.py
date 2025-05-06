@@ -18,7 +18,8 @@ import bcrypt
 import jwt
 import datetime
 from . import utente_bp
-from models import users as user_model
+# from models import users as user_model
+# from models import therapist as therapist_model
 from models import analysisResult as result_model
 from models import exercise as exercise_model
 from models import utente as utente_model

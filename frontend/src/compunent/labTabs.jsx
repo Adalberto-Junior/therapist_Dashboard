@@ -20,7 +20,8 @@ export default function LabTabs() {
 
     }   
     if (newValue === "2"){
-        navigate("/login");
+        navigate("/utente");
+    // navigate("/utente", { state: { index } }); // Pass the index as state to the next page
     } 
     if (newValue === "3") {
         navigate("/register");
