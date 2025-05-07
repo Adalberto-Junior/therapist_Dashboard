@@ -10,7 +10,7 @@
 #=================================================================================================================
 
 # Import necessary modules and packages
-from flask import request, jsonify, current_app
+from flask import request, jsonify, current_app, make_response
 from pymongo.cursor import Cursor
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
@@ -127,7 +127,16 @@ def get_utente_by_id(user_id):
 
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    # response_data = health_user
+    # response = make_response(jsonify(response_data))
+    # response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    # response.headers["Pragma"] = "no-cache"
+    # response.headers["Expires"] = "0"
+    
+    # return response
 
+    # return jsonify(list(health_user)), 200
     return jsonify(health_user), 200
 
 @utente_bp.route('/informacao/<string:health_user_name>', methods=['GET'])

@@ -215,7 +215,7 @@ class CreatDocumentToDB:
                     "name": name,
                     "email": email,
                     "date_of_birth": date_of_birth, # date_of_birth is the date of birth of the user
-                    "therapist": therapist,
+                    "therapist": self.ensure_objectid(therapist), 
                     "observation": observation,   
                     "medical_condition": medical_condition, # medical_condition is the medical condition of the user
                     "health_user_number": health_user_number, # health_user_number is the health user number of the user
@@ -223,5 +223,5 @@ class CreatDocumentToDB:
                     "address": address, # health_user_address is the address of the health user
 
                 }
-        data = json.dumps(self.data)
+        # data = json.dumps(self.data)
         return self.data

@@ -8,6 +8,7 @@ import Home from './pages/Home.jsx'
 import LabTabs from "./compunent/labTabs.jsx";
 import AllUtente from './pages/utente/all_utente.jsx'
 import ProtectedRoute from './pages/ProtectedRoute.jsx'
+import HealthUserInformation from './pages/utente/information.jsx'
 
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -39,33 +40,31 @@ export default function App() {
   //   </BrowserRouter>
   // );
 
-  if (localStorage.getItem('token')) {
+  if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== "") {
     return (
       <BrowserRouter>
         <LabTabs />
         <Routes>
-          <Route path="/" >
-            <Route index element={<Home />} />
-            <Route path="utente" element={<AllUtente />} />
-            <Route path="protected" element={<Protected />} />
-            <Route path="*" element={<NoPage />} />
-          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="utente" element={<AllUtente />} />
+          <Route path="utente/:id/informacao" element={<HealthUserInformation />} />
+          <Route path="protected" element={<Protected />} />
+          <Route path="*" element={<NoPage />} />
         </Routes>
       </BrowserRouter>
-    )
-  }else {
+    );
+  } else {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" >
-            <Route index element={<LoginForm />} />
-            <Route path="register" element={<RegisterForm />} />
-            <Route path="*" element={<NoPage />} />
-          </Route>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="register" element={<RegisterForm />} />
+          <Route path="*" element={<NoPage />} />
         </Routes>
       </BrowserRouter>
-    )
+    );
   }
+  
 
   // return (
   //   // <>

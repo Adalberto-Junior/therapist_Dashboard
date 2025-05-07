@@ -15,7 +15,6 @@ export default function AllUtente() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams(); // Obter o ID do URL
-    const { register, handleSubmit, formState: { errors } } = useForm();
 
     useEffect(() => {
         // Fetch data from the Flask API
@@ -32,19 +31,7 @@ export default function AllUtente() {
         fetchData();
     }, []);
 
-    const onSubmit = async (data) => {
-        try {
-            const response = await api.post("/utente/", data); // Adjust the endpoint as needed
-            setUtentes([...utentes, response.data]); // Add the new utente to the state
-            alert("Utente added successfully:", response.data);  //TODO: delete this line
-            // navigate("/utente/"); // Redirect to the all utente page after adding
-            // window.location.reload(); // Reload the page to see the new utente in the list
-        }
-        catch (error) {
-            console.error("Error adding utente:", error);
-            alert("Erro ao adicionar utente. Por favor tenta novamente.");
-        }
-    }
+
 
     // const fetchUtente = async () => {
     //     try {
@@ -76,6 +63,16 @@ export default function AllUtente() {
         } catch (error) {
             console.error("Error deleting utente:", error);
         }
+    };
+
+    const handleOpen = async (id) => {
+        navigate(`/utente/${id}/informacao`);
+        // try {
+        //     await api.delete(`/utentes/${id}`); // Adjust the endpoint as needed
+        //     setUtentes(utentes.filter((utente) => utente.id !== id)); // Remove the deleted utente from the state
+        // } catch (error) {
+        //     console.error("Error deleting utente:", error);
+        // }
     };
 
     if (loading) return <p>Loading...</p>;
@@ -126,8 +123,8 @@ export default function AllUtente() {
     }
         
     if (utentes.length > 0) {
+        console.log(utentes[0]['_id'])
         return (
-            add_utente_forme(),
             <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100">
                 <h2 className="text-2xl font-bold text-center mb-5">Lista de Utentes</h2>
                 <table className="min-w-full bg-white border border-gray-300">
@@ -140,19 +137,30 @@ export default function AllUtente() {
                         </tr>
                     </thead>
                     <tbody>
+                        
                         {utentes.map((utente) => (
-                            <tr key={utente.id}>
-                                <td className="py-2 px-4 border-b">{utente.id}</td>
-                                <td className="py-2 px-4 border-b">{utente.nome}</td>
+                            <tr key={utente._id.$oid || utente._id}>
+                                <td className="py-2 px-4 border-b">{utente._id.$oid || utente._id.toString()}</td>
+                                <td className="py-2 px-4 border-b">{utente.name}</td>
                                 <td className="py-2 px-4 border-b">{utente.email}</td>
                                 <td className="py-2 px-4 border-b">
-                                    <button onClick={() => handleEdit(utente.id)} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Editar</button>
-                                    <button onClick={() => handleDelete(utente.id)} className="bg-red-500 text-white py-1 px-3 rounded">Eliminar</button>
+                                    <button onClick={() => handleOpen(utente._id.$oid || utente._id.toString())} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Abrir</button>
+                                    {/* <button onClick={() => handleEdit(utente._id.$oid || utente._id.toString())} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Editar</button>
+                                    <button onClick={() => handleDelete(utente._id.$oid || utente._id.toString())} className="bg-red-500 text-white py-1 px-3 rounded">Eliminar</button> */}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
+                    
                 </table>
+                <button
+                    onClick={() => setShowForm(true)}
+                    className="mybutton"
+                    style={{ width: '200px', height: '50px', fontSize: '16px' }}
+                >
+                    Adicionar Utente
+                </button>
+                {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
             </div>
         );
     }
