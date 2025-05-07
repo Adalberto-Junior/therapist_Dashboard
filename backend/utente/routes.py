@@ -23,6 +23,7 @@ from . import utente_bp
 from models import analysisResult as result_model
 from models import exercise as exercise_model
 from models import utente as utente_model
+from models import users as user_model
 from models.creatDocument import *
 
 def decode_token(token):
@@ -167,11 +168,11 @@ def get_utente_by_name(health_user_name):
     return jsonify(health_user), 200
 
 
-@utente_bp.route('/<string:health_user_name>/analise/fonacao', methods=['GET'])
-def get_analise_fonacao(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/fonacao', methods=['GET'])
+def get_analise_fonacao(user_id):
     """
-    Get the phonation analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the phonation analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the analysis results.
     """
     token = request.headers.get('Authorization')
@@ -187,12 +188,18 @@ def get_analise_fonacao(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'phonation')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'phonation')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -202,11 +209,11 @@ def get_analise_fonacao(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/analise/articulacao', methods=['GET'])
-def get_analise_articulacao(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/articulacao', methods=['GET'])
+def get_analise_articulacao(user_id):
     """
-    Get the articulation analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the articulation analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the articulation analysis results.
     """
     token = request.headers.get('Authorization')
@@ -222,12 +229,18 @@ def get_analise_articulacao(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'articulation')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'articulation')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -237,11 +250,11 @@ def get_analise_articulacao(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/analise/prosodia', methods=['GET'])
-def get_analise_prosodia(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/prosodia', methods=['GET'])
+def get_analise_prosodia(user_id):
     """
-    Get the prosody analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the prosody analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the prosody analysis results.
     """
     token = request.headers.get('Authorization')
@@ -257,12 +270,18 @@ def get_analise_prosodia(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'prosody')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'prosody')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -272,11 +291,11 @@ def get_analise_prosodia(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/analise/glotal', methods=['GET'])
-def get_analise_glotal(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/glotal', methods=['GET'])
+def get_analise_glotal(user_id):
     """
-    Get the glottal analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the glottal analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the glottal analysis results.
     """
     token = request.headers.get('Authorization')
@@ -292,12 +311,18 @@ def get_analise_glotal(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'glottal')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'glottal')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -307,11 +332,11 @@ def get_analise_glotal(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/analise/reaprendizado', methods=['GET'])
-def get_analise_reaprendizado(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/reaprendizado', methods=['GET'])
+def get_analise_reaprendizado(user_id):
     """
-    Get the replearning analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the replearning analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the replearning analysis results.
     """
     token = request.headers.get('Authorization')
@@ -327,12 +352,18 @@ def get_analise_reaprendizado(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'replearning')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'replearning')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -342,11 +373,11 @@ def get_analise_reaprendizado(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/analise/fonologica', methods=['GET'])
-def get_analise_fonologica(health_user_name):
+@utente_bp.route('/<string:user_id>/analise/fonologica', methods=['GET'])
+def get_analise_fonologica(user_id):
     """
-    Get the phonological analysis results for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the phonological analysis results for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the phonological analysis results.
     """
     token = request.headers.get('Authorization')
@@ -362,12 +393,18 @@ def get_analise_fonologica(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    analysis_results = result_model.get_result_by_user_and_processingtype(health_user['_id'],'phonological')
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    analysis_results = result_model.get_result_by_user_and_processingtype(casa_viva_user['_id'],'phonological')
 
     if not analysis_results:
         return jsonify({"error": "Resultados de análise não encontrados"}), 404
@@ -377,11 +414,11 @@ def get_analise_fonologica(health_user_name):
 
     return jsonify(analysis_results), 200
 
-@utente_bp.route('/<string:health_user_name>/exercicio/', methods=['GET'])
-def get_exercicio(health_user_name):
+@utente_bp.route('/<string:user_id>/exercicio/', methods=['GET'])
+def get_exercicio(user_id):
     """
-    Get the exercises for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Get the exercises for a specific health user by their id.
+    :param user_id: The id of the health user.
     :return: JSON response with the exercises.
     """
     token = request.headers.get('Authorization')
@@ -397,12 +434,19 @@ def get_exercicio(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+
+    health_user = utente_model.get_health_user_by_id(user_id)
 
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-    exercises = exercise_model.get_exercise_by_health_user(health_user['_id'])
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    exercises = exercise_model.get_exercise_by_health_user(casa_viva_user['_id'])
 
     if not exercises:
         return jsonify({"error": "Exercícios não encontrados"}), 404
@@ -412,11 +456,11 @@ def get_exercicio(health_user_name):
 
     return jsonify(exercises), 200
 
-@utente_bp.route('/<string:health_user_name>/exercicio/adicionar', methods=['POST'])
-def add_exercicio(health_user_name):
+@utente_bp.route('/<string:user_id>/exercicio/adicionar', methods=['POST'])
+def add_exercicio(user_id):
     """
-    Add a new exercise for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Add a new exercise for a specific health user by their id.
+    :param user_id: The name of the health user.
     :return: JSON response with the exercise ID and a success message.
     """
     token = request.headers.get('Authorization')
@@ -432,10 +476,16 @@ def add_exercicio(health_user_name):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
+    health_user = utente_model.get_health_user_by_id(user_id)
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
 
     data = request.get_json()
     name = data.get('name')
@@ -448,17 +498,18 @@ def add_exercicio(health_user_name):
         return jsonify({"error": "Já há exercício com este nome registrado"}), 400
 
     docuemnto = CreatDocumentToDB()
-    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=health_user_name, user=health_user['_id'], steps=steps)
+    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps)
     
     exercise_id = exercise_model.create_exercise(doc)
 
     return jsonify({"message": "Exercício adicionado com sucesso", "id": str(exercise_id)}), 201
 
-@utente_bp.route('/<string:health_user_name>/exercicio/update/<string:exercise_id>', methods=['PUT'])
-def update_exercicio(health_user_name, exercise_id):
+#TODO: Verificar isso
+@utente_bp.route('/<string:user_id>/exercicio/update/<string:exercise_id>', methods=['PUT'])
+def update_exercicio(user_id, exercise_id):
     """
-    Update an existing exercise for a specific health user by their name.
-    :param health_user_name: The name of the health user.
+    Update an existing exercise for a specific health user by their id.
+    :param user_id: The id of the health user.
     :param exercise_id: The ID of the exercise to be updated.
     :return: JSON response with a success message.
     """
@@ -475,10 +526,16 @@ def update_exercicio(health_user_name, exercise_id):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+    health_user = utente_model.get_health_user_by_id(user_id)
 
     if not health_user:
         return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
 
     data = request.get_json()
     name = data.get('name')
@@ -488,10 +545,12 @@ def update_exercicio(health_user_name, exercise_id):
     steps = data.get('steps')
 
     docuemnto = CreatDocumentToDB()
-    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=health_user_name, user=health_user['_id'], steps=steps)
+    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps)
     exercise = exercise_model.update_exercise(exercise_id, doc)
 
     if not exercise:
         return jsonify({"error": "Exercício não encontrado"}), 404
+    
+    return jsonify({"Sucess": "Exercício atualizado com sucesso"}), 200
 
 

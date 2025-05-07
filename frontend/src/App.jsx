@@ -9,6 +9,7 @@ import LabTabs from "./compunent/labTabs.jsx";
 import AllUtente from './pages/utente/all_utente.jsx'
 import ProtectedRoute from './pages/ProtectedRoute.jsx'
 import HealthUserInformation from './pages/utente/information.jsx'
+import ArticulationResult from './pages/utente/result/articulation.jsx'
 
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="utente" element={<AllUtente />} />
           <Route path="utente/:id/informacao" element={<HealthUserInformation />} />
+          <Route path="utente/:id/analise/articulacao" element={<ArticulationResult />} />
           <Route path="protected" element={<Protected />} />
           <Route path="*" element={<NoPage />} />
         </Routes>
