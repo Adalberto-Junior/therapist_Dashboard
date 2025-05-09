@@ -7,4 +7,8 @@ frontend:
     react
     npm install @mui/material @emotion/react @emotion/styled @mui/lab
     npm install react-phone-number-input --save
+    //npm install react-collapse --save
+    npm install react-bootstrap 
+    npm install bootstrap
+
     
