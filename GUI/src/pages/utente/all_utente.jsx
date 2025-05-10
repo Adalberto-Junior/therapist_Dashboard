@@ -90,35 +90,6 @@ export default function AllUtente() {
             </button>
             {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
           </div>
-            // <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100">
-            //     <h2 className="text-2xl font-bold text-center mb-5">Lista de Utentes</h2>
-            //     <p className="text-center">Nenhum utente encontrado.</p>
-            //     <p className="text-center">Adicione um utente acima.</p>
-            //     <table className="min-w-full bg-white border border-gray-300">
-            //         <thead>
-            //             <tr className="bg-gray-200">
-            //                 <th className="py-2 px-4 border-b">ID</th>
-            //                 <th className="py-2 px-4 border-b">Nome</th>
-            //                 <th className="py-2 px-4 border-b">Email</th>
-            //                 <th className="py-2 px-4 border-b">Ações</th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {utentes.map((utente) => (
-            //                 <tr key={utente.id}>
-            //                     <td className="py-2 px-4 border-b">{utente.id}</td>
-            //                     <td className="py-2 px-4 border-b">{utente.nome}</td>
-            //                     <td className="py-2 px-4 border-b">{utente.email}</td>
-            //                     <td className="py-2 px-4 border-b">
-            //                         <button onClick={() => handleEdit(utente.id)} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Editar</button>
-            //                         <button onClick={() => handleDelete(utente.id)} className="bg-red-500 text-white py-1 px-3 rounded">Eliminar</button>
-            //                     </td>
-            //                 </tr>
-            //             ))}
-            //         </tbody>
-            //     </table>
-            // </div>
-            // <p>No data available</p>
         );
     }
         
