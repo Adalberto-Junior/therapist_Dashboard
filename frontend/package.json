@@ -17,7 +17,7 @@
     "@hookform/error-message": "^2.0.1",
     "@mui/lab": "^7.0.0-beta.11",
     "@mui/material": "^7.0.2",
-    "@tailwindcss/vite": "^4.1.4",
+    "@tailwindcss/vite": "^4.1.6",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.6",
     "react": "^19.0.0",
@@ -25,19 +25,26 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",
     "react-icons": "^5.5.0",
-    "react-phone-number-input": "^3.4.12",
-    "tailwindcss": "^4.1.4"
+    "react-phone-number-input": "^3.4.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "postcss": "^8.5.3",
     "react-router-dom": "^7.5.1",
+    "tailwindcss": "^4.1.6",
     "vite": "^6.3.1"
-  }
+  },
+  "description": "- login - register - add exercise",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

@@ -28,11 +28,11 @@ export default function LoginForm () {
 
   return (
     // <div className='container' >
-    <div className="container mx-auto max-w-md mt-10 p-5 bg-gray-100">
+    <div className="flex flex-col justify-center gap-4 md:gap-8  w-99 h-150  mt-30 p-5 rounded-2xl bg-gray-100">
       <h2 className="text-2xl font-bold text-center mb-5">Login</h2>
       <form  onSubmit={handleSubmit(onSubmit) } className="flex flex-col">
         <div>
-          <label htmlFor="email">Email</label>
+          {/* <label className='p-2' htmlFor="email">Email</label> */}
           <input
             className="w-full bg-white text-black p-2 border border-gray-300 rounded-md mb-4"
             type="email"
@@ -50,7 +50,7 @@ export default function LoginForm () {
           <ErrorMessage errors={errors} name="email" render={({ message }) => <p>{message}</p>} />
         </div>
         <div>
-          <label htmlFor="password">Password</label>
+          {/* <label htmlFor="password">Password</label> */}
           <input
             className="w-full bg-white text-black p-2 border border-gray-300 rounded-md mb-4"
             type="password"
@@ -61,7 +61,7 @@ export default function LoginForm () {
           />
           <ErrorMessage errors={errors} name="password" render={({ message }) => <p>{message}</p>} />
         </div>
-        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Entrar</button>
+        <button type="submit" className=" border w-full bg-green-500 text-white p-2 rounded-2x1 mb-2 hover:bg-green-600">Entrar</button>
         <div className="mt-4 text-center">
           <p>Não tem uma conta? <a href="/register" className="text-blue-500">Registrar</a></p>
         </div>

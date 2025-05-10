@@ -1,5 +1,5 @@
 import { useState } from 'react'
-// import './App.css'
+import './index.css'
 import RegisterForm from './pages/auth/registerForm.jsx'
 import NoPage from './pages/NoPage.jsx'
 import LoginForm from './pages/auth/login.jsx'
