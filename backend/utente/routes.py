@@ -58,7 +58,7 @@ def register_utente():
 
     data = request.get_json()
     name = data.get('name')
-    email = data.get('email')
+    email = data.get('email').lower()
     observation = data.get('observation')
     medical_condition = data.get('medical_condition')
     date_birth = data.get('date_birth')

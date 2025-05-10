@@ -71,7 +71,7 @@ def register():
 
     data = request.get_json()
     name = data.get('name')
-    email = data.get('email')
+    email = data.get('email').lower()
     password = data.get('password')
     profession = data.get('profession')
     date_birth = data.get('date_birth')
@@ -97,7 +97,7 @@ def login():
     """
 
     data = request.get_json()
-    email = data.get('email')
+    email = data.get('email').lower()
     password = data.get('password')
 
     user = therapist_model.get_therapist_by_email(email)
