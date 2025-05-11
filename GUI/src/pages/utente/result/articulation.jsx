@@ -194,6 +194,7 @@ import api from "../../../api";
 import { useParams } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import BarChart from "../../../compunent/barChat.jsx"
 
 const keyTranslations = {
     static_result: "Resultados Estáticos",
@@ -282,7 +283,7 @@ export default function ArticulationResult() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-            <div className="flex-1 p-8">
+            <div className="flex-1 p-1">
                 <div className=" w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
                     <h1 className="text-2xl font-bold text-center mb-5">Resultados de Articulação</h1>
 
@@ -317,6 +318,7 @@ export default function ArticulationResult() {
                     )}
                 </div>
             </div>
+            {/* <BarChart /> */}
         </div>
     );
 }

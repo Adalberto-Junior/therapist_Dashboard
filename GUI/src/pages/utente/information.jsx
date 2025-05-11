@@ -83,7 +83,7 @@ export default function HealthUserInformation() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
             {/* <UtenteTabs /> */}
-            <div className=" container flex flex-col  mt-10 bg-transparent dark:bg-zinc-800 shadow-md rounded-lg p-6">
+            {/* <div className=" container flex flex-col  mt-10 bg-transparent dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
                 {/* <div className="flex flex-col items-center mt-10"> */}
                     {utente && Object.keys(utente).length > 0 ? (
                         <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100 rounded-lg shadow-md">
@@ -159,7 +159,7 @@ export default function HealthUserInformation() {
                     ) : (
                         <p>Nenhum dado disponível</p>
                     )}
-            </div>
+            {/* </div> */}
         </div>
         
     );

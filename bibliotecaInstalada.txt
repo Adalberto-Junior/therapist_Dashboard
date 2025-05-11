@@ -16,6 +16,8 @@ frontend:
     npm install @hookform/error-message
     npm install @headlessui/react
     npm install @heroicons/react
+    npm install d3
+
     
 
     

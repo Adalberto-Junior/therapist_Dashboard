@@ -31,17 +31,23 @@ export default function LabTabs() {
   return (
     <div className="z-50 fixed top-0 left-0 right-0 bg-white"
       style={{
-    position: "fixed", // fixo no topo da tela
-    top: 0,
-    left: 0,
-    width: "100%",
-    zIndex: 1000,
-    backgroundColor: "var(--mui-palette-background-default)", // fundo adaptável
-  }}
+        position: "fixed", // fixo no topo da tela
+        top: 0,
+        left: 0,
+        right:0,
+        width: "100%",
+        zIndex: 1000,
+        backgroundColor: "var(--mui-palette-background-default)", // fundo adaptável
+      }}
     >
       <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
         <TabContext value={value}>
-          <TabList onChange={handleChange} aria-label="Main Tabs">
+          <TabList
+              onChange={handleChange}
+              aria-label="Main Tabs"
+              variant="fullWidth"
+              sx={{ px: 0, width: "100%" }}
+            >
             <Tab label="Home" value="1" />
             <Tab label="Utente" value="2" />
             <Tab label="Perfil" value="3" />
