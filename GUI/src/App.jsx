@@ -64,7 +64,7 @@ import NoPage from './pages/NoPage.jsx'
 import LoginForm from './pages/auth/login.jsx'
 import Protected from './pages/protected.jsx'
 import Home from './pages/Home.jsx'
-import LabTabs from "./compunent/labTabs.jsx";
+import LabTabs from "./component/labTabs.jsx";
 import AllUtente from './pages/utente/all_utente.jsx'
 import ProtectedRoute from './pages/ProtectedRoute.jsx'
 import HealthUserInformation from './pages/utente/information.jsx'

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import UtenteTabs from "../compunent/utenteTabs.jsx";
+import UtenteTabs from "../component/utenteTabs.jsx";
 
 export default function UtenteTabsLayout() {
   return (
