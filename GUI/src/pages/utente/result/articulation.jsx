@@ -259,6 +259,42 @@ function RecursiveAccordion({ data }) {
     );
 }
 
+function ChartAccordion({radarData,barGroups}) {
+  return (
+        <Accordion alwaysOpen>
+            <Accordion.Item eventKey={"0"}>
+              <Accordion.Header>Gráficos</Accordion.Header>
+              <Accordion.Body>
+                {/* Radar Chart */}
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold mb-2">Radar (Estáticos)</h2>
+                  <br></br>
+                  {/* <RadarChart data={radarData} /> */}
+                  <StaticBarChart data={radarData}/>
+                </div>
+
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold mb-2">Métricas Estáticas</h2>
+                  <StaticBarChart data={radarData} width={600} height={Math.max(200, radarData.length * 25)} />
+                </div>
+
+                {/* Bar Charts */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-2">Barras (Não Estáticos)</h2>
+                  {Object.entries(barGroups).map(([key, vals]) => (
+                    <div key={key} className="mb-4">
+                      <h3 className="font-medium mb-1">{translateKey(key)}</h3>
+                      <BarChart data={vals} />
+                    </div>
+                  ))}
+                </div>
+                
+              </Accordion.Body>
+            </Accordion.Item>
+        </Accordion>
+    );
+}
+
 
 export default function ArticulationResult() {
     const [results, setResults] = useState([]);
@@ -378,7 +414,6 @@ export default function ArticulationResult() {
               {filtered.map((item, idx) => {
                 const radarData = buildRadarData(item.static_result || []);
                 const barGroups = buildBarData(item.no_static_result || []);
-
                 return (
                   <Accordion.Item eventKey={idx.toString()} key={idx}>
                     <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
@@ -390,30 +425,11 @@ export default function ArticulationResult() {
                         {/** Reutilize seu Accordion recursivo aqui se quiser **/}
                         <RecursiveAccordion data={item} />
                       </div>
-
-                      {/* Radar Chart */}
+                      {/* Dados em Gráficos */}
                       <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-2">Radar (Estáticos)</h2>
-                        <br></br>
-                        {/* <RadarChart data={radarData} /> */}
-                        <StaticBarChart data={radarData}/>
+                        <h2 className="text-lg font-semibold mb-2">Gráficos</h2>
+                        <ChartAccordion radarData={radarData} barGroups={barGroups}/>
                       </div>
-                      <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-2">Métricas Estáticas</h2>
-                        <StaticBarChart data={radarData} width={600} height={Math.max(200, radarData.length * 25)} />
-                      </div>
-
-                      {/* Bar Charts */}
-                      <div>
-                        <h2 className="text-lg font-semibold mb-2">Barras (Não Estáticos)</h2>
-                        {Object.entries(barGroups).map(([key, vals]) => (
-                          <div key={key} className="mb-4">
-                            <h3 className="font-medium mb-1">{translateKey(key)}</h3>
-                            <BarChart data={vals} />
-                          </div>
-                        ))}
-                      </div>
-
                     </Accordion.Body>
                   </Accordion.Item>
                 );
@@ -422,7 +438,6 @@ export default function ArticulationResult() {
           ) : (
             <p className="text-center mt-5">Nenhum dado disponível para essa data.</p>
           )}
-
         </div>
       </div>
     </div>

@@ -82,11 +82,11 @@ export default function AllUtente() {
             <div className="flex flex-col items-center mt-10">
                 <p>Nenhum dado disponível</p>
             <button
-              onClick={() => setShowForm(true)}
-              className="mybutton"
-              style={{ width: '200px', height: '50px', fontSize: '16px' }}
+                onClick={() => setShowForm(true)}
+                className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
             >
-              Adicionar Utente
+                Adicionar Utente
             </button>
             {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
           </div>
@@ -118,8 +118,6 @@ export default function AllUtente() {
                                     <td className="py-2 px-4 border-b">{utente.email}</td>
                                     <td className="py-2 px-4 border-b">
                                         <button onClick={() => handleOpen(utente._id.$oid || utente._id.toString())} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Abrir</button>
-                                        {/* <button onClick={() => handleEdit(utente._id.$oid || utente._id.toString())} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Editar</button>
-                                        <button onClick={() => handleDelete(utente._id.$oid || utente._id.toString())} className="bg-red-500 text-white py-1 px-3 rounded">Eliminar</button> */}
                                     </td>
                                 </tr>
                             ))}
