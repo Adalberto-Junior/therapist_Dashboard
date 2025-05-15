@@ -456,7 +456,7 @@ def get_exercicio(user_id):
 
     return jsonify(exercises), 200
 
-@utente_bp.route('/<string:user_id>/exercicio/adicionar', methods=['POST'])
+@utente_bp.route('/<string:user_id>/exercicio/', methods=['POST'])
 def add_exercicio(user_id):
     """
     Add a new exercise for a specific health user by their id.

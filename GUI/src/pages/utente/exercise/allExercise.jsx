@@ -4,7 +4,7 @@ import api from "../../../../../frontend/src/api";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import FloatingForm from './floatingexerciseForm'; // Importando o componente de formulário flutuante
+import FloatingForm from './floatingExerciseForm'; // Importando o componente de formulário flutuante
 // import '../../App.css'; // Importando o CSS tradicional
 
 
