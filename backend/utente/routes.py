@@ -415,7 +415,7 @@ def get_analise_fonologica(user_id):
     return jsonify(analysis_results), 200
 
 @utente_bp.route('/<string:user_id>/exercicio/', methods=['GET'])
-def get_exercicio(user_id):
+def get_exercicios(user_id):
     """
     Get the exercises for a specific health user by their id.
     :param user_id: The id of the health user.
@@ -456,6 +456,36 @@ def get_exercicio(user_id):
 
     return jsonify(exercises), 200
 
+@utente_bp.route('/exercicio/<string:exercise_id>/', methods=['GET'])
+def get_exercicio(exercise_id):
+    """
+    Get the a specific exercise by their id.
+    :param exercise_id: The id of the health user.
+    :return: JSON response with the exercise.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    exercise = exercise_model.get_exercise_by_id(exercise_id)
+
+    if not exercise:
+        return jsonify({"error": "Exercício não encontrados"}), 404
+    
+    # if isinstance(exercises, Cursor):
+    #     exercises = list(exercises)
+
+    return jsonify(exercise), 200
+
 @utente_bp.route('/<string:user_id>/exercicio/', methods=['POST'])
 def add_exercicio(user_id):
     """
@@ -491,7 +521,7 @@ def add_exercicio(user_id):
     name = data.get('name')
     type = data.get('type')
     description = data.get('description')
-    video_url = data.get('video_url')
+    # video_url = data.get('video_url')
     steps = data.get('steps')
 
     if exercise_model.get_exercise_by_name(name):

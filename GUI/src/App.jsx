@@ -70,6 +70,7 @@ import ProtectedRoute from './pages/ProtectedRoute.jsx'
 import HealthUserInformation from './pages/utente/information.jsx'
 import ArticulationResult from './pages/utente/result/articulation.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
+import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
@@ -98,6 +99,7 @@ export default function App() {
               <Route path="informacao" element={<HealthUserInformation />} />
               <Route path="analise/articulacao" element={<ArticulationResult />} />
               <Route path="exercicios" element={<AllExercise />} />
+              <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               {/* Adicione outras subtabs aqui */}
             </Route>
 

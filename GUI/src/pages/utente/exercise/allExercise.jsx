@@ -52,7 +52,7 @@ export default function AllExercise() {
     //     }
     // };
     const handleEdit = (id) => {
-        navigate(`/exercise/edit/${id}`); // Redirect to the edit page with the exercise ID
+        navigate(`/exercicio/editar/${id}`); // Redirect to the edit page with the exercise ID
     };
     const handleDelete = async (id) => {
         try {
@@ -64,7 +64,7 @@ export default function AllExercise() {
     };
 
     const handleOpen = async (id_) => {
-        navigate(`/utente/${id}/exercise/${id_}`);
+        navigate(`/utente/${id}/exercicio/${id_}`);
         // try {
         //     await api.delete(`/exercises/${id}`); // Adjust the endpoint as needed
         //     setexercises(exercises.filter((exercise) => exercise.id !== id)); // Remove the deleted exercise from the state
@@ -73,8 +73,22 @@ export default function AllExercise() {
         // }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
+    if (loading) {
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    };
+
+    if (error) {
+         return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Error: {error.message}</p>
+            </div>
+         ) 
+    };
+
     if (exercises.length === 0) {
         return ( 
             <div className="flex flex-col items-center mt-10">

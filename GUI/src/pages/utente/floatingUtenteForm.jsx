@@ -15,11 +15,9 @@ export default function FloatingForm ({ onClose }) {
 
     const onSubmit = async (data) => {
         try {
-            const response = await api.post("/utente/", data); // Adjust the endpoint as needed
-            // setUtentes([...utentes, response.data]); // Add the new utente to the state
-            alert("Utente added successfully:", response.data);  //TODO: delete this line
-            // navigate("/utente/"); // Redirect to the all utente page after adding
-            // window.location.reload(); // Reload the page to see the new utente in the list
+            const response = await api.post("/utente/", data);
+            alert("Utente adicionado com sucesso");
+            window.location.reload(); // Reload the page to see the new utente in the list
         }
         catch (error) {
             console.error("Error adding utente:", error);

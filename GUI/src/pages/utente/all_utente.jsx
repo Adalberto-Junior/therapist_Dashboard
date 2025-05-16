@@ -75,21 +75,36 @@ export default function AllUtente() {
         // }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
+    if (loading) {
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    };
+
+    if (error) {
+         return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Error: {error.message}</p>
+            </div>
+         ) 
+    };
     if (utentes.length === 0) {
-        return ( 
-            <div className="flex flex-col items-center mt-10">
-                <p>Nenhum dado disponível</p>
-            <button
-                onClick={() => setShowForm(true)}
-                className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
-                style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
-            >
-                Adicionar Utente
-            </button>
-            {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
-          </div>
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+              <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+                <h2 className="text-2xl font-bold text-center mb-5">Nenhum dado disponível</h2>
+                <button
+                    onClick={() => setShowForm(true)}
+                    className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                    style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
+                >
+                    Adicionar Utente
+                </button>
+                {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
+              </div>
+            </div>
         );
     }
         
