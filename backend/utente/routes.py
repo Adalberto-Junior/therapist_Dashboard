@@ -521,6 +521,7 @@ def add_exercicio(user_id):
     name = data.get('name')
     type = data.get('type')
     description = data.get('description')
+    typeOfProcessing = data.get('typeOfProcessing')
     # video_url = data.get('video_url')
     steps = data.get('steps')
 
@@ -528,7 +529,7 @@ def add_exercicio(user_id):
         return jsonify({"error": "Já há exercício com este nome registrado"}), 400
 
     docuemnto = CreatDocumentToDB()
-    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps)
+    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps,typeOfProcessing=typeOfProcessing)
     
     exercise_id = exercise_model.create_exercise(doc)
 

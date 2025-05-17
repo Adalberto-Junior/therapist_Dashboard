@@ -96,12 +96,13 @@ class CreatDocumentToDB:
                 }
         return self.data
     
-    def exerciseDocument(self, type, name, description, steps, userName, user):
+    def exerciseDocument(self, type, name, description, steps, userName, user,typeOfProcessing):
         """
         Create a document for the exercise.
         :param type: The type of the exercise.
         :param name: The name of the exercise.
         :param description: The description of the exercise.
+        :param typeOfProcessing: the type of processing of exercise.
         :param steps: The steps of the exercise.
         :param userName: The name of the user.
         :param user: The user id.
@@ -112,6 +113,7 @@ class CreatDocumentToDB:
                     "type": type,                                    # type is the type of exercise: speech, reading, writing, etc
                     "name": name,
                     "description": description,
+                    "typeOfProcessing":typeOfProcessing,
                     "steps": steps,                      # steps is a list of dictionaries
                     "userName": userName,                # userName is the name of the user
                     "user": self.ensure_objectid(user),                        # user is the id of the user
