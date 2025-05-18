@@ -69,6 +69,10 @@ import AllUtente from './pages/utente/all_utente.jsx'
 import ProtectedRoute from './pages/ProtectedRoute.jsx'
 import HealthUserInformation from './pages/utente/information.jsx'
 import ArticulationResult from './pages/utente/result/articulation.jsx'
+import ProsodyResult from './pages/utente/result/prosody.jsx'
+import PhonotionResult from './pages/utente/result/phonation.jsx'
+import GlottalResult from './pages/utente/result/glottal.jsx'
+import ReplearningResult from './pages/utente/result/repleaning.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
 
@@ -98,6 +102,10 @@ export default function App() {
             <Route path="utente/:id" element={<UtenteTabsLayout />}>
               <Route path="informacao" element={<HealthUserInformation />} />
               <Route path="analise/articulacao" element={<ArticulationResult />} />
+              <Route path="analise/fonacao" element={<PhonotionResult />} />
+              <Route path="analise/prosodia" element={<ProsodyResult />} />
+              <Route path="analise/glota" element={<GlottalResult />} />
+              <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               {/* Adicione outras subtabs aqui */}

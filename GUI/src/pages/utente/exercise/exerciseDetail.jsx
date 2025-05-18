@@ -26,6 +26,27 @@ export default function ExerciseDetail() {
         fetchData();
     }, [id_]);
 
+    const processingInPT = {
+        articulation: "Articulação",
+        phonation: "Fonação",
+        glotta: "Glota",
+        prosody: "Prosódia",
+        replearning: "Reaprendizagem",
+
+    }
+
+    const stepInPT = {
+        text: "Texto",
+        title: "Título",
+        description: "Descrição",
+        word: "Palavra",
+        sentence: "Frase",
+        step: "Passo",
+        question: "Pergunta",
+        typeOfConsonant: "Tipo de Consoante",
+        syllables: "Sílaba",
+    }
+
 
     const handleEdit = (id) => {
         navigate(`/utente/${id}/exercicio/edit/${id_}`); // Redirect to the edit page with the utente ID //TODO: FAZER DEPOIS
@@ -69,9 +90,14 @@ export default function ExerciseDetail() {
                 if (key === "description") key = "Descrição do Exercício";
                 if (key === "type") key = "Tipo do Exercício";
                 if (key === "userName") key = "Nome do Utilizador";
+                if (key == "typeOfProcessing") {
+                    key = "Tipo de Processamento"
+                    value = processingInPT[value]
+                } 
                 if (key === "user") {
-                    key = "Id do Utilizador";
-                    value = value?.$oid || value;
+                    // key = "Id do Utilizador";
+                    // value = value?.$oid || value;
+                    return null;
                 }
                 if (key === "_id") {
                     key = "Id do Exercício";
@@ -129,7 +155,7 @@ export default function ExerciseDetail() {
                                 <Accordion.Body>
                                 {Object.entries(step).map(([k, v], i) => (
                                         <div key={i} className="mb-2">
-                                            <span className="font-semibold">{k}:</span>{" "}
+                                            <span className="font-semibold">{stepInPT[k]}:</span>{" "}
                                             <span>{typeof v === 'string' ? v : JSON.stringify(v)}</span>
                                         </div>
                                     ))}

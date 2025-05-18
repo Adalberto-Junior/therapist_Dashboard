@@ -21,9 +21,9 @@ export default function UtenteTabs() {
   const handleChange = (event, newValue) => {
     if (newValue === "1") navigate(`/utente/${id}/informacao`);
     if (newValue === "2") navigate(`/utente/${id}/analise/articulacao`);
-    if (newValue === "3") navigate(`/utente/${id}//analise/fonacao`);
-    if (newValue === "4") navigate(`/utente/${id}//analise/glota`);
-    if (newValue === "5") navigate(`/utente/${id}//analise/prosodia`);
+    if (newValue === "3") navigate(`/utente/${id}/analise/fonacao`);
+    if (newValue === "4") navigate(`/utente/${id}/analise/glota`);
+    if (newValue === "5") navigate(`/utente/${id}/analise/prosodia`);
     if (newValue === "6") navigate(`/utente/${id}/analise/reaprendizagem`);
     // if (newValue === "7") navigate(`/utente/${id}/adicionar_exercicio`);
     if (newValue === "7") navigate(`/utente/${id}/exercicios`);

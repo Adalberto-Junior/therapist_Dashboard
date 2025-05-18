@@ -103,7 +103,7 @@ function ChartAccordion({radarData,barGroups}) {
 }
 
 
-export default function PhonotionResult() {
+export default function GlottalResult() {
     const [results, setResults] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const { id } = useParams();
@@ -111,7 +111,7 @@ export default function PhonotionResult() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get(`/utente/${id}/analise/fonacao`);
+                const response = await api.get(`/utente/${id}/analise/glotal`);
                 setResults(response.data);
                 if (response.data.length > 0) {
                     setSelectedDate(response.data[0].date); 
@@ -158,7 +158,7 @@ export default function PhonotionResult() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
         <div className=" container w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-center mb-5">Resultados de Fonação</h1>
+          <h1 className="text-2xl font-bold text-center mb-5">Resultados de Glota</h1>
 
           <select
             className="mb-4 p-2 border rounded w-full"
