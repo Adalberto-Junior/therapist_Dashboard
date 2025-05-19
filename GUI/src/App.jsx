@@ -66,7 +66,7 @@ import Protected from './pages/protected.jsx'
 import Home from './pages/Home.jsx'
 import LabTabs from "./component/labTabs.jsx";
 import AllUtente from './pages/utente/all_utente.jsx'
-import ProtectedRoute from './pages/ProtectedRoute.jsx'
+import Profile from './pages/therapist/perfil.jsx'
 import HealthUserInformation from './pages/utente/information.jsx'
 import ArticulationResult from './pages/utente/result/articulation.jsx'
 import ProsodyResult from './pages/utente/result/prosody.jsx'
@@ -97,7 +97,7 @@ export default function App() {
           <>
             <Route path="/" element={<Home />} />
             <Route path="utente" element={<AllUtente />} />
-
+            <Route path="me" element={<Profile />} />
             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
             <Route path="utente/:id" element={<UtenteTabsLayout />}>
               <Route path="informacao" element={<HealthUserInformation />} />

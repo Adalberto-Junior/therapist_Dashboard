@@ -137,6 +137,8 @@ def get_profile():
 
     user = therapist_model.get_therapist_by_id(user_id)
 
+    print(user)
+
     if not user:
         return jsonify({"error": "Utilizador não encontrado"}), 404
 
@@ -193,9 +195,9 @@ def add_notas():
         return jsonify({"error": "Token inválido"}), 401
     
     data = request.get_json()
-    note = data('texto')
-    priority = data('prioridade')
-    date = data('data')
+    note = data.get('texto')
+    priority = data.get('prioridade')
+    date = data.get('data')
 
     docuemnto = CreatDocumentToDB()
     doc = docuemnto.noteDocument(note=note,priority=priority,date=date,therapist=user_id)

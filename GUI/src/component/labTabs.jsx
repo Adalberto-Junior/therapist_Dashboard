@@ -11,7 +11,7 @@ export default function LabTabs() {
 
   const getTabValueFromPath = () => {
     if (location.pathname.startsWith("/utente")) return "2";
-    if (location.pathname.startsWith("/register")) return "3";
+    if (location.pathname.startsWith("/me")) return "3";
     return "1";
   };
 
@@ -25,7 +25,7 @@ export default function LabTabs() {
     setValue(newValue);
     if (newValue === "1") navigate("/");
     if (newValue === "2") navigate("/utente");
-    if (newValue === "3") navigate("/register");
+    if (newValue === "3") navigate("/me");
   };
 
   return (

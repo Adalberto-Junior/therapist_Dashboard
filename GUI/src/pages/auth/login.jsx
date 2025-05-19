@@ -25,7 +25,7 @@ export default function LoginForm () {
             alert("Erro ao fazer login. Tente novamente.");
         }
     }
-  };
+  }; 
 
   return (
     // <div className='container' >
