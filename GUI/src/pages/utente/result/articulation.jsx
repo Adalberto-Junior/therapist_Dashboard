@@ -269,8 +269,8 @@ function ChartAccordion({radarData,barGroups}) {
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold mb-2">Radar (Estáticos)</h2>
                   <br></br>
-                  {/* <RadarChart data={radarData} /> */}
-                  <StaticBarChart data={radarData}/>
+                  <RadarChart data={radarData} />
+                  {/* <StaticBarChart data={radarData}/> */}
                 </div>
 
                 <div className="mb-6">
@@ -328,9 +328,11 @@ export default function ArticulationResult() {
         staticArr.forEach(obj => {
         Object.entries(obj).forEach(([k, v]) => {
             const prefix = k.replace(/_\d+$/, '');
-            const num = parseFloat(v[0]);
+            const num = parseFloat(v);
+            // console.log("va: ",v)
             groups[prefix] = groups[prefix] || [];
             groups[prefix].push(num);
+            // console.log(num)
         });
         });
         // console.log(Object.entries(groups).map(([axis, vals]) => ({

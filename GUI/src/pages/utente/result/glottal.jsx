@@ -133,7 +133,7 @@ export default function GlottalResult() {
         staticArr.forEach(obj => {
         Object.entries(obj).forEach(([k, v]) => {
             const prefix = k.replace(/_\d+$/, '');
-            const num = parseFloat(v[0]);
+            const num = parseFloat(v);
             groups[prefix] = groups[prefix] || [];
             groups[prefix].push(num);
         });

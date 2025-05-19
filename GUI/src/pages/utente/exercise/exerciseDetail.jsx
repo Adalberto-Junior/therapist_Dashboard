@@ -47,6 +47,10 @@ export default function ExerciseDetail() {
         syllables: "Sílaba",
     }
 
+    function translateKey(key) {
+        return stepInPT[key] || key.replace(/_/g, " ");
+    }
+
 
     const handleEdit = (id) => {
         navigate(`/utente/${id}/exercicio/edit/${id_}`); // Redirect to the edit page with the utente ID //TODO: FAZER DEPOIS
@@ -154,11 +158,15 @@ export default function ExerciseDetail() {
                                 <Accordion.Header>📄 Passo {index + 1}</Accordion.Header>
                                 <Accordion.Body>
                                 {Object.entries(step).map(([k, v], i) => (
-                                        <div key={i} className="mb-2">
-                                            <span className="font-semibold">{stepInPT[k]}:</span>{" "}
-                                            <span>{typeof v === 'string' ? v : JSON.stringify(v)}</span>
-                                        </div>
-                                    ))}
+                                    <div key={i} className="mb-2">
+                                        {v !== null && (
+                                            <>
+                                                <span className="font-semibold">{translateKey(k)}:</span>{" "}
+                                                <span>{typeof v === 'string' ? v : JSON.stringify(v)}</span>
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
                                 </Accordion.Body>
                             </>
                     </Accordion.Item>

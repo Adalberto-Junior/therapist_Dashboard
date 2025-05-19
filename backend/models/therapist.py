@@ -141,3 +141,31 @@ def get_therapistId(email):
         return str(therapist['_id'])
     else:
         return None
+    
+##################NOTES########################################
+def create_therapist_note(data):
+    """
+    Create a new therapist's notes in the database.
+    :param data: JSON string containing therapist notes data.
+    :return: The ID of the created therapist's notes.
+    """
+
+    note = mongo.db.notes
+    result = note.insert_one(data)
+    return str(result.inserted_id)
+
+def get_therapist_note_by_id(noteId):
+    """
+    Get a therapis's note by their id.
+    :param noteId: The id of the note.
+    :return: The note data as a dictionary.
+    """
+    return mongo.db.notes.find_one({"_id": ObjectId(noteId)})
+
+def get_therapist_notes_by_therapist_id(therapist_id):
+    """
+    Get a therapist notes by therapist ID.
+    :param therapist_id: The ID of the therapist.
+    :return: The therapist notes data as a dictionary.
+    """
+    return mongo.db.notes.find({"therapist": ObjectId(therapist_id)})

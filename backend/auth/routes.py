@@ -13,6 +13,7 @@ import base64
 from flask import request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
+from pymongo.cursor import Cursor
 import bcrypt
 import jwt
 import datetime
@@ -141,4 +142,65 @@ def get_profile():
 
     return jsonify({"user": {"id": str(user['_id']), "name": user['name'], "email": user['email'], "profession": user['profession'], "date_of_birth": user['date_of_birth']}}), 200
 
+# Exemplo de rota protegida
+@auth_bp.route('/notas', methods=['GET'])
+def get_notas():
+    """
+    Get the current user's notes.
+    :return: JSON response with the user's notes.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
 
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        user_id = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    notes = therapist_model.get_therapist_notes_by_therapist_id(user_id)
+
+    if not notes:
+        return jsonify({"error": "Ainda não há notas"}), 404
+
+    if isinstance(notes, Cursor):
+        notes = list(notes)
+
+    return jsonify(notes), 200
+
+# Exemplo de rota protegida
+@auth_bp.route('/notas', methods=['POST'])
+def add_notas():
+    """
+    Add the current user's notes.
+    :return: JSON response with the user's notes.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        user_id = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+    
+    data = request.get_json()
+    note = data('texto')
+    priority = data('prioridade')
+    date = data('data')
+
+    docuemnto = CreatDocumentToDB()
+    doc = docuemnto.noteDocument(note=note,priority=priority,date=date,therapist=user_id)
+    
+    noteId = therapist_model.create_therapist_note(doc)
+
+   
+    return jsonify({"message": "Nota Guardado com sucesso", "id": str(noteId)}), 201

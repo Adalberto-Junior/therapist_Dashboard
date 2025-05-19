@@ -120,6 +120,26 @@ class CreatDocumentToDB:
                 }
         return self.data
     
+    def noteDocument(self, note, priority, date,therapist):
+        """
+        Create a document for the exercise.
+        :param note: The note to keep.
+        :param priority: The priority of the note.
+        :param date: The date of create the note.
+        :param therapist: the therapist Id.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "note": note,                            
+                    "priority": priority,
+                    "date": date,
+                    "therapist": self.ensure_objectid(therapist),
+                }
+        return self.data
+    
+    #NOTE:APagar isso depois. Não é importante
+    
     def stepSentence_WordDocument(self, step, description, word = None, sentence = None):
         self.data.clear()
         if word:

@@ -31,7 +31,7 @@ export default function FloatingForm({ onClose }) {
     palavras: ['Palavras', 'Descrição'],
     frases: ['Frase', 'Descrição'],
     leitura: ['Título', 'Texto', 'Descrição'],
-    discurso: ['Questação', 'Descrição'],
+    discurso: ['Questão', 'Descrição'],
     diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição'],
     novo: ['label', 'valor']
   };
