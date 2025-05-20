@@ -309,8 +309,8 @@ import * as d3 from 'd3';
 
 export function RadarChart({
   data,
-  width = 900,
-  height = 900,
+  width = 600,
+  height = 600,
   levels = 5,
   margin = { top: 60, right: 90, bottom: 60, left: 90 },
   maxValue
@@ -585,3 +585,278 @@ export function StaticBarChart({
   return <svg ref={ref} width={width} height={height}></svg>;
 }
 
+// LineChart
+// import {
+//   LineChart as RechartsLineChart,
+//   Line,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   CartesianGrid,
+//   ResponsiveContainer,
+// } from "recharts";
+
+// export function LineChart({ data }) {
+//   const chartData = data.map((value, index) => ({
+//     name: `Ponto ${index + 1}`,
+//     value,
+//   }));
+
+//   return (
+//     <ResponsiveContainer width="100%" height={300}>
+//       <RechartsLineChart data={chartData}>
+//         <CartesianGrid strokeDasharray="3 3" />
+//         <XAxis dataKey="name" />
+//         <YAxis />
+//         <Tooltip />
+//         <Line
+//           type="monotone"
+//           dataKey="value"
+//           stroke="#8884d8"
+//           activeDot={{ r: 8 }}
+//         />
+//       </RechartsLineChart>
+//     </ResponsiveContainer>
+//   );
+// }
+
+
+LineChart.jsx
+export function LineChart({ data }) {
+  const ref = useRef();
+
+  useEffect(() => {
+    // Limpar SVG anterior
+    d3.select(ref.current).selectAll("*").remove();
+
+    if (!data || data.length < 2) return;
+
+    const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+    const width = 600 - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(ref.current)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Escalas
+    const x = d3.scalePoint()
+      .domain(data.map(d => d.axis))
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([
+        d3.min(data, d => d.value) - 1,
+        d3.max(data, d => d.value) + 1
+      ])
+      .range([height, 0]);
+
+    // Eixos
+    svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+
+    svg.append("g").call(d3.axisLeft(y));
+
+    // Linha
+    const line = d3.line()
+      .x(d => x(d.axis))
+      .y(d => y(d.value));
+
+    svg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "#4f46e5")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    // Pontos
+    svg.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(d.axis))
+      .attr("cy", d => y(d.value))
+      .attr("r", 4)
+      .attr("fill", "#4f46e5");
+
+    // Tooltip
+    const tooltip = d3.select(ref.current)
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "#fff")
+      .style("border", "1px solid #ccc")
+      .style("padding", "4px 8px")
+      .style("font-size", "12px")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    svg.selectAll("circle")
+      .on("mouseover", function (event, d) {
+        tooltip
+          .html(`<strong>${d.axis}</strong><br/>${d.value}`)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 28}px`)
+          .style("opacity", 1);
+      })
+      .on("mouseout", () => tooltip.style("opacity", 0));
+  }, [data]);
+
+  return <div ref={ref} style={{ position: "relative" }} />;
+}
+
+
+// export function LineChart({ data = [] }) {
+//   const wrapper = useRef();          // div wrapper
+//   const svgRef = useRef();           // svg element
+
+//   useEffect(() => {
+//     if (!data || data.length < 2) return;
+//     const parsed = data.map((d, i) =>
+//       typeof d === "object"
+//         ? { label: d.axis ?? `Ponto ${i + 1}`, value: +d.value }
+//         : { label: `Ponto ${i + 1}`, value: +d }
+//     );
+
+//     // ——— Dimensions ———
+//     const W = 600;
+//     const H = 300;
+//     const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+//     const width = W - margin.left - margin.right;
+//     const height = H - margin.top - margin.bottom;
+
+    
+
+//     // ——— Clear previous draw ———
+//     d3.select(svgRef.current).selectAll("*").remove();
+
+//     // ——— Scales ———
+//     const x = d3
+//       .scalePoint()
+//       .domain(parsed.map(d => d.label))
+//       .range([margin.left, width + margin.left]);
+
+//     const y = d3
+//       .scaleLinear()
+//       .domain(d3.extent(parsed, d => d.value))
+//       .nice()
+//       .range([height + margin.top, margin.top]);
+
+//     // ——— SVG root ———
+//     const svg = d3
+//       .select(svgRef.current)
+//       .attr("viewBox", `0 0 ${W} ${H}`)
+//       .attr("width", "100%")
+//       .attr("height", "auto")
+//       .style("overflow", "visible")
+//       .style("font", "10px sans-serif")
+//       .style("-webkit-tap-highlight-color", "transparent")
+//       .on("pointerenter pointermove", pointermoved)
+//       .on("pointerleave", pointerleft)
+//       .on("touchstart", e => e.preventDefault());
+
+//     // ——— Axes ———
+//     svg
+//       .append("g")
+//       .attr("transform", `translate(0,${height + margin.top})`)
+//       .call(d3.axisBottom(x))
+//       .selectAll("text")
+//       .attr("transform", "rotate(-45)")
+//       .style("text-anchor", "end");
+
+//     svg
+//       .append("g")
+//       .attr("transform", `translate(${margin.left},0)`)
+//       .call(d3.axisLeft(y))
+//       .call(g => g.select(".domain").remove())
+//       .call(g =>
+//         g
+//           .selectAll(".tick line")
+//           .clone()
+//           .attr("x2", width)
+//           .attr("stroke-opacity", 0.1)
+//       );
+
+//     // ——— Line generator ———
+//     const line = d3
+//       .line()
+//       .x(d => x(d.label))
+//       .y(d => y(d.value));
+
+//     svg
+//       .append("path")
+//       .datum(parsed)
+//       .attr("fill", "none")
+//       .attr("stroke", "#4f46e5")
+//       .attr("stroke-width", 1.5)
+//       .attr("d", line);
+
+//     // ——— Tooltip group ———
+//     const tooltip = svg.append("g").style("display", "none");
+
+//     // Helpers
+//     const bisect = d3.bisector(d => d.label).center; // para scalePoint
+//     function pointermoved(event) {
+//       const xm = event.layerX;
+//       const label = x.invert ? x.invert(xm) : parsed[bisect(parsed, xm)].label;
+//       const i = parsed.findIndex(d => d.label === label);
+//       if (i === -1) return;
+//       const d = parsed[i];
+
+//       tooltip.style("display", null);
+//       tooltip.attr(
+//         "transform",
+//         `translate(${x(d.label)},${y(d.value)})`
+//       );
+
+//       const path = tooltip
+//         .selectAll("path")
+//         .data([null])
+//         .join("path")
+//         .attr("fill", "white")
+//         .attr("stroke", "black");
+
+//       const text = tooltip
+//         .selectAll("text")
+//         .data([null])
+//         .join("text")
+//         .call(t =>
+//           t
+//             .selectAll("tspan")
+//             .data([d.label, d.value.toFixed(2)])
+//             .join("tspan")
+//             .attr("x", 0)
+//             .attr("y", (_, j) => `${j * 1.1}em`)
+//             .attr("font-weight", (_, j) => (j ? null : "bold"))
+//             .text(s => s)
+//         );
+
+//       size(text, path);
+//     }
+
+//     function pointerleft() {
+//       tooltip.style("display", "none");
+//     }
+
+//     // dar forma ao balão
+//     function size(text, path) {
+//       const { x: bx, y: by, width: bw, height: bh } = text.node().getBBox();
+//       text.attr("transform", `translate(${-bw / 2},${15 - by})`);
+//       path.attr(
+//         "d",
+//         `M${-bw / 2 - 10},5H-5l5,-5l5,5H${bw / 2 + 10}v${bh + 20}h-${
+//           bw + 20
+//         }z`
+//       );
+//     }
+//   }, [data]);
+
+//   return <svg ref={svgRef} />;
+// }
