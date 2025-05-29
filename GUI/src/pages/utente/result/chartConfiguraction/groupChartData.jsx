@@ -58,8 +58,8 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
               return { axis: `Ponto ${i + 1}`, value: parseFloat(entry) };
             }
           });
-
           result[chartType][group] = formattedData;
+          console.log("Grouped Data:", result[chartType][group]);
         }
       });
     });

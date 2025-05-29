@@ -3,7 +3,10 @@ import api from "../../../api";
 import { useParams } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx";
+import {chartConfig} from "./chartConfiguraction/chartConfig.jsx";
+import {groupChartData} from "./chartConfiguraction/groupChartData.jsx";
+import {ChartAccordion} from "./chartConfiguraction/ChartAccordion.jsx";
 import {RadarChart, BarChart, StaticBarChart} from "../../../component/chart.jsx"
 
 const keyTranslations = {
@@ -22,86 +25,6 @@ const keyTranslations = {
 function translateKey(key) {
     return keyTranslations[key] || key.replace(/_/g, " ");
 }
-
-function RecursiveAccordion({ data }) {
-    
-    if (!data || Object.keys(data).length === 0) {
-        return <p className="text-center mt-2">Nenhum dado disponível</p>;
-    }
-
-    return (
-        <Accordion alwaysOpen>
-            {Object.entries(data).map(([key, value], index) => (
-                <Accordion.Item eventKey={index.toString()} key={index}>
-                    {key !== "_id" && key !== "date" && key !== "user" && key !== "recording" && key !== "processing_type" && key !== "step" && (
-                        <>
-                            {/* <Accordion.Header>{key.replace(/_/g, " ")}</Accordion.Header> */}
-                            <Accordion.Header>{translateKey(key)}</Accordion.Header>
-                            <Accordion.Body>
-                                {/* Se o valor for um objeto, renderiza recursivamente */}
-                                {typeof value === "object" && value !== null ? (
-                                    Array.isArray(value) ? (
-                                        /* Se for uma lista, iteramos sobre ela */
-                                        value.map((item, subIndex) => (
-                                            <div key={subIndex} className="border p-2 rounded">
-                                                {typeof item === "object" && item !== null ? (
-                                                    <RecursiveAccordion data={item} />
-                                                ) : (
-                                                    item.toString()
-                                                )}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <RecursiveAccordion data={value} />
-                                    )
-                                ) : (
-                                    value.toString()
-                                )}
-                            </Accordion.Body>
-                        </>
-                    )}
-                </Accordion.Item>
-            ))}
-        </Accordion>
-    );
-}
-
-function ChartAccordion({radarData,barGroups}) {
-  return (
-        <Accordion alwaysOpen>
-            <Accordion.Item eventKey={"0"}>
-              <Accordion.Header>Gráficos</Accordion.Header>
-              <Accordion.Body>
-                {/* Radar Chart */}
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-2">Radar (Estáticos)</h2>
-                  <br></br>
-                  {/* <RadarChart data={radarData} /> */}
-                  <StaticBarChart data={radarData}/>
-                </div>
-
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-2">Métricas Estáticas</h2>
-                  <StaticBarChart data={radarData} width={600} height={Math.max(200, radarData.length * 25)} />
-                </div>
-
-                {/* Bar Charts */}
-                <div>
-                  <h2 className="text-lg font-semibold mb-2">Barras (Não Estáticos)</h2>
-                  {Object.entries(barGroups).map(([key, vals]) => (
-                    <div key={key} className="mb-4">
-                      <h3 className="font-medium mb-1">{translateKey(key)}</h3>
-                      <BarChart data={vals} />
-                    </div>
-                  ))}
-                </div>
-                
-              </Accordion.Body>
-            </Accordion.Item>
-        </Accordion>
-    );
-}
-
 
 export default function ProsodyResult() {
     const [results, setResults] = useState([]);
@@ -128,32 +51,33 @@ export default function ProsodyResult() {
    
 
     // Agrupa dados estáticos para Radar
-    function buildRadarData(staticArr) {
-        const groups = {};
-        staticArr.forEach(obj => {
-        Object.entries(obj).forEach(([k, v]) => {
-            const prefix = k.replace(/_\d+$/, '');
-            const num = parseFloat(v);
-            groups[prefix] = groups[prefix] || [];
-            groups[prefix].push(num);
-        });
-        });
-        return Object.entries(groups).map(([axis, vals]) => ({
-        axis,
-        value: vals.reduce((a, b) => a + b, 0) / vals.length
-        }));
-    }
+    // function buildRadarData(staticArr) {
+    //     const groups = {};
+    //     staticArr.forEach(obj => {
+    //     Object.entries(obj).forEach(([k, v]) => {
+    //         const prefix = k.replace(/_\d+$/, '');
+    //         const num = parseFloat(v);
+    //         groups[prefix] = groups[prefix] || [];
+    //         groups[prefix].push(num);
+    //     });
+    //     });
+    //     return Object.entries(groups).map(([axis, vals]) => ({
+    //     axis,
+    //     value: vals.reduce((a, b) => a + b, 0) / vals.length
+    //     }));
+    // }
 
-    // Agrupa dados não estáticos para Barras
-    function buildBarData(nonStaticArr) {
-        const result = {};
-        nonStaticArr.forEach(obj => {
-        Object.entries(obj).forEach(([k, arr]) => {
-            result[k] = (arr || []).map(x => parseFloat(x));
-        });
-        });
-        return result;
-    }
+    // // Agrupa dados não estáticos para Barras
+    // function buildBarData(nonStaticArr) {
+    //     const result = {};
+    //     nonStaticArr.forEach(obj => {
+    //     Object.entries(obj).forEach(([k, arr]) => {
+    //         result[k] = (arr || []).map(x => parseFloat(x));
+    //     });
+    //     });
+    //     return result;
+    // }
+
     return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
@@ -173,8 +97,9 @@ export default function ProsodyResult() {
           {filtered.length ? (
             <Accordion alwaysOpen>
               {filtered.map((item, idx) => {
-                const radarData = buildRadarData(item.static_result || []);
-                const barGroups = buildBarData(item.no_static_result || []);
+                // const radarData = buildRadarData(item.static_result || []);
+                // const barGroups = buildBarData(item.no_static_result || []);
+                const groupedData = groupChartData(item.static_result || [], item.no_static_result || [], chartConfig);
                 return (
                   <Accordion.Item eventKey={idx.toString()} key={idx}>
                     <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
@@ -186,11 +111,14 @@ export default function ProsodyResult() {
                         {/** Reutilize seu Accordion recursivo aqui se quiser **/}
                         <RecursiveAccordion data={item} />
                       </div>
-                      {/* Dados em Gráficos */}
+                      {/* Dados em Gráficos
                       <div className="mb-6">
                         <h2 className="text-lg font-semibold mb-2">Gráficos</h2>
                         <ChartAccordion radarData={radarData} barGroups={barGroups}/>
-                      </div>
+                      </div> */}
+                       <div className="mb-6">
+                          <ChartAccordion groupedData={groupedData} />
+                        </div>
                     </Accordion.Body>
                   </Accordion.Item>
                 );

@@ -13,8 +13,14 @@ export const chartConfig = {
   //   chartComponent: BarChart,
   // },
    line: {
-    match: /^([a-zA-Z]+)_\d+$/,
+    match: /^(.+)$/,
     labelPrefix: "",
     chartComponent: LineChart,
   },
+
+  // line1: {
+  //   match: /^([a-zA-Z]+)\d+$/,
+  //   labelPrefix: "",
+  //   chartComponent: LineChart,
+  // },
 };

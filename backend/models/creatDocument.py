@@ -96,7 +96,7 @@ class CreatDocumentToDB:
                 }
         return self.data
     
-    def exerciseDocument(self, type, name, description, steps, userName, user,typeOfProcessing):
+    def exerciseDocument(self, type, name, description, steps, userName, user,typeOfProcessing,therapist):
         """
         Create a document for the exercise.
         :param type: The type of the exercise.
@@ -106,6 +106,7 @@ class CreatDocumentToDB:
         :param steps: The steps of the exercise.
         :param userName: The name of the user.
         :param user: The user id.
+        :param therapist: The therapist id.
         :return: JSON string of the document.
         """
         self.data.clear()
@@ -117,6 +118,7 @@ class CreatDocumentToDB:
                     "steps": steps,                      # steps is a list of dictionaries
                     "userName": userName,                # userName is the name of the user
                     "user": self.ensure_objectid(user),                        # user is the id of the user
+                    "therapist": self.ensure_objectid(therapist),          # therapist is the id of the therapist
                 }
         return self.data
     

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-// import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+
 
 export default function Profile() {
   const [perfil, setPerfil] = useState(null);
