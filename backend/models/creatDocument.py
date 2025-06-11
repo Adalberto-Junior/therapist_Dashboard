@@ -121,14 +121,17 @@ class CreatDocumentToDB:
                     "therapist": self.ensure_objectid(therapist),          # therapist is the id of the therapist
                 }
         return self.data
-    
-    def noteDocument(self, note, priority, date,therapist):
+
+    def noteDocument(self, note, priority, date, therapist, dataExecucao, category, done):
         """
         Create a document for the exercise.
         :param note: The note to keep.
         :param priority: The priority of the note.
         :param date: The date of create the note.
         :param therapist: the therapist Id.
+        :param dataExecucao: The date of execution of the note.
+        :param category: The category of the note.
+        :param done: The status of the note (done or not).
         :return: JSON string of the document.
         """
         self.data.clear()
@@ -137,11 +140,14 @@ class CreatDocumentToDB:
                     "priority": priority,
                     "date": date,
                     "therapist": self.ensure_objectid(therapist),
+                    "dataExecucao": dataExecucao,
+                    "category": category,
+                    "done": done
                 }
         return self.data
-    
+
     #NOTE:APagar isso depois. Não é importante
-    
+
     def stepSentence_WordDocument(self, step, description, word = None, sentence = None):
         self.data.clear()
         if word:

@@ -26,6 +26,8 @@ export default function HealthUserInformation() {
         fetchData();
     }, [id]);
 
+
+
     function calcularIdade(dataNascimento) {
         if (!dataNascimento) return "N/A"; // Se não houver data, retorna "N/A"
     
@@ -53,13 +55,24 @@ export default function HealthUserInformation() {
         return String(idade);
     }
 
-    const handleEdit = (id) => {
-        navigate(`/utente/edit/${id}`); // Redirect to the edit page with the utente ID
+    const handleEdit = (utenteId) => {
+        // Navigate to the edit page with the utente ID
+        console.log("Editing utente:", utenteId);
+        if (!utenteId) {
+            console.error("Invalid utente ID");
+            return;
+        }
+        navigate(`/utente/${utenteId}/editar`); // Redirect to the edit page with the utente ID
     };
-    const handleDelete = async (id) => {
+    const handleDelete = async (utenteId) => {
+        if (!utenteId) {
+            console.error("Invalid utente ID");
+            return;
+        }
         try {
-            await api.delete(`/utentes/${id}`); // Adjust the endpoint as needed
-            setUtentes(utentes.filter((utente) => utente.id !== id)); // Remove the deleted utente from the state
+            await api.delete(`/utente/informacao/${utenteId}`);
+            setUtentes(utentes.filter((u) => u.id !== utenteId));
+            navigate('/utente'); // Redirect to the list of utentes after deletion
         } catch (error) {
             console.error("Error deleting utente:", error);
         }
@@ -145,12 +158,12 @@ export default function HealthUserInformation() {
             
                             <div className="flex justify-center mt-5 space-x-4">
                                 <button 
-                                    onClick={() => handleEdit(utente._id)} 
+                                    onClick={() => handleEdit(utente._id.$oid || utente._id)} 
                                     className="bg-blue-500 text-white py-2 px-4 rounded">
                                     Editar
                                 </button>
                                 <button 
-                                    onClick={() => handleDelete(utente._id)} 
+                                    onClick={() => handleDelete(utente._id.$oid || utente._id)} 
                                     className="bg-red-500 text-white py-2 px-4 rounded">
                                     Eliminar
                                 </button>

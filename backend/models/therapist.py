@@ -169,3 +169,22 @@ def get_therapist_notes_by_therapist_id(therapist_id):
     :return: The therapist notes data as a dictionary.
     """
     return mongo.db.notes.find({"therapist": ObjectId(therapist_id)})
+
+def update_therapist_note(noteId, data):
+    """
+    Update a therapist's note by its ID.
+    :param noteId: The ID of the note.
+    :param data: The data to update the note with.
+    :return: True if the update was successful, False otherwise.
+    """
+    result = mongo.db.notes.update_one({"_id": ObjectId(noteId)}, {"$set": data})
+    return result.modified_count > 0
+
+def delete_therapist_note(noteId):
+    """
+    Delete a therapist's note by its ID.
+    :param noteId: The ID of the note.
+    :return: True if the deletion was successful, False otherwise.
+    """
+    result = mongo.db.notes.delete_one({"_id": ObjectId(noteId)})
+    return result.deleted_count > 0

@@ -140,6 +140,76 @@ def get_utente_by_id(user_id):
     # return jsonify(list(health_user)), 200
     return jsonify(health_user), 200
 
+@utente_bp.route('/informacao/<string:user_id>', methods=['PUT'])
+def update_utente(user_id):
+    """
+    Update the health user information by user ID.
+    :param user_id: The ID of the health user.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    data = request.get_json()
+    name = data.get('name')
+    email = data.get('email').lower()
+    observation = data.get('observation')
+    medical_condition = data.get('medical_condition')
+    date_birth = data.get('date_of_birth')
+    health_user_number = data.get('health_user_number')
+    cellphone = data.get('cellphone')
+    address = data.get('address')
+
+    documento = CreatDocumentToDB()
+    doc = documento.healthUserDocument(name=name, email=email, date_of_birth=date_birth, observation=observation, medical_condition=medical_condition, therapist=therapistId, health_user_number=health_user_number, cellphone=cellphone, address=address)
+
+
+    health_user = utente_model.update_health_user(user_id, doc)
+
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    return jsonify({"message": "Utente atualizado com sucesso"}), 200
+
+@utente_bp.route('/informacao/<string:user_id>', methods=['DELETE'])
+def delete_utente(user_id):
+    """
+    Delete the health user by user ID.
+    :param user_id: The ID of the health user.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    health_user = utente_model.get_health_user_by_id(user_id)
+
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    utente_model.delete_health_user(user_id)
+
+    return jsonify({"message": "Utente deletado com sucesso"}), 200
+
 @utente_bp.route('/informacao/<string:health_user_name>', methods=['GET'])
 def get_utente_by_name(health_user_name):
     """

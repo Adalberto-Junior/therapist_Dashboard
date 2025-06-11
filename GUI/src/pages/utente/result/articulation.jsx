@@ -209,6 +209,7 @@ export default function ArticulationResult() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
         <div className=" container w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+          {/* <div className=" container w-full max-w-xl text-gray-900 bg-white  dark:bg-zinc-800  dark:text-white shadow-md rounded-lg p-6"> */}
           <h1 className="text-2xl font-bold text-center mb-5">Resultados de Articulação</h1>
 
           <select
@@ -266,6 +267,75 @@ export default function ArticulationResult() {
   );
 }
 
+
+//TODO:VERISSO
+// export default function ArticulationResult() {
+//   const [results, setResults] = useState([]);
+//   const { id } = useParams();
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await api.get(`/utente/${id}/analise/articulacao`);
+//         setResults(response.data);
+//       } catch (error) {
+//         console.error("Erro ao buscar dados:", error);
+//       }
+//     };
+//     fetchData();
+//   }, [id]);
+
+//   // Pegamos o resultado mais recente
+//   const latestResult = results.length ? results[0] : null;
+  
+//   // Lista de dados considerados prioritários
+//   const importantFields = ["amplitude", "velocidade", "precisão", "avg BBEon_1"]; // Exemplo, pode ser alterado
+
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+      
+//       {/* <div className="flex-1 p-1"> */}
+//         <div className="min-h-screen  min-w-screen max-w-3xl  bg-gray-100 dark:bg-zinc-900 shadow-md rounded-lg p-6">
+//           <h1 className="text-2xl font-bold text-center mb-5">Resultados de Articulação</h1>
+
+//           {latestResult ? (
+//             <div className="grid grid-cols-2 gap-4">
+//               {/* Dados Numéricos */}
+//               <div className="bg-white dark:bg-zinc-700 p-4 rounded shadow">
+//                 <h2 className="text-lg font-semibold mb-3">Dados Numéricos</h2>
+//                 {importantFields.map((field) => (
+//                   latestResult[field] && (
+//                     <p key={field} className="font-medium">
+//                       {translateKey(field)}: {latestResult[field]}
+//                     </p>
+//                   )
+//                 ))}
+//               </div>
+
+//               {/* Gráficos */}
+//               <div className="bg-white dark:bg-zinc-700 p-4 rounded shadow">
+//                 <h2 className="text-lg font-semibold mb-3">Gráficos</h2>
+//                 <ChartAccordion groupedData={groupChartData(latestResult.static_result || [], latestResult.no_static_result || [], chartConfig)} />
+//               </div>
+//             </div>
+//           ) : (
+//             <p className="text-center mt-5">Nenhum dado disponível.</p>
+//           )}
+
+//           {/* Dados Adicionais em Accordion */}
+//           <Accordion alwaysOpen>
+//             <Accordion.Item eventKey="extra">
+//               <Accordion.Header>Ver mais detalhes</Accordion.Header>
+//               <Accordion.Body>
+//                 <RecursiveAccordion data={latestResult} />
+//               </Accordion.Body>
+//             </Accordion.Item>
+//           </Accordion>
+//         </div>
+//       {/* </div> */}
+//     </div>
+//   );
+// }
 
 
 

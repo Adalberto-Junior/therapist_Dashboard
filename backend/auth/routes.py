@@ -198,11 +198,80 @@ def add_notas():
     note = data.get('texto')
     priority = data.get('prioridade')
     date = data.get('data')
+    dataExecucao = data.get('dataExecucao')
+    category = data.get('categoria')
+    done = data.get('done')
 
-    docuemnto = CreatDocumentToDB()
-    doc = docuemnto.noteDocument(note=note,priority=priority,date=date,therapist=user_id)
-    
+    documento = CreatDocumentToDB()
+    doc = documento.noteDocument(note=note, priority=priority, date=date, dataExecucao=dataExecucao, category=category, done=done, therapist=user_id)
+
     noteId = therapist_model.create_therapist_note(doc)
 
    
     return jsonify({"message": "Nota Guardado com sucesso", "id": str(noteId)}), 201
+
+@auth_bp.route('/notas/<note_id>', methods=['PUT'])
+def update_notas(note_id):
+    """
+    Update a user's note.
+    :param note_id: The ID of the note to update.
+    :return: JSON response with the updated note.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        user_id = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    data = request.get_json()
+    note = data.get('note')
+    priority = data.get('priority')
+    date = data.get('date')
+    dataExecucao = data.get('dataExecucao')
+    category = data.get('category')
+    done = data.get('done')
+
+    documento = CreatDocumentToDB()
+    doc = documento.noteDocument(note=note, priority=priority, date=date, dataExecucao=dataExecucao, category=category, done=done, therapist=user_id)
+
+    updated_note = therapist_model.update_therapist_note(note_id, doc)
+
+    if not updated_note:
+        return jsonify({"error": "Nota não encontrada"}), 404
+
+    return jsonify({"message": "Nota atualizada com sucesso", "note": updated_note}), 200
+
+
+@auth_bp.route('/notas/<note_id>', methods=['DELETE'])
+def delete_notas(note_id):
+    """
+    Delete a user's note.
+    :param note_id: The ID of the note to delete.
+    :return: JSON response indicating the result of the deletion.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        user_id = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    deleted = therapist_model.delete_therapist_note(note_id)
+
+    if not deleted:
+        return jsonify({"error": "Nota não encontrada"}), 404
+
+    return jsonify({"message": "Nota deletada com sucesso"}), 200

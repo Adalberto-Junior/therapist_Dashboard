@@ -75,6 +75,7 @@ import GlottalResult from './pages/utente/result/glottal.jsx'
 import ReplearningResult from './pages/utente/result/repleaning.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
+import EditUtente from './pages/utente/editUtent.jsx'
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
@@ -101,6 +102,7 @@ export default function App() {
             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
             <Route path="utente/:id" element={<UtenteTabsLayout />}>
               <Route path="informacao" element={<HealthUserInformation />} />
+              <Route path="editar" element={<EditUtente />} />
               <Route path="analise/articulacao" element={<ArticulationResult />} />
               <Route path="analise/fonacao" element={<PhonotionResult />} />
               <Route path="analise/prosodia" element={<ProsodyResult />} />
