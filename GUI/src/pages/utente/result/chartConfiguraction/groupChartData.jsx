@@ -59,7 +59,7 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
             }
           });
           result[chartType][group] = formattedData;
-          console.log("Grouped Data:", result[chartType][group]);
+          // console.log("Grouped Data:", result[chartType][group]);
         }
       });
     });

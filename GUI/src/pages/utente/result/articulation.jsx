@@ -9,6 +9,7 @@ import {groupChartData} from "./chartConfiguraction/groupChartData.jsx";
 import {ChartAccordion} from "./chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx";
 
+
 // Traduções de chave
 const keyTranslations = {
   static_result: "Resultados Estáticos",
@@ -193,7 +194,7 @@ export default function ArticulationResult() {
         const response = await api.get(`/utente/${id}/analise/articulacao`);
         setResults(response.data);
         if (response.data.length > 0) {
-          setSelectedDate(response.data[0].date);
+          setSelectedDate(response.data[response.data.length - 1].date);
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -206,14 +207,14 @@ export default function ArticulationResult() {
   const filtered = results.filter((res) => res.date === selectedDate);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+    <div className="min-h-screen min-w-screen items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
-        <div className=" container w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+        {/* <div className=" container w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
           {/* <div className=" container w-full max-w-xl text-gray-900 bg-white  dark:bg-zinc-800  dark:text-white shadow-md rounded-lg p-6"> */}
-          <h1 className="text-2xl font-bold text-center mb-5">Resultados de Articulação</h1>
+          <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Articulação</div>
 
           <select
-            className="mb-4 p-2 border rounded w-full"
+           className="mb-4 p-2 border rounded w-full bg-white text-black border-gray-300 dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
             value={selectedDate || ''}
             onChange={e => setSelectedDate(e.target.value)}
           >
@@ -223,49 +224,113 @@ export default function ArticulationResult() {
           </select>
 
           {filtered.length ? (
+              <div className="w-full flex flex-col md:flex-row gap-4 items-start">
+                {/* Esquerda: Valores númericos */}
+                <div className="w-full md:basis-2/6 bg-gray-100 dark:bg-zinc-900 shadow-md rounded-lg p-6">
+                  <div className="w-full bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+                    <h2 className="text-lg font-semibold mb-3">Dados Numéricos Relevantes</h2>
+                    
+                    {filtered.map((item, idx) => {
+                      const staticResult = item.static_result || [];
+                      // console.log("Static Result:", staticResult);
+                      // Define os campos que deseja destacar
+                      const camposImportantes = [
+                        "avg BBEon_1",
+                        "avg BBEon_5",
+                        "avg MFCCon_8",
+                        "avg DMFCCon_3",
+                        "avg DDMFCCon_2"
+                      ];
+
+                      const dadosRelevantes = staticResult.filter(obj => {
+                        const chave = Object.keys(obj)[0]; // pega a única chave do objeto
+                        return camposImportantes.includes(chave);
+                      });
+
+                      if (dadosRelevantes.length === 0) return null;
+                      return (
+                        <div key={idx} className="mb-6 ">
+                          <h3 className="text-md font-bold mb-2">{`Passo ${idx + 1}`}</h3>
+                          <table className="min-w-full bg-white border border-gray-300 dark:bg-zinc-800 dark:border-zinc-600">
+                            <thead>
+                              <tr  className="bg-gray-200">
+                                <th className="border-b p-2">Métrica</th>
+                                <th className="border-b p-2">Valor</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {dadosRelevantes.map((obj, idxs) => {
+                                const chave = Object.keys(obj)[0];
+                                let valor = obj[chave];
+                                if (typeof valor !== 'number') {
+                                  valor = parseFloat(valor) || "NA"; // Tenta converter para número, se falhar, define como 0
+                                }
+                                return (
+                                  <tr key={idxs}>
+                                    <td className="border-b p-2">{chave}</td>
+                                    <td className="border-b p-2">{typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+
+                {/* Direita: Gráficos */}
+                <div className="w-full md:basis-4/5 bg-white dark:bg-zinc-700 p-6 rounded shadow">
+                  <h2 className="text-lg font-semibold mb-3">Gráficos</h2>
+                  <Accordion alwaysOpen>
+                      {filtered.map((item, idx) => {
+                        const staticResult = item.static_result || [];
+                        const nonStaticResult = item.no_static_result || [];
+                        const groupedData = groupChartData(staticResult, nonStaticResult, chartConfig);
+
+                        return (
+                          <Accordion.Item eventKey={idx.toString()} key={idx}>
+                            <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
+                            <Accordion.Body>
+                              <div className="mb-6">
+                                <h2 className="text-lg font-semibold mb-2">Números</h2>
+                                <RecursiveAccordion data={item} />
+                              </div>
+                              <div className="mb-6">
+                                <ChartAccordion groupedData={groupedData} />
+                              </div>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        );
+                      })}
+                    </Accordion>
+                </div>
+              </div>
+            ) : (
+              <p className="text-center mt-5">Nenhum dado disponível para essa data.</p>
+            )}
+          {/* Dados Adicionais em Accordion */}
+          <div className="bg-white dark:bg-zinc-700 p-6 rounded shadow">
+            <h2 className="text-lg font-semibold mb-3">Dados Detalhados</h2>
             <Accordion alwaysOpen>
-              {filtered.map((item, idx) => {
-                // const groupedChartData = groupChartData(item.static_result || [], chartConfig);
-                // const barGroups = buildBarData(item.no_static_result || []);
-                // const radarGroups = groupAvgRadarData(item.static_result || []);
-                  const staticResult = item.static_result || [];
-                  const nonStaticResult = item.no_static_result || [];
-
-                  // const radarAndBars = groupChartData([...staticResult, ...nonStaticResult], chartConfig);
-                  const groupedData = groupChartData(item.static_result || [], item.no_static_result || [], chartConfig);
-                  return (
-                  <Accordion.Item eventKey={idx.toString()} key={idx}>
-                    <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
+              { filtered.map((item, idx) => {
+                return (
+                  <Accordion.Item eventKey={`extra-${idx}`} key={idx}>
+                    <Accordion.Header>{`Passo ${idx + 1}`}</Accordion.Header>
                     <Accordion.Body>
-
-                      {/* Accordion Recursivo de Dados */}
-                      <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-2">Números</h2>
-                        <RecursiveAccordion data={item} />
-                      </div>
-
-                      {/* Accordion de Gráficos */}
-                      {/* <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-2">Gráficos</h2>
-                        <ChartAccordion groupedData={groupedChartData} barGroups={barGroups} />
-                      </div> */}
-                       <div className="mb-6">
-                        <ChartAccordion groupedData={groupedData} />
-                      </div>
-
+                      <RecursiveAccordion data={item} />
                     </Accordion.Body>
                   </Accordion.Item>
                 );
               })}
             </Accordion>
-          ) : (
-            <p className="text-center mt-5">Nenhum dado disponível para essa data.</p>
-          )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
 
 //TODO:VERISSO
