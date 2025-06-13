@@ -140,12 +140,21 @@ export default function EditUtente() {
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
           />
         </div>
-
-        <button
+        <div className="flex items-center">
+          <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-green-500 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
         >
           Salvar Alterações
+        </button>
+        </div>
+        
+        <button
+          type="button"
+          onClick={() => navigate(`/utente/${id}/informacao`)}
+          className="bg-amber-500 dark:bg-amber-800 hover:bg-amber-600 dark:hover:bg-amber-700 text-white px-4 py-2 rounded ml-2"
+        >
+          Cancelar
         </button>
       </form>
     </div>

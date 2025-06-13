@@ -265,7 +265,9 @@ export default function FloatingForm({ onClose }) {
 
           {/* Botões */}
           <div className="flex flex-col gap-2 mt-4">
-            <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+            <button type="submit" 
+            className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
+            >
               Adicionar Exercício
             </button>
             <button onClick={onClose} type="button" className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">

@@ -70,6 +70,9 @@ export default function HealthUserInformation() {
             return;
         }
         try {
+            if (!window.confirm("Tem a certeza que deseja eliminar este utente?")) {
+                return; // User cancelled the deletion
+            }
             await api.delete(`/utente/informacao/${utenteId}`);
             setUtentes(utentes.filter((u) => u.id !== utenteId));
             navigate('/utente'); // Redirect to the list of utentes after deletion
@@ -155,18 +158,22 @@ export default function HealthUserInformation() {
                                     );
                                 })}
                             </div>
-            
+
                             <div className="flex justify-center mt-5 space-x-4">
-                                <button 
+                                <div className="flex flex-col items-center">
+                                    <button 
                                     onClick={() => handleEdit(utente._id.$oid || utente._id)} 
-                                    className="bg-blue-500 text-white py-2 px-4 rounded">
+                                    className="mb-4 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors dark:bg-yellow-600 dark:hover:bg-yellow-800">
                                     Editar
                                 </button>
-                                <button 
-                                    onClick={() => handleDelete(utente._id.$oid || utente._id)} 
-                                    className="bg-red-500 text-white py-2 px-4 rounded">
-                                    Eliminar
-                                </button>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <button 
+                                        onClick={() => handleDelete(utente._id.$oid || utente._id)} 
+                                        className="mb-4 bg-red-400 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-500 dark:hover:bg-red-800">
+                                        Eliminar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ) : (

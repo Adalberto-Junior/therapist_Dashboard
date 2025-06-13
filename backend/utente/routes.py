@@ -484,6 +484,85 @@ def get_analise_fonologica(user_id):
 
     return jsonify(analysis_results), 200
 
+@utente_bp.route('/<string:user_id>/analise/<string:analise_Id>', methods=['Delete'])
+def delete_analise(user_id, analise_Id):
+    """
+    Delete a specific analysis result by its ID for a specific health user by their id.
+    :param user_id: The id of the health user.
+    :param analise_Id: The ID of the analysis result to be deleted.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+
+    health_user = utente_model.get_health_user_by_id(user_id)
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    result = result_model.delete_result(analise_Id)
+
+    if not result:
+        return jsonify({"error": "Resultado de análise não encontrado"}), 404
+    
+    return jsonify({"message": "Resultado de análise deletado com sucesso"}), 200
+
+@utente_bp.route('/<string:user_id>/analise/<string:type_of_processing>/<string:date>', methods=['DELETE'])
+def delete_analise_by_type_and_date(user_id, type_of_processing, date):
+    """
+    Delete all analysis results of a specific type and date for a specific health user by their id.
+    :param user_id: The id of the health user.
+    :param type_of_processing: The type of processing (e.g., 'phonation', 'articulation').
+    :param date: The date of the analysis results to be deleted.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+
+    health_user = utente_model.get_health_user_by_id(user_id)
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    result = result_model.delete_result_by_user_type_and_date(casa_viva_user['_id'], type_of_processing, date)
+
+    if not result:
+        return jsonify({"error": "Resultados de análise não encontrados"}), 404
+    
+    return jsonify({"message": "Resultados de análise deletados com sucesso"}), 200
+
 @utente_bp.route('/<string:user_id>/exercicio/', methods=['GET'])
 def get_exercicios(user_id):
     """

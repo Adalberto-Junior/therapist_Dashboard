@@ -168,10 +168,14 @@ export default function FloatingForm ({ onClose }) {
                     ></textarea>
                     <ErrorMessage errors={errors} name="observation" render={({ message }) => <span className="error-message">{message}</span>} />
                 </div>
-                <button type="submit" className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Adicionar</button>
+                <button type="submit" 
+                className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
+                >
+                    Adicionar
+                </button>
             </form>
           <button
-            className="w-full bg-blue-500 text-white py-2 px-3 rounded"
+            className="w-full bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-2 rounded mr-2 mt-4"
             onClick={onClose}
             style={{ width: '320px', height: '40px', fontSize: '16px', margin:'15px' }}
         >

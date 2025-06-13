@@ -132,7 +132,10 @@ export default function AllUtente() {
                                     <td className="py-2 px-4 border-b">{utente.name}</td>
                                     <td className="py-2 px-4 border-b">{utente.email}</td>
                                     <td className="py-2 px-4 border-b">
-                                        <button onClick={() => handleOpen(utente._id.$oid || utente._id.toString())} className="bg-blue-500 text-white py-1 px-3 rounded mr-2">Abrir</button>
+                                        <button onClick={() => handleOpen(utente._id.$oid || utente._id.toString())}
+                                         className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">
+                                            Abrir
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -141,7 +144,7 @@ export default function AllUtente() {
                     </table>
                     <button
                         onClick={() => setShowForm(true)}
-                        className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                        className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
                         style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
                     >
                         Adicionar Utente

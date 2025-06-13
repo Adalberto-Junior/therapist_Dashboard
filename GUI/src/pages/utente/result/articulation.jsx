@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../component/chart.jsx";
 import {chartConfig} from "./chartConfiguraction/chartConfig.jsx";
 import {groupChartData} from "./chartConfiguraction/groupChartData.jsx";
-import {ChartAccordion} from "./chartConfiguraction/ChartAccordion.jsx";
+import {ChartAccordion, DisplayChart} from "./chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx";
 
 
@@ -203,6 +203,49 @@ export default function ArticulationResult() {
     fetchData();
   }, [id]);
 
+  const handleDelete = async () => {
+    const typeOfProcessing = filtered.find(item => item.date === selectedDate)?.processing_type;
+    if (!typeOfProcessing) return;
+    const selectedDate_ = selectedDate;
+    try {
+      if (!typeOfProcessing) return;
+      if (!window.confirm(`Tem certeza que deseja eliminar todos os resultados desta data: ${selectedDate_}?`)) return;
+
+      await api.delete(`/utente/${id}/analise/${typeOfProcessing}/${selectedDate}`);
+      setResults((prevResults) =>
+        prevResults.filter((res) => res.date !== selectedDate)
+      );
+      if (filtered.length === 0) {
+        setSelectedDate(null);
+      }
+      alert(`Resultados da data ${selectedDate_} eliminado com sucesso!`);
+      window.location.reload(); // Recarrega a página para atualizar os dados
+    } catch (error) {
+      console.error("Erro ao deletar dados:", error);
+      alert("Erro ao eliminar os resultados. Tente novamente.");
+    }
+  };
+
+  const handleDeleteByResultId = async (resultId) => {
+    try {
+      if (!window.confirm("Tem certeza que deseja eliminar este resultado?")) return;
+
+      await api.delete(`/utente/${id}/analise/${resultId.$oid || resultId}`);
+      setResults((prevResults) =>
+        prevResults.filter((res) => res._id !== resultId)
+      );
+      if (filtered.length === 0) {
+        setSelectedDate(null);
+      }
+      alert("Resultado eliminado com sucesso!");
+      window.location.reload(); // Recarrega a página para atualizar os dados
+
+    } catch (error) {
+      console.error("Erro ao deletar dados:", error);
+      alert("Erro ao eliminar o resultado. Tente novamente.");
+    }
+  };
+
   const uniqueDates = [...new Set(results.map((res) => res.date))];
   const filtered = results.filter((res) => res.date === selectedDate);
 
@@ -222,11 +265,14 @@ export default function ArticulationResult() {
               <option key={i} value={d}>{d}</option>
             ))}
           </select>
-
+          
           {filtered.length ? (
+            <div className="w-full bg-gray-100 dark:bg-zinc-900 rounded-lg p-6">
+              
               <div className="w-full flex flex-col md:flex-row gap-4 items-start">
+               
                 {/* Esquerda: Valores númericos */}
-                <div className="w-full md:basis-2/6 bg-gray-100 dark:bg-zinc-900 shadow-md rounded-lg p-6">
+                <div className="w-full md:basis-2/6 bg-gray-100 dark:bg-zinc-900  rounded-lg p-6">
                   <div className="w-full bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
                     <h2 className="text-lg font-semibold mb-3">Dados Numéricos Relevantes</h2>
                     
@@ -253,38 +299,57 @@ export default function ArticulationResult() {
                           <h3 className="text-md font-bold mb-2">{`Passo ${idx + 1}`}</h3>
                           <table className="min-w-full bg-white border border-gray-300 dark:bg-zinc-800 dark:border-zinc-600">
                             <thead>
-                              <tr  className="bg-gray-200">
-                                <th className="border-b p-2">Métrica</th>
+                              {/* <tr  className="bg-gray-200 dark:bg-gray-500">
+                                <th className="border-b p-2">Parâmetro</th>
                                 <th className="border-b p-2">Valor</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {dadosRelevantes.map((obj, idxs) => {
-                                const chave = Object.keys(obj)[0];
-                                let valor = obj[chave];
-                                if (typeof valor !== 'number') {
-                                  valor = parseFloat(valor) || "NA"; // Tenta converter para número, se falhar, define como 0
-                                }
-                                return (
-                                  <tr key={idxs}>
-                                    <td className="border-b p-2">{chave}</td>
-                                    <td className="border-b p-2">{typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
+                              </tr> */}
+                              <tr className="bg-green-300 dark:bg-gray-500 sticky top-0 z-10">
+                            <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Parâmetro</th>
+                            <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Valor</th>
+                            </tr>
+                              </thead>
+                              <tbody>
+                                {dadosRelevantes.map((obj, idxs) => {
+                                  const chave = Object.keys(obj)[0];
+                                  let valor = obj[chave];
+                                  if (typeof valor !== 'number') {
+                                    valor = parseFloat(valor) || "N/A"; // Tenta converter para número, se falhar, define como "N/A"
+                                  }
+                                  return (
+                                    // <tr key={idxs}>
+                                    //   <td className="border-b p-2">{chave}</td>
+                                    //   <td className="border-b p-2">{typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}</td>
+                                    // </tr>
+
+                                    <tr key={idxs} className="odd:bg-gray-100 odd:dark:bg-gray-300">
+                                      <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{translateKey(chave)}</td>
+                                      <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">
+                                        {typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                           </table>
+                          <div className="w-full mt-6 flex justify-center ">
+                              <button
+                                className="mb-4 bg-red-400 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-500 dark:hover:bg-red-800"
+                                // className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
+                                onClick={() => handleDeleteByResultId(item._id)}
+                              >
+                                Eliminar este passo
+                              </button>
+                         </div>
                         </div>
+
                       );
                     })}
                   </div>
                 </div>
-
-
                 {/* Direita: Gráficos */}
                 <div className="w-full md:basis-4/5 bg-white dark:bg-zinc-700 p-6 rounded shadow">
                   <h2 className="text-lg font-semibold mb-3">Gráficos</h2>
-                  <Accordion alwaysOpen>
+                  <Accordion alwaysOpen defaultActiveKey="0">
                       {filtered.map((item, idx) => {
                         const staticResult = item.static_result || [];
                         const nonStaticResult = item.no_static_result || [];
@@ -292,14 +357,14 @@ export default function ArticulationResult() {
 
                         return (
                           <Accordion.Item eventKey={idx.toString()} key={idx}>
-                            <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
+                            <Accordion.Header>{`Passo ${idx + 1}`}</Accordion.Header>
                             <Accordion.Body>
-                              <div className="mb-6">
+                              {/* <div className="mb-6">
                                 <h2 className="text-lg font-semibold mb-2">Números</h2>
                                 <RecursiveAccordion data={item} />
-                              </div>
+                              </div> */}
                               <div className="mb-6">
-                                <ChartAccordion groupedData={groupedData} />
+                                <DisplayChart groupedData={groupedData} />
                               </div>
                             </Accordion.Body>
                           </Accordion.Item>
@@ -308,25 +373,39 @@ export default function ArticulationResult() {
                     </Accordion>
                 </div>
               </div>
+                      {/* Dados Adicionais em Accordion */}
+              <div className="w-full mt-6"></div>
+              <div className="bg-white dark:bg-zinc-700 p-6 rounded shadow">
+                <h2 className="text-lg font-semibold mb-3">Dados Detalhados</h2>
+                <Accordion alwaysOpen>
+                  { filtered.map((item, idx) => {
+                    return (
+                      <Accordion.Item eventKey={`extra-${idx}`} key={idx}>
+                        <Accordion.Header>{`Passo ${idx + 1}`}</Accordion.Header>
+                        <Accordion.Body>
+                          <RecursiveAccordion data={item} />
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    );
+                  })}
+                </Accordion>
+              </div>
+              <div className="w-full mt-6 flex justify-center ">
+                  <button
+                    className="mb-4 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-700 dark:hover:bg-red-800"
+                    // className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
+                    onClick={() => handleDelete()}
+                  >
+                    Eliminar Todos os Resultados
+                  </button>
+              </div>
+            </div>
             ) : (
-              <p className="text-center mt-5">Nenhum dado disponível para essa data.</p>
+              <div className="w-full bg-gray-100 dark:bg-zinc-900  rounded-lg p-9">
+              <p className="text-center mt-5 text-3xl dark:text-white">Nenhum dado disponível para essa data.</p>
+             </div>
             )}
-          {/* Dados Adicionais em Accordion */}
-          <div className="bg-white dark:bg-zinc-700 p-6 rounded shadow">
-            <h2 className="text-lg font-semibold mb-3">Dados Detalhados</h2>
-            <Accordion alwaysOpen>
-              { filtered.map((item, idx) => {
-                return (
-                  <Accordion.Item eventKey={`extra-${idx}`} key={idx}>
-                    <Accordion.Header>{`Passo ${idx + 1}`}</Accordion.Header>
-                    <Accordion.Body>
-                      <RecursiveAccordion data={item} />
-                    </Accordion.Body>
-                  </Accordion.Item>
-                );
-              })}
-            </Accordion>
-          </div>
+          
         </div>
       </div>
     );

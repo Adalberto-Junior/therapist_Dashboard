@@ -209,6 +209,18 @@ def delete_result_by_recording_user_date_and_step(recording_id, user_id, date, s
     result = mongo.db.results.delete_many({"recording": ObjectId(recording_id), "user": ObjectId(user_id), "date": date, "step": step})
     return result.deleted_count > 0
 
+def delete_result_by_user_type_and_date(user_id, processing_type, date):
+    """
+    Delete all results for a specific user, processing type, and date.
+    :param user_id: The ID of the user.
+    :param processing_type: The processing type of the results.
+    :param date: The date of the results.
+    :return: True if the deletion was successful, False otherwise.
+    """
+    # mongo = app.extensions['pymongo']
+    result = mongo.db.results.delete_many({"user": ObjectId(user_id), "processing_type": processing_type, "date": date})
+    return result.deleted_count > 0
+
 
 def get_resultId_by_recording_user_date_and_step(recording_id, user_id, date, step):
     """
