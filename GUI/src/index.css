@@ -33,11 +33,11 @@ body {
   
 }
 
-h1 {
+/* h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  color: #ffffff;
-}
+   color: #ffffff; 
+} */
 
 button {
   border-radius: 8px;
@@ -69,7 +69,7 @@ button:focus-visible {
   /* button {
     background-color: gray;
   } */
-  h1 {
-    color: #213547;
-  }
+  /* h1 {
+    color: red;
+  } */
 }

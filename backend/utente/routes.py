@@ -684,12 +684,10 @@ def add_exercicio(user_id):
 
     return jsonify({"message": "Exercício adicionado com sucesso", "id": str(exercise_id)}), 201
 
-#TODO: Verificar isso
-@utente_bp.route('/<string:user_id>/exercicio/update/<string:exercise_id>', methods=['PUT'])
-def update_exercicio(user_id, exercise_id):
+@utente_bp.route('/exercicio/<string:exercise_id>/', methods=['PUT'])
+def update_exercicio(exercise_id):
     """
     Update an existing exercise for a specific health user by their id.
-    :param user_id: The id of the health user.
     :param exercise_id: The ID of the exercise to be updated.
     :return: JSON response with a success message.
     """
@@ -706,31 +704,101 @@ def update_exercicio(user_id, exercise_id):
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
-    health_user = utente_model.get_health_user_by_id(user_id)
-
-    if not health_user:
-        return jsonify({"error": "Utente não encontrado"}), 404
-    
-    casa_viva_user = user_model.get_user_by_email(health_user['email'])
-
-    if not casa_viva_user:
-        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
-
     data = request.get_json()
     name = data.get('name')
     type = data.get('type')
     description = data.get('description')
-    video_url = data.get('video_url')
+    user = data.get('user')
+    typeOfProcessing = data.get('typeOfProcessing')
+    therapist = therapistId
+    userName = data.get('userName')
+
     steps = data.get('steps')
 
-    docuemnto = CreatDocumentToDB()
-    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps)
+    documento = CreatDocumentToDB()
+    doc = documento.exerciseDocument(name=name, type=type, description=description, userName=userName, user=user, steps=steps, therapist=therapist, typeOfProcessing=typeOfProcessing)
     exercise = exercise_model.update_exercise(exercise_id, doc)
 
     if not exercise:
         return jsonify({"error": "Exercício não encontrado"}), 404
-    
+
     return jsonify({"Sucess": "Exercício atualizado com sucesso"}), 200
+
+@utente_bp.route('/exercicio/<string:exercise_id>/', methods=['DELETE'])
+def delete_exercicio(exercise_id):
+    """
+    Delete an existing exercise for a specific health user by their id.
+    :param exercise_id: The ID of the exercise to be deleted.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    exercise = exercise_model.delete_exercise(exercise_id)
+
+    if not exercise:
+        return jsonify({"error": "Exercício não encontrado"}), 404
+
+    return jsonify({"Sucess": "Exercício deletado com sucesso"}), 200
+
+
+# #TODO: Verificar isso
+# @utente_bp.route('/<string:user_id>/exercicio/update/<string:exercise_id>', methods=['PUT'])
+# def update_exercicio(user_id, exercise_id):
+#     """
+#     Update an existing exercise for a specific health user by their id.
+#     :param user_id: The id of the health user.
+#     :param exercise_id: The ID of the exercise to be updated.
+#     :return: JSON response with a success message.
+#     """
+#     token = request.headers.get('Authorization')
+#     if not token or not token.startswith("Bearer "):
+#         return jsonify({"error": "Token ausente"}), 401
+
+#     try:
+#         token = token.replace("Bearer ", "")
+#         decoded = decode_token(token)
+#         therapistId = decoded['user_id']
+#     except jwt.ExpiredSignatureError:
+#         return jsonify({"error": "Token expirado"}), 401
+#     except jwt.InvalidTokenError:
+#         return jsonify({"error": "Token inválido"}), 401
+
+#     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
+#     health_user = utente_model.get_health_user_by_id(user_id)
+
+#     if not health_user:
+#         return jsonify({"error": "Utente não encontrado"}), 404
+    
+#     casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+#     if not casa_viva_user:
+#         return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+#     data = request.get_json()
+#     name = data.get('name')
+#     type = data.get('type')
+#     description = data.get('description')
+#     video_url = data.get('video_url')
+#     steps = data.get('steps')
+
+#     docuemnto = CreatDocumentToDB()
+#     doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps)
+#     exercise = exercise_model.update_exercise(exercise_id, doc)
+
+#     if not exercise:
+#         return jsonify({"error": "Exercício não encontrado"}), 404
+    
+#     return jsonify({"Sucess": "Exercício atualizado com sucesso"}), 200
 
 

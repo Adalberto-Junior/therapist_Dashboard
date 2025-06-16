@@ -53,16 +53,23 @@ export default function ExerciseDetail() {
 
 
     const handleEdit = (id) => {
-        navigate(`/utente/${id}/exercicio/edit/${id_}`); // Redirect to the edit page with the utente ID //TODO: FAZER DEPOIS
+        navigate(`/utente/${id}/exercicio/editar/${id_}`); // Redirect to the edit page with the utente ID //TODO: FAZER DEPOIS
     };
-    // const handleDelete = async (id) => {
-    //     try {
-    //         await api.delete(`/utente/exercicio/${id_}`); // Adjust the endpoint as needed
-    //         setExercise(exercise.filter((utente) => utente.id !== id)); // Remove the deleted utente from the state
-    //     } catch (error) {
-    //         console.error("Error deleting utente:", error);
-    //     }
-    // };
+
+    const handleDelete = async () => {
+        
+        try {
+            const exercicioId = id_;
+            if (!window.confirm("Tem a certeza que deseja eliminar este exercício?")) {
+                return; // If the user cancels, do nothing
+            }
+            await api.delete(`/utente/exercicio/${id_}`); // Adjust the endpoint as needed
+            setExercise(exercise.filter((exercise) => exercise.id !== id_)); // Remove the deleted exercise from the state
+            window.history.back(); // Redirect back to the previous page
+        } catch (error) {
+            console.error(`Erro ao Deletar o exercício ${exercicioId}:`, error);
+        }
+    };
     
 
     if (loading){
@@ -85,10 +92,22 @@ export default function ExerciseDetail() {
             {/* <div className=" container flex flex-col  mt-10 bg-transparent dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
                 {/* <div className="flex flex-col items-center mt-10"> */}
                     {exercise && Object.keys(exercise).length > 0 ? (
-    <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100 rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Detalhes do Exercício</h1>
-        
-        <div className="grid grid-cols-2 gap-4 bg-white p-5 rounded-lg shadow-md">
+    <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100 dark:bg-gray-900 rounded-lg">
+        {/* <div className="flex justify-between items-center mb-4">
+            <button
+                onClick={() => navigate(-1)} // Voltar para a página anterior
+                className="bg-blue-500 text-white py-2 px-4 rounded">
+                voltar
+            </button>
+        </div> */}
+        <div className="flex justify-center items-center mb-6">
+            <span className="text-center text-4xl font-bold dark:text-white p-2">Detalhes do Exercício</span>
+        </div>
+            {/* <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Detalhes do Exercício</p> */}
+
+
+
+        <div className="grid grid-cols-2 gap-4 bg-white dark:bg-gray-500 p-5 rounded-lg shadow-md">
             {Object.entries(exercise).map(([key, value]) => {
                 if (key === "name") key = "Nome do Exercício";
                 if (key === "description") key = "Descrição do Exercício";
@@ -148,7 +167,7 @@ export default function ExerciseDetail() {
             //         ))}
             //     </Accordion>
             // </div>
-            <div className="mt-8 bg-white p-5 rounded-lg shadow-md">
+            <div className="mt-8 bg-white dark:bg-gray-300 p-5 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Passos</h2>
                 <Accordion alwaysOpen>
                     {exercise.steps.map((step, index) => (
@@ -177,12 +196,22 @@ export default function ExerciseDetail() {
         )}
 
         <div className="flex justify-center mt-5 space-x-4">
+        <div className="flex flex-col items-center">
             <button 
-                onClick={() => handleEdit(exercise.user?.$oid || id)} 
-                className="bg-blue-500 text-white py-2 px-4 rounded">
-                Editar
+            onClick={() => handleEdit(exercise.user?.$oid || id)} 
+            className="mb-4 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600 transition-colors dark:bg-yellow-600 dark:hover:bg-yellow-800">
+            Editar
+        </button>
+        </div>
+        <div className="flex flex-col items-center">
+            <button 
+                onClick={() => handleDelete()} 
+                className="mb-4 bg-red-400 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-500 dark:hover:bg-red-800">
+                Eliminar
             </button>
         </div>
+    </div>
+
     </div>
 ) : (
     <p>Nenhum dado disponível</p>

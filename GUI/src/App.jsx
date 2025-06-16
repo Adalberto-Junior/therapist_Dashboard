@@ -76,6 +76,7 @@ import ReplearningResult from './pages/utente/result/repleaning.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
 import EditUtente from './pages/utente/editUtent.jsx'
+import EditarExercicioForm from './pages/utente/exercise/editExercise.jsx'
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
@@ -110,6 +111,7 @@ export default function App() {
               <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
+              <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />
               {/* Adicione outras subtabs aqui */}
             </Route>
 
