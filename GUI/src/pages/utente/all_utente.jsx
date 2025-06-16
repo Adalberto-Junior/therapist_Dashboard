@@ -112,7 +112,7 @@ export default function AllUtente() {
         console.log(utentes[0]['_id'])
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+                <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-20">
                 {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
                     <h2 className="text-2xl font-bold text-center mb-5">Lista de Utentes</h2>
                     <table className="min-w-full bg-white border border-gray-300">
