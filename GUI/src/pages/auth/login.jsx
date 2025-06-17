@@ -14,8 +14,8 @@ export default function LoginForm () {
     try {
       const response = await api.post("/auth/login", data);
       localStorage.setItem("token", response.data.token);
-      // alert("Login successful:", response.data);
-      navigate("/"); // Redireciona para a página protegida após o login
+      
+      navigate("/utente"); 
       window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);

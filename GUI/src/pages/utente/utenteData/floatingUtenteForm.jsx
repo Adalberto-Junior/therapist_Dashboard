@@ -1,11 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import api from "../../api";
+// import axios from 'axios';
+import api from "../../../api";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import '../../App.css'; // Importando o CSS tradicional
+// import '../../App.css'; // Importando o CSS tradicional
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
 

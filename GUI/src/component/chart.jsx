@@ -311,13 +311,14 @@ export function RadarChart({
   data,
   width = 600,
   height = 600,
-  levels = 5,
-  margin = { top: 60, right: 90, bottom: 60, left: 90 },
+  levels = 10,
+  margin = { top: 60, right: 60, bottom: 60, left: 60 },
   maxValue
 }) {
   const ref = useRef();
 
   useEffect(() => {
+    // console.log("Dados recebidos pelo RadarChart:", data);
     const svg = d3.select(ref.current);
     svg.selectAll('*').remove();
 
@@ -375,15 +376,49 @@ export function RadarChart({
       .style('stroke', '#ccc')
       .style('stroke-width', '1px');
 
+    // axis.append('text')
+    //   .attr('class', 'legend')
+    //   .attr('x', (_, i) => rScale(maxVal * 1.15) * Math.cos(angleSlice * i - Math.PI/2))
+    //   .attr('y', (_, i) => rScale(maxVal * 1.15) * Math.sin(angleSlice * i - Math.PI/2))
+    //   .attr('dy', '0.35em')
+    //   .style('font-size', '11px')
+    //   .style('fill', '#333')
+    //   .style('text-anchor', 'middle')
+    //   .text(d => d);
+    
+    // axis.append('text')
+    //   .attr('class', 'legend')
+    //   .attr('text-anchor', 'middle')
+    //   .attr('transform', (_, i) => {
+    //     const angleDeg = (angleSlice * i * 180 / Math.PI) - 90;
+    //     const x = rScale(maxVal * 1.15) * Math.cos(angleSlice * i - Math.PI/2);
+    //     const y = rScale(maxVal * 1.15) * Math.sin(angleSlice * i - Math.PI/2);
+    //     return `translate(${x}, ${y}) rotate(${angleDeg})`;
+    //   })
+    //   .style('font-size', '11px')
+    //   .style('fill', '#333')
+    //   .text(d => d);
+
     axis.append('text')
       .attr('class', 'legend')
-      .attr('x', (_, i) => rScale(maxVal * 1.15) * Math.cos(angleSlice * i - Math.PI/2))
-      .attr('y', (_, i) => rScale(maxVal * 1.15) * Math.sin(angleSlice * i - Math.PI/2))
-      .attr('dy', '0.35em')
+      .attr('text-anchor', 'middle')
+      .attr('transform', (_, i) => {
+        const angle = angleSlice * i;
+        const angleDeg = angle * 180 / Math.PI - 90;
+
+        const x = rScale(maxVal * 1.15) * Math.cos(angle - Math.PI/2);
+        const y = rScale(maxVal * 1.15) * Math.sin(angle - Math.PI/2);
+
+        // Se o ângulo estiver entre 90° e 270°, invertemos (para manter leitura correta)
+        const flip = angleDeg > 90 && angleDeg < 270 ? 180 : 0;
+
+        return `translate(${x}, ${y}) rotate(${angleDeg + flip})`;
+      })
       .style('font-size', '11px')
       .style('fill', '#333')
-      .style('text-anchor', 'middle')
-      .text(d => d);
+      .text((d, i) => d);
+
+
 
     // Gerar a área do radar ajustando cada valor com offset
     const radarLine = d3.lineRadial()
@@ -621,11 +656,12 @@ export function StaticBarChart({
 // }
 
 
-LineChart.jsx
+//LineChart.jsx
 export function LineChart({ data }) {
   const ref = useRef();
 
   useEffect(() => {
+    // console.log("Dados recebidos pelo LineChart:", data);
     // Limpar SVG anterior
     d3.select(ref.current).selectAll("*").remove();
 

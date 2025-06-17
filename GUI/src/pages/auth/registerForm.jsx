@@ -17,10 +17,11 @@ export default function RegisterForm () {
       console.log("Dados do formulário:", data);
       const response = await api.post("/auth/register", data);
       localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
-      // Redireciona para a página protegida após o registro
-      navigate("/protected"); // Descomente se você tiver uma página protegida para redirecionar
-      console.log(response.data);
+      
       alert("Utilizador registado com sucesso!");
+      navigate("/utente"); 
+      window.location.reload(); // Recarrega a página para refletir o estado autenticado
+
     } catch (error) {
       console.error("Erro ao registrar:", error);
       // Se o erro for 409, significa que o utilizador já existe

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import api from "../../api";
+// import axios from 'axios';
+import api from "../../../api";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";

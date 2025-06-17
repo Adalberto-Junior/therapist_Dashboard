@@ -34,7 +34,12 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
       Object.entries(config).forEach(([chartType, { match }]) => {
         const matchResult = key.match(match);
         if (matchResult && chartType === "radar") {
-          const group = matchResult[1];
+          let group = matchResult[1];
+          if (group === "BBEon" || group === "BBEoff") {
+            group = "BBEon_BBEoff"; // Agrupar ambos em um único grupo
+          }
+          key = key.replace(/avg|Avg/, ""); // Normalizar chave
+      
           if (!result[chartType][group]) result[chartType][group] = [];
           result[chartType][group].push({ axis: key, value: parseFloat(value) });
         }
@@ -64,7 +69,79 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
       });
     });
   });
+  // console.log("Final Grouped Data:", result);
+  // console.log("Static Data:", staticData);
 
   return result;
 }
 
+export function groupBBEonBBEoffData(staticData = [], config) {
+  const result = {};
+  Object.keys(config).forEach(chartType => {
+    result[chartType] = {};
+  });
+ 
+
+  // Processar dados estáticos (ex: radar)
+  staticData.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      Object.entries(config).forEach(([chartType, { match }]) => {
+        const matchResult = key.match(match);
+        if (matchResult && chartType === "radar") {
+          let group = matchResult[1];
+          if (group === "BBEon" || group === "BBEoff") {
+            group = "BBEon_BBEoff"; // Agrupar ambos em um único grupo
+          }
+          key = key.replace(/avg|Avg/, ""); // Normalizar chave
+      
+          
+          
+          if (group === "BBEon_BBEoff") {
+            if (!result[chartType][group]) result[chartType][group] = [];
+
+            result[chartType][group].push({ axis: key, value: parseFloat(value) });
+          } 
+
+          // else {
+          //   result[chartType][group].push({ axis: key, value: parseFloat(value) });
+          // }
+          
+        }
+      });
+    });
+  });
+  // console.log("Final Grouped Data for BBEon_BBEoff:", result);
+  return result;
+}
+
+export function groupNotBBEonBBEoffData(staticData = [], config) {
+  const result = {};
+  Object.keys(config).forEach(chartType => {
+    result[chartType] = {};
+  });
+ 
+
+  // Processar dados estáticos (ex: radar)
+  staticData.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      Object.entries(config).forEach(([chartType, { match }]) => {
+        const matchResult = key.match(match);
+        if (matchResult && chartType === "radar") {
+          let group = matchResult[1];
+          if (group === "BBEon" || group === "BBEoff") {
+            group = "BBEon_BBEoff"; // Agrupar ambos em um único grupo
+          }
+          key = key.replace(/avg|Avg/, ""); // Normalizar chave
+          
+          if (group === "BBEon_BBEoff") {
+            return; // Ignorar BBEon_BBEoff para este agrupamento
+          }
+          if (!result[chartType][group]) result[chartType][group] = [];
+          result[chartType][group].push({ axis: key, value: parseFloat(value) });
+        }
+      });
+    });
+  });
+  // console.log("Final Grouped Data for Not BBEon_BBEoff:", result);
+  return result;
+}

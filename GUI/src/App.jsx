@@ -62,12 +62,11 @@ import { useState } from "react";
 import RegisterForm from './pages/auth/registerForm.jsx'
 import NoPage from './pages/NoPage.jsx'
 import LoginForm from './pages/auth/login.jsx'
-import Protected from './pages/protected.jsx'
 import Home from './pages/Home.jsx'
 import LabTabs from "./component/labTabs.jsx";
-import AllUtente from './pages/utente/all_utente.jsx'
+import AllUtente from './pages/utente/utenteData/all_utente.jsx'
 import Profile from './pages/therapist/perfil.jsx'
-import HealthUserInformation from './pages/utente/information.jsx'
+import HealthUserInformation from './pages/utente/utenteData/information.jsx'
 import ArticulationResult from './pages/utente/result/articulation.jsx'
 import ProsodyResult from './pages/utente/result/prosody.jsx'
 import PhonotionResult from './pages/utente/result/phonation.jsx'
@@ -75,7 +74,7 @@ import GlottalResult from './pages/utente/result/glottal.jsx'
 import ReplearningResult from './pages/utente/result/repleaning.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
-import EditUtente from './pages/utente/editUtent.jsx'
+import EditUtente from './pages/utente/utenteData/editUtent.jsx'
 import EditarExercicioForm from './pages/utente/exercise/editExercise.jsx'
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
@@ -115,7 +114,6 @@ export default function App() {
               {/* Adicione outras subtabs aqui */}
             </Route>
 
-            <Route path="protected" element={<Protected />} />
             <Route path="*" element={<NoPage />} />
           </>
         ) : (

@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import api from "../../api";
+import api from "../../../api.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
-import UtenteTabs from "../../component/utenteTabs.jsx";
+// import UtenteTabs from "../../../component/utenteTabs.jsx";
 
 
 export default function HealthUserInformation() {

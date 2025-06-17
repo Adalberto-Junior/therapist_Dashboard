@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../api";
+import api from "../../../api";
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
 
