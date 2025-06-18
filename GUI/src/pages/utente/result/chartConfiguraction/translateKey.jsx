@@ -1,41 +1,48 @@
-// // Traduções de chave
-// const keyTranslations = {
-//   static_result: "Resultados Estáticos",
-//   no_static_result: "Resultados não Estáticos",
-//   "avg BBEon_1": "Bark band energies in onset transitions 1",
-//   "avg BBEon_2": "Bark band energies in onset transitions 2",
-//   "avg_BBEon_3": "Média BBEon 3",
-//   "avg_BBEon_4": "Média BBEon 4",
-//   $oid: "ID do Objeto",
-//   id: "Identificador",
-//   date: "Data",
-// };
 
-// export function translateKey(key) {
-//   return keyTranslations[key] || key.replace(/_/g, " ");
-// }
-
-const keyTranslations = {
+const baseTranslations = {
   static_result: "Resultados Estáticos",
   no_static_result: "Resultados não Estáticos",
   $oid: "ID do Objeto",
   id: "Identificador",
   date: "Data",
+  // BBEon_BBEoff: "BBEon&BBEoff",
+};
+
+const componentDescriptions = {
+  BBEon: "Energias de banda de casca em transições de início",
+  BBEoff: "Energias de banda de casca em transições de fim",
+  MFCCoff: "Coeficientes cepstrais em transições de fim",
+  MFCCon: "Coeficientes cepstrais em transições de início",
+  DMFCCoff: "Coeficientes cepstrais dinâmicos em transições de fim",
+  DMFCCon: "Coeficientes cepstrais dinâmicos em transições de início",
+  DDMFCCoff: "Coeficientes cepstrais dinâmicos de segunda derivada em transições de fim",
+  DDMFCCon: "Coeficientes cepstrais dinâmicos de segunda derivada em transições de início",
+  F1: "Primeiro Formante",
+};
+
+const prefixTranslations = {
+  avg: "Média de",
+  std: "Desvio padrão de",
+  Avg: "Média de",
+  skewness: "Assimetria de",
+  kurtosis: "Curtose de", 
 };
 
 export function translateKey(key) {
-  // Traduz chaves conhecidas
-  if (keyTranslations[key]) return keyTranslations[key];
+  // Traduções diretas
+  if (baseTranslations[key]) return baseTranslations[key];
 
-  // Padrão: "avg BBEon_1" ou "dst BBEon_12"
-  const pattern = /^(avg|dst) BBEon_(\d+)$/;
+  // Padrões tipo "avg BBEon_1" ou "dst MFCCoff_2"
+  const pattern = /^(avg|std|skewness|kurtosis|Avg) ([A-Za-z]+)_(\d+)$/;
   const match = key.match(pattern);
   if (match) {
-    const tipo = match[1] === "avg" ? "Média" : "Desvio padrão";
-    const numero = match[2];
-    return `${tipo} BBEon ${numero}`;
+    const [, prefix, component, number] = match;
+    const prefixText = prefixTranslations[prefix] || prefix;
+    const componentText = componentDescriptions[component] || component;
+    return `${prefixText} ${componentText} ${number} (${component} ${number})`;
   }
 
-  // Padrão genérico: substitui _ por espaço e capitaliza
+  // Fallback: tornar legível qualquer outra chave
   return key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 }
+

@@ -131,6 +131,16 @@ export function groupNotBBEonBBEoffData(staticData = [], config) {
           if (group === "BBEon" || group === "BBEoff") {
             group = "BBEon_BBEoff"; // Agrupar ambos em um único grupo
           }
+          if (group === "MFCCoff" || group === "MFCCon") {
+            group = "MFCCon & MFCCoff"; 
+          }
+          if (group === "DMFCCon" || group === "DMFCCoff") {
+            group = "DMFCCon & DMFCCoff"; 
+          }
+          if (group ==="DDMFCCon" || group === "DDMFCCoff") {
+            group = "DDMFCCon & DDMFCCoff";
+          }
+
           key = key.replace(/avg|Avg/, ""); // Normalizar chave
           
           if (group === "BBEon_BBEoff") {

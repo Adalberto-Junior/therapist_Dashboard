@@ -604,8 +604,8 @@ export default function ArticulationResult() {
                 </div>
               </div>
               <div className="w-full md:basis-4/5  bg-white dark:bg-zinc-700 p-6 rounded shadow">
-                <h2 className="text-xl font-bold mb-4">Gráficos Principais</h2>
-                <h3 className="text-md font-semibold mb-3">Radar: bbeon & bbeoff</h3>
+                <h2 className="text-xl font-bold mb-4">Gráficos</h2>
+                <h3 className="text-md font-semibold mb-3">bbeon & bbeoff</h3>
                 {/* <div className="grid grid-cols-1 md:grid-cols-2  "> */}
                   {Object.keys(allRadarGroupedData).map((type) => (
                     <div key={type} className="w-full min-w-0">

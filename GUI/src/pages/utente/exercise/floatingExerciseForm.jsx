@@ -28,21 +28,21 @@ export default function FloatingForm({ onClose }) {
   const tipoSelecionado = watch('tipo');
 
   const camposPorTipo = {
-    palavras: ['Palavras', 'Descrição'],
-    frases: ['Frase', 'Descrição'],
-    leitura: ['Título', 'Texto', 'Descrição'],
-    discurso: ['Questão', 'Descrição'],
-    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição'],
-    novo: ['label', 'valor']
+    palavras: ['Palavras', 'Descrição','ID'],
+    frases: ['Frase', 'Descrição','ID'],
+    leitura: ['Título', 'Texto', 'Descrição', 'ID'],
+    discurso: ['Questão', 'Descrição','ID'],
+    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
+    novo: ['label', 'valor','ID']
   };
 
   const camposPorTipoEn = {
-    palavras: ['word', 'description'],
-    frases: ['sentence', 'description'],
-    leitura: ['title', 'text', 'description'],
-    discurso: ['question', 'description'],
-    diadococinesia: ['typeOfConsonant', 'syllables', 'description'],
-    novo: ['label', 'value']
+    palavras: ['word', 'description','ID'],
+    frases: ['sentence', 'description','ID'],
+    leitura: ['title', 'text', 'description','ID'],
+    discurso: ['question', 'description','ID'],
+    diadococinesia: ['typeOfConsonant', 'syllables', 'description','ID'],
+    novo: ['label', 'value','ID']
   };
 
    const mapTipo = (tipo) => {
