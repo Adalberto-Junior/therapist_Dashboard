@@ -1,5 +1,6 @@
-// import React, { useRef, useEffect } from 'react';
-// import * as d3 from 'd3';
+import React, { useRef, useEffect } from 'react';
+import * as d3 from 'd3';
+
 
 // RadarChart Component
 // export function RadarChart({ data, width = 900, height = 600, levels = 10, maxValue }) {
@@ -181,8 +182,7 @@
 // }
 
 // src/component/charts.jsx
-import React, { useRef, useEffect } from 'react';
-import * as d3 from 'd3';
+
 
 // export function RadarChart({
 //   data,
@@ -657,14 +657,103 @@ export function StaticBarChart({
 
 
 //LineChart.jsx
+// export function LineChart({ data }) {
+//   const ref = useRef();
+
+//   useEffect(() => {
+//     // console.log("Dados recebidos pelo LineChart:", data);
+//     // Limpar SVG anterior
+//     d3.select(ref.current).selectAll("*").remove();
+
+//     if (!data || data.length < 2) return;
+
+//     const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+//     const width = 1150 - margin.left - margin.right;
+//     const height = 300 - margin.top - margin.bottom;
+
+//     const svg = d3
+//       .select(ref.current)
+//       .append("svg")
+//       .attr("width", width + margin.left + margin.right)
+//       .attr("height", height + margin.top + margin.bottom)
+//       .append("g")
+//       .attr("transform", `translate(${margin.left},${margin.top})`);
+
+//     // Escalas
+//     const x = d3.scalePoint()
+//       .domain(data.map(d => d.axis))
+//       .range([0, width]);
+
+//     const y = d3.scaleLinear()
+//       .domain([
+//         d3.min(data, d => d.value) - 1,
+//         d3.max(data, d => d.value) + 1
+//       ])
+//       .range([height, 0]);
+
+//     // Eixos
+//     svg.append("g")
+//       .attr("transform", `translate(0,${height})`)
+//       .call(d3.axisBottom(x))
+//       .selectAll("text")
+//       .attr("transform", "rotate(-45)")
+//       .style("text-anchor", "end");
+
+//     svg.append("g").call(d3.axisLeft(y));
+
+//     // Linha
+//     const line = d3.line()
+//       .x(d => x(d.axis))
+//       .y(d => y(d.value));
+
+//     svg.append("path")
+//       .datum(data)
+//       .attr("fill", "none")
+//       .attr("stroke", "#4f46e5")
+//       .attr("stroke-width", 2)
+//       .attr("d", line);
+
+//     // Pontos
+//     svg.selectAll("circle")
+//       .data(data)
+//       .enter()
+//       .append("circle")
+//       .attr("cx", d => x(d.axis))
+//       .attr("cy", d => y(d.value))
+//       .attr("r", 4)
+//       .attr("fill", "#4f46e5");
+
+//     // Tooltip
+//     const tooltip = d3.select(ref.current)
+//       .append("div")
+//       .style("position", "absolute")
+//       .style("background", "#fff")
+//       .style("border", "1px solid #ccc")
+//       .style("padding", "4px 8px")
+//       .style("font-size", "12px")
+//       .style("pointer-events", "none")
+//       .style("opacity", 0);
+
+//     svg.selectAll("circle")
+//       .on("mouseover", function (event, d) {
+//         tooltip
+//           .html(`<strong>${d.axis}</strong><br/>${d.value}`)
+//           .style("left", `${event.pageX + 10}px`)
+//           .style("top", `${event.pageY - 28}px`)
+//           .style("opacity", 1);
+//       })
+//       .on("mouseout", () => tooltip.style("opacity", 0));
+//   }, [data]);
+
+//   return <div ref={ref} style={{ position: "relative" }} />;
+// }
+
+
 export function LineChart({ data }) {
   const ref = useRef();
 
   useEffect(() => {
-    // console.log("Dados recebidos pelo LineChart:", data);
-    // Limpar SVG anterior
     d3.select(ref.current).selectAll("*").remove();
-
     if (!data || data.length < 2) return;
 
     const margin = { top: 20, right: 20, bottom: 50, left: 50 };
@@ -675,71 +764,78 @@ export function LineChart({ data }) {
       .select(ref.current)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("height", height + margin.top + margin.bottom);
+
+    const chart = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Escalas
-    const x = d3.scalePoint()
-      .domain(data.map(d => d.axis))
+    const x = d3
+      .scalePoint()
+      .domain(data.map((d) => d.axis))
       .range([0, width]);
 
-    const y = d3.scaleLinear()
-      .domain([
-        d3.min(data, d => d.value) - 1,
-        d3.max(data, d => d.value) + 1
-      ])
+    const y = d3
+      .scaleLinear()
+      .domain([d3.min(data, (d) => d.value) - 1, d3.max(data, (d) => d.value) + 1])
       .range([height, 0]);
 
     // Eixos
-    svg.append("g")
+    chart
+      .append("g")
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x))
       .selectAll("text")
       .attr("transform", "rotate(-45)")
       .style("text-anchor", "end");
 
-    svg.append("g").call(d3.axisLeft(y));
+    chart.append("g").call(d3.axisLeft(y));
 
     // Linha
-    const line = d3.line()
-      .x(d => x(d.axis))
-      .y(d => y(d.value));
+    const line = d3
+      .line()
+      .x((d) => x(d.axis))
+      .y((d) => y(d.value));
 
-    svg.append("path")
+    chart
+      .append("path")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke", "#4f46e5")
       .attr("stroke-width", 2)
       .attr("d", line);
 
-    // Pontos
-    svg.selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("cx", d => x(d.axis))
-      .attr("cy", d => y(d.value))
-      .attr("r", 4)
-      .attr("fill", "#4f46e5");
-
-    // Tooltip
-    const tooltip = d3.select(ref.current)
+    // Tooltip container
+    const tooltip = d3
+      .select(ref.current)
       .append("div")
       .style("position", "absolute")
       .style("background", "#fff")
       .style("border", "1px solid #ccc")
-      .style("padding", "4px 8px")
+      .style("border-radius", "4px")
+      .style("padding", "6px 10px")
       .style("font-size", "12px")
       .style("pointer-events", "none")
-      .style("opacity", 0);
+      .style("opacity", 0)
+      .style("box-shadow", "0 2px 6px rgba(0, 0, 0, 0.2)");
 
-    svg.selectAll("circle")
-      .on("mouseover", function (event, d) {
+    // Pontos
+    chart
+      .selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => x(d.axis))
+      .attr("cy", (d) => y(d.value))
+      .attr("r", 4)
+      .attr("fill", "#4f46e5")
+      .on("mouseover click", function (event, d) {
+        const bounds = ref.current.getBoundingClientRect();
         tooltip
-          .html(`<strong>${d.axis}</strong><br/>${d.value}`)
-          .style("left", `${event.pageX + 10}px`)
-          .style("top", `${event.pageY - 28}px`)
+          .html(`<strong>${d.axis}</strong><br/>Valor: ${d.value}`)
+          .style("left", `${event.clientX - bounds.left + 10}px`)
+          .style("top", `${event.clientY - bounds.top - 30}px`)
           .style("opacity", 1);
       })
       .on("mouseout", () => tooltip.style("opacity", 0));
