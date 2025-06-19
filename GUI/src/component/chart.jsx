@@ -844,6 +844,105 @@ export function LineChart({ data }) {
   return <div ref={ref} style={{ position: "relative" }} />;
 }
 
+// Gráficos por categoria
+export function LineChartCategory({ dataGroup }) {
+  const ref = useRef();
+
+  useEffect(() => {
+    d3.select(ref.current).selectAll("*").remove();
+
+    if (!dataGroup || Object.keys(dataGroup).length === 0) return;
+
+    const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+    const width = 1150 - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(ref.current)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Pegar todos os pontos de tempo
+    const allAxis = new Set();
+    const allValues = [];
+
+    Object.values(dataGroup).forEach(series => {
+      series.forEach(d => {
+        allAxis.add(d.axis);
+        allValues.push(d.value);
+      });
+    });
+
+    const x = d3.scalePoint()
+      .domain(Array.from(allAxis))
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([d3.min(allValues) - 1, d3.max(allValues) + 1])
+      .range([height, 0]);
+
+    // Eixos
+    svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+
+    svg.append("g").call(d3.axisLeft(y));
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    // Tooltip container
+    const tooltip = d3.select(ref.current)
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "#fff")
+      .style("border", "1px solid #ccc")
+      .style("padding", "4px 8px")
+      .style("font-size", "12px")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    // Linhas e círculos
+    Object.entries(dataGroup).forEach(([label, series], index) => {
+      const line = d3.line()
+        .x(d => x(d.axis))
+        .y(d => y(d.value));
+
+      svg.append("path")
+        .datum(series)
+        .attr("fill", "none")
+        .attr("stroke", color(index))
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+      svg.selectAll(`.circle-${label}`)
+        .data(series)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.axis))
+        .attr("cy", d => y(d.value))
+        .attr("r", 3)
+        .attr("fill", color(index))
+        .on("mouseover", function (event, d) {
+          tooltip
+            .html(`<strong>${label}</strong><br/>${d.axis}: ${d.value}`)
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 28}px`)
+            .style("opacity", 1);
+        })
+        .on("mouseout", () => tooltip.style("opacity", 0));
+    });
+  }, [dataGroup]);
+
+  return <div ref={ref} style={{ position: "relative" }} />;
+}
+
+
 
 // export function LineChart({ data = [] }) {
 //   const wrapper = useRef();          // div wrapper

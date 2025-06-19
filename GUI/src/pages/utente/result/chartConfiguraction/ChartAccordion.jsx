@@ -310,6 +310,26 @@ export function DisplayChart({ groupedData, filterRadarOnly = false, labels = []
           );
         }
 
+        {/*Gráficos Agrupados por Categóprias. Ex: BBEons num só gráfico */}
+        // if (chartType === "line") {
+        //   const { labelPrefix, chartComponent: ChartComponent } = chartConfig.line;
+
+        //   return (
+        //     <div key={`${chartType}-${idx}`} className="grid gap-6">
+        //       {Object.entries(data).map(([categoryKey, descriptorsObj], i) => (
+        //         <div key={`${chartType}-${categoryKey}-${i}`} className="bg-white dark:bg-zinc-800 p-4 rounded shadow">
+        //           <h5 className="text-center text-lg font-semibold mb-2">
+        //             {labelPrefix} {translateKey(categoryKey)}
+        //           </h5>
+        //           {/* Passa todos os descritores da categoria */}
+        //           <ChartComponent dataGroup={descriptorsObj} />
+        //         </div>
+        //       ))}
+        //     </div>
+        //   );
+        // }
+
+
         return null;
       })}
     </div>

@@ -47,30 +47,89 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
     });
   });
 
- // Processar dados não estáticos (line)
-  nonStaticData.forEach(item => {
-    Object.entries(item).forEach(([key, valueArray]) => {
-      Object.entries(config).forEach(([chartType, { match }]) => {
-        const matchResult = key.match(match);
-        if (matchResult && chartType !== "radar") {
-          const group = key;
-          if (!result[chartType][group]) result[chartType][group] = [];
+//  // Processar dados não estáticos (line)
+//   nonStaticData.forEach(item => {
+//     Object.entries(item).forEach(([key, valueArray]) => {
+//       Object.entries(config).forEach(([chartType, { match }]) => {
+//         const matchResult = key.match(match);
+//         if (matchResult && chartType !== "radar") {
+//           const group = key;
+//           if (!result[chartType][group]) result[chartType][group] = [];
 
-          const formattedData = valueArray.map((entry, i) => {
-            if (typeof entry === "object" && entry !== null && "label" in entry && "value" in entry) {
-              return { axis: entry.label, value: parseFloat(entry.value) };
-            } else {
-              return { axis: `Ponto ${i + 1}`, value: parseFloat(entry) };
-            }
-          });
-          result[chartType][group] = formattedData;
-          // console.log("Grouped Data:", result[chartType][group]);
-        }
-      });
-    });
-  });
+//           const formattedData = valueArray.map((entry, i) => {
+//             if (typeof entry === "object" && entry !== null && "label" in entry && "value" in entry) {
+//               return { axis: entry.label, value: parseFloat(entry.value) };
+//             } else {
+//               return { axis: `Ponto ${i + 1}`, value: parseFloat(entry) };
+//             }
+//           });
+//           result[chartType][group] = formattedData;
+//           // console.log("Grouped Data:", result[chartType][group]);
+//         }
+//       });
+//     });
+//   });
   // console.log("Final Grouped Data:", result);
   // console.log("Static Data:", staticData);
+  
+  nonStaticData.forEach(item => {
+  Object.entries(item).forEach(([key, valueArray]) => {
+    Object.entries(config).forEach(([chartType, { match }]) => {
+      const matchResult = key.match(match);
+      if (matchResult && chartType !== "radar") {
+        const group = key; // ou: const group = descriptorType se quiseres agrupar por tipo
+        if (!result[chartType][group]) result[chartType][group] = [];
+
+        const formattedData = valueArray.map((entry, i) => {
+          const timeLabel = `${i * 20} ms`; // 20ms por deslocamento
+          if (typeof entry === "object" && entry !== null && "label" in entry && "value" in entry) {
+            return { axis: timeLabel, value: parseFloat(entry.value) };
+          } else {
+            return { axis: timeLabel, value: parseFloat(entry) };
+          }
+        });
+
+        result[chartType][group] = formattedData;
+      }
+    });
+  });
+});
+
+//Agrupado por categoria:
+// const temporalStep = 20; // deslocamento de 20ms entre frames
+
+// nonStaticData.forEach(item => {
+//   Object.entries(item).forEach(([key, valueArray]) => {
+//     Object.entries(config).forEach(([chartType, { match }]) => {
+//       const matchResult = key.match(match);
+//       if (matchResult && chartType !== "radar") {
+//         // Extrair tipo de descritor (BBE, MFCC, etc.)
+//         const [descriptorType] = key.split("_");
+
+//         // Criar estrutura de categoria
+//         if (!result[chartType][descriptorType]) result[chartType][descriptorType] = {};
+
+//         // Inicializar vetor de pontos por descritor
+//         if (!result[chartType][descriptorType][key]) {
+//           result[chartType][descriptorType][key] = [];
+//         }
+
+//         const formattedData = valueArray.map((entry, i) => {
+//           const time = i * temporalStep; // tempo em ms
+//           if (typeof entry === "object" && entry !== null && "label" in entry && "value" in entry) {
+//             return { axis: `${time} ms`, value: parseFloat(entry.value) };
+//           } else {
+//             return { axis: `${time} ms`, value: parseFloat(entry) };
+//           }
+//         });
+
+//         result[chartType][descriptorType][key] = formattedData;
+//       }
+//     });
+//   });
+// });
+
+
 
   return result;
 }
