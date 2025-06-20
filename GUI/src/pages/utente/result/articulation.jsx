@@ -537,7 +537,8 @@ export default function ArticulationResult() {
       if (!acc[type]) acc[type] = {};
       Object.entries(charts).forEach(([label, data]) => {
         // Adiciona passo no rótulo para distinção visual
-        acc[type][`${label} (Passo ${index + 1})`] = data;
+        // acc[type][`${label} (Passo ${index + 1})`] = data;
+        acc[type][`${label} (Passo ${item.step})`] = data;
       });
     });
 
@@ -574,7 +575,7 @@ export default function ArticulationResult() {
                     if (dadosRelevantes.length === 0) return null;
                     return (
                       <div key={idx} className="mb-6">
-                        <h3 className="text-md font-bold mb-2">Passo {idx + 1}</h3>
+                        <h3 className="text-md font-bold mb-2">Passo {item.step}</h3>
                         <table className="min-w-full bg-white border border-gray-300 dark:bg-zinc-800 dark:border-zinc-600">
                           <thead>
                             <tr className="bg-green-300 dark:bg-gray-500 sticky top-0 z-10">
@@ -639,7 +640,7 @@ export default function ArticulationResult() {
                         const groupedData = groupNotBBEonBBEoffData(staticResult, chartConfig);
                         return (
                           <div key={idx} className="mb-6">
-                            <h4 className="font-semibold mb-1">Passo {idx + 1}</h4>
+                            <h4 className="font-semibold mb-1">Passo {item.step}</h4>
                             <DisplayChart groupedData={groupedData} filterRadarOnly={true} excludeRadarLabels={radarLabels} />
                           </div>
                         );
@@ -658,7 +659,7 @@ export default function ArticulationResult() {
                         console.log("grouped data: ", groupedData)
                         return (
                           <div key={idx} className="mb-6">
-                            <h4 className="font-semibold mb-1">Passo {idx + 1}</h4>
+                            <h4 className="font-semibold mb-1">Passo {item.step}</h4>
                             <DisplayChart groupedData={groupedData} />
                           </div>
                         );
@@ -677,7 +678,7 @@ export default function ArticulationResult() {
                   { filtered.map((item, idx) => {
                      return (
                       <Accordion.Item eventKey={`extra-${idx}`} key={idx}>
-                        <Accordion.Header>{`Passo ${idx + 1}`}</Accordion.Header>
+                        <Accordion.Header>{`Passo ${item.step}`}</Accordion.Header>
                         <Accordion.Body>
                            <RecursiveAccordion data={item} />
                         </Accordion.Body>

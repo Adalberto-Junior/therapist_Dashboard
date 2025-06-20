@@ -224,21 +224,41 @@ export default function FloatingForm({ onClose }) {
                                         </div>
                                     </>
                                 ) : (
-                                    (camposPorTipo[type] || []).map((campo) => (
-                                        <div className="mb-2" key={campo}>
+                                    // (camposPorTipo[type] || []).map((campo) => (
+                                    //     <div className="mb-2" key={campo}>
+                                    //         <label className="block text-sm capitalize">{campo}:</label>
+                                    //         {campo === 'Texto' ? (
+                                    //           <textarea
+                                    //             className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                    //             {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
+                                    //         ></textarea>
+                                    //         ):(<input
+                                    //             {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
+                                    //             className="w-full p-2 border rounded dark:bg-zinc-600"
+                                    //         />
+                                    //         )}
+                                    //     </div>
+                                    // ))
+                                    (camposPorTipo[type] || []).map((campo, campoIdx) => {
+                                        const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
+
+                                        return (
+                                          <div className="mb-2" key={campo}>
                                             <label className="block text-sm capitalize">{campo}:</label>
                                             {campo === 'Texto' ? (
                                               <textarea
+                                                {...register(`steps.${index}.${fieldName}`, { required: true })}
                                                 className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                                {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
-                                            ></textarea>
-                                            ):(<input
-                                                {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
+                                              ></textarea>
+                                            ) : (
+                                              <input
+                                                {...register(`steps.${index}.${fieldName}`, { required: true })}
                                                 className="w-full p-2 border rounded dark:bg-zinc-600"
-                                            />
+                                              />
                                             )}
-                                        </div>
-                                    ))
+                                          </div>
+                                        );
+                                      })
                                 )}
                                 <button
                                     type="button"
