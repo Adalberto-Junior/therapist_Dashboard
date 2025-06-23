@@ -49,7 +49,7 @@ export default function EditUtente() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="p-6 max-w-xl mx-auto bg-white dark:bg-zinc-800 rounded shadow">
+    <div className="p-6 m-8 max-w-xl mx-auto bg-white dark:bg-zinc-800 rounded shadow">
       <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">Editar Utente</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

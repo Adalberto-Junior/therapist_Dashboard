@@ -344,7 +344,8 @@ export default function EditarExercicioForm () {
             typeOfProcessing: "",
             steps: [],
             tipoSelecionado: "",
-            therapist: ""
+            therapist: "",
+            ID: "",
         }
     });
 
@@ -382,6 +383,7 @@ export default function EditarExercicioForm () {
           typeOfProcessing: data.typeOfProcessing || "",
           steps: data.steps || [],
           therapist: data.therapist || "",
+          ID: data.ID || ""
         });
         
 
@@ -396,23 +398,24 @@ export default function EditarExercicioForm () {
     fetchExercise();
   }, [id_, reset]);
 
+    
     const camposPorTipo = {
-        palavras: ['Palavras', 'Descrição'],
-        frases: ['Frase', 'Descrição'],
-        leitura: ['Título', 'Texto', 'Descrição'],
-        discurso: ['Questão', 'Descrição'],
-        diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição'],
-        novo: ['label', 'valor']
-    };
+    palavras: ['Palavras', 'Descrição','ID'],
+    frases: ['Frase', 'Descrição','ID'],
+    leitura: ['Título', 'Texto', 'Descrição', 'ID'],
+    discurso: ['Questão', 'Descrição','ID'],
+    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
+    novo: ['label', 'valor','ID']
+  };
 
-    const camposPorTipoEn = {
-        palavras: ['word', 'description'],
-        frases: ['sentence', 'description'],
-        leitura: ['title', 'text', 'description'],
-        discurso: ['question', 'description'],
-        diadococinesia: ['typeOfConsonant', 'syllables', 'description'],
-        novo: ['label', 'value']
-    };
+  const camposPorTipoEn = {
+    palavras: ['word', 'description','ID'],
+    frases: ['sentence', 'description','ID'],
+    leitura: ['title', 'text', 'description','ID'],
+    discurso: ['question', 'description','ID'],
+    diadococinesia: ['typeOfConsonant', 'syllables', 'description','ID'],
+    novo: ['label', 'value','ID']
+  };
 
     const tipoPorLabel = {
         'Repetição de Palavras': 'palavras',
@@ -461,7 +464,7 @@ export default function EditarExercicioForm () {
         data.type = mapTipo(data.tipo);
         await api.put(`/utente/exercicio/${id_}/`, data);
         alert('Exercício editado com sucesso!');
-        window.location.reload();
+        window.history.back();
         } catch (error) {
         console.error('Erro ao editar exercício:', error);
         alert('Erro ao editar exercício.');

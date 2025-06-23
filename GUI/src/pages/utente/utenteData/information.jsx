@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import api from "../../../api.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
-// import UtenteTabs from "../../../component/utenteTabs.jsx";
+// import { Card, CardBody, CardFooter } from '@react-ui-org/react-ui';
+import { useForm } from "react-hook-form";
 
 
 export default function HealthUserInformation() {
@@ -11,6 +12,12 @@ export default function HealthUserInformation() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
+    const [showReportForm, setShowReportForm] = useState(false);
+    const [report, setReport] = useState({ title: '', observations: '', recommendations: '', internal_note: '' });
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const { register, handleSubmit, reset } = useForm();
+    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,6 +87,60 @@ export default function HealthUserInformation() {
             console.error("Error deleting utente:", error);
         }
     };
+
+    const handleCreateReport = async () => {
+        try {
+            await api.post(`/relatorios`, { ...report, utente_id: id });
+            setShowReportForm(false);
+            setReport({ title: '', observations: '', recommendations: '', internal_note: '' });
+            alert("Relatório criado com sucesso!");
+        } catch (err) {
+            console.error("Erro ao criar relatório:", err);
+        }
+    };
+
+    const onSubmit = async (data) => {
+        try {
+             // Verificar se o ID do utente está definido
+            if (!id) {
+                alert("Utente não encontrado.");
+                return;
+            }
+            
+            const payload = {
+                ...data,
+                utente_id: id,
+                terapeuta_id: "",
+                status: "finalizado",
+                created_at: new Date().toISOString(),
+            };
+
+            const response = await api.post(`/utente/${id}/relatorio/`, payload);
+            alert("Relatório enviado com sucesso!");
+            setMostrarFormulario(false);
+            window.location.reload(); // Recarrega a página para mostrar o novo relatório
+        } catch (error) {
+            console.error("Erro ao enviar relatório:", error);
+            alert("Erro ao enviar relatório.");
+            return;
+        }
+           
+            // const response = await fetch("/api/relatorios", {
+            // method: "POST",
+            // headers: { "Content-Type": "application/json" },
+            // body: JSON.stringify(payload),
+            // });
+
+            // if (response.ok) {
+            // const result = await response.json();
+            // onSave?.(result);
+            // reset();
+            // alert("Relatório salvo com sucesso!");
+            // setMostrarFormulario(false);
+            // } else {
+            // alert("Erro ao salvar relatório.");
+            // }
+    };
     
 
     if (loading){
@@ -96,16 +157,35 @@ export default function HealthUserInformation() {
             </div>
          ) 
     }
+    
+
     return (
+        
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            {/* <div className="max-w-4xl w-full  bg-gray-100 dark:bg-zinc-900 shadow-md rounded-lg p-6">
+                <button 
+                    onClick={() => navigate('/utente')}
+                    className="fixed top-26 left-1 z-50 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-800 shadow-md"
+                    >
+                    ⬅️ Voltar
+                </button>
+            </div> */}
+            <div className="absolute top-25 left-1">
+                <button 
+                    onClick={() => navigate('/utente')}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-800 shadow-md"
+                    >
+                    ⬅️ Voltar
+                </button>
+            </div>
             {/* <UtenteTabs /> */}
             {/* <div className=" container flex flex-col  mt-10 bg-transparent dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
                 {/* <div className="flex flex-col items-center mt-10"> */}
                     {utente && Object.keys(utente).length > 0 ? (
-                        <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100 rounded-lg shadow-md">
-                            <h1 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Dados do Utente</h1>
+                        <div className="min-w-10/12 mx-auto max-w-4xl mt-10 p-5 m-80  bg-gray-100 rounded-lg dark:bg-zinc-900">
+                            <p className="text-4xl font-semibold text-center dark:text-white mb-6">Dados do Utente</p>
                             
-                            <div className="container grid grid-cols-2 gap-4 bg-white p-5 rounded-lg shadow-md">
+                            <div className="grid grid-cols-2 gap-4 bg-white p-5 rounded-lg shadow-md">
                                 {Object.entries(utente).map(([key, value]) => {
                                     // Correção para MongoDB `_id`
                                     if (key === "_id") {
@@ -175,9 +255,221 @@ export default function HealthUserInformation() {
                                     </button>
                                 </div>
                             </div>
+                            {/* Botão para criar relatório */}
+                    {/* <Card className="mt-10">
+                        <CardHeader>
+                            <CardTitle>Criar Relatório</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {!showReportForm ? (
+                                <button
+                                    onClick={() => setShowReportForm(true)}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                >
+                                    Criar Relatório
+                                </button>
+                            ) : (
+                                <form onSubmit={(e) => { e.preventDefault(); handleCreateReport(); }} className="space-y-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Título"
+                                        value={report.title}
+                                        onChange={(e) => setReport({ ...report, title: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Observações"
+                                        value={report.observations}
+                                        onChange={(e) => setReport({ ...report, observations: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Recomendações"
+                                        value={report.recommendations}
+                                        onChange={(e) => setReport({ ...report, recommendations: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Nota interna (visível só para terapeutas)"
+                                        value={report.internal_note}
+                                        onChange={(e) => setReport({ ...report, internal_note: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                    />
+                                    <div className="flex space-x-4">
+                                        <button
+                                            type="submit"
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                        >
+                                            Guardar Relatório
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowReportForm(false)}
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-600"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+                        </CardContent>
+                    </Card> */}
                         </div>
                     ) : (
                         <p>Nenhum dado disponível</p>
+                    )}
+                    {/* Botão Flutuante */}
+                    <button
+                        onClick={() => setMostrarFormulario(true)}
+                        className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg text-xl"
+                        aria-label="Criar relatório"
+                    >
+                        + Escrever Relatório
+                    </button>
+                    {/* Formulário de Relatório */}
+                    {/* {mostrarFormulario && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                            <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg max-w-md w-full">
+                                <h2 className="text-xl font-semibold mb-4">Criar Relatório</h2>
+                                <form onSubmit={(e) => { e.preventDefault(); handleCreateReport(); }} className="space-y-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Título"
+                                        value={report.title}
+                                        onChange={(e) => setReport({ ...report, title: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Observações"
+                                        value={report.observations}
+                                        onChange={(e) => setReport({ ...report, observations: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Recomendações"
+                                        value={report.recommendations}
+                                        onChange={(e) => setReport({ ...report, recommendations: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                        required
+                                    />
+                                    <textarea
+                                        placeholder="Nota interna (visível só para terapeutas)"
+                                        value={report.internal_note}
+                                        onChange={(e) => setReport({ ...report, internal_note: e.target.value })}
+                                        className="w-full p-2 border rounded"
+                                    />
+                                    <div className="flex space-x-4">
+                                        <button
+                                            type="submit"
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                        >
+                                            Guardar Relatório
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setMostrarFormulario(false)}
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-600"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )} */}
+                    {mostrarFormulario && (
+                        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 py-3 w-full max-w-lg">
+                                <h2 className="text-2xl font-semibold mb-4 text-center dark:text-white">Novo Relatório</h2>
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Título</label>
+                                        <input
+                                            type="text"
+                                            name="title"
+                                            placeholder="Ex: Análise de Fonação - 10/06/2025"
+                                            {...register("title", { required: true })}
+                                            required
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        />
+                                    </div>
+                                    <div>
+                                       <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Análise</label>
+                                        <select
+                                            name="type_of_analysis"
+                                            {...register("type_of_analysis", { required: true })}
+                                            required
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        >
+                                            <option value="articulacao">Articulação</option>
+                                            <option value="fonacao">Fonação</option>
+                                            <option value="prosodia">Prosódia</option>
+                                            <option value="glotis">Glota</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Data da Análise</label>
+                                        <input
+                                            type="date"
+                                            name="analysis_date"
+                                            {...register("analysis_date", { required: true })}
+                                            required
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Observações Principais</label>
+                                        <textarea
+                                            name="observations"
+                                            rows="5"
+                                            {...register("observations")}
+                                            placeholder="Descreva os principais achados da análise..."
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Recomendações ao Paciente</label>
+                                        <textarea
+                                            name="recommendations"
+                                            rows="5"
+                                            {...register("recommendations")}
+                                            placeholder="Sugira exercícios ou hábitos para a próxima semana..."
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nota Confidencial (opcional)</label>
+                                        <textarea
+                                            name="internal_note"
+                                            rows="2"
+                                            {...register("internal_note")}
+                                            placeholder="Visível apenas para o terapeuta."
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        ></textarea>
+                                    </div>
+                                    <div className="flex justify-between mt-4">
+                                        <button
+                                            type="submit"
+                                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                                        >
+                                            Submeter
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setMostrarFormulario(false)}
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     )}
             {/* </div> */}
         </div>

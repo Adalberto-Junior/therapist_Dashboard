@@ -126,6 +126,7 @@ export default function ExerciseDetail() {
                     key = "Id do Exercício";
                     value = value?.$oid || value;
                 }
+                if (key === "therapist") return null; // Não exibir o ID do terapeuta
 
                 // Pular os steps para mostrar por último
                 if (key === "steps") return null;

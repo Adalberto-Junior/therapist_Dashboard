@@ -752,6 +752,8 @@ def delete_exercicio(exercise_id):
     return jsonify({"Sucess": "Exercício deletado com sucesso"}), 200
 
 
+
+
 # #TODO: Verificar isso
 # @utente_bp.route('/<string:user_id>/exercicio/update/<string:exercise_id>', methods=['PUT'])
 # def update_exercicio(user_id, exercise_id):
@@ -801,4 +803,51 @@ def delete_exercicio(exercise_id):
     
 #     return jsonify({"Sucess": "Exercício atualizado com sucesso"}), 200
 
+
+@utente_bp.route('/relatorio/<string:utente_id>/', methods=['POST'])
+def generate_relatorio(utente_id):
+    """
+    Generate a report for a specific health user by their id.
+    :param utente_id: The id of the health user.
+    :return: JSON response with the report data.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+ 
+
+    health_user = utente_model.get_health_user_by_id(utente_id)
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    # Generate the report data here
+    report_data = {
+        "utente_id": utente_id,
+        "nome": health_user['name'],
+        "email": health_user['email'],
+        "data_nascimento": health_user['date_of_birth'],
+        "observacao": health_user['observation'],
+        "condicao_medica": health_user['medical_condition'],
+        "numero_utente_saude": health_user['health_user_number'],
+        "celular": health_user['cellphone'],
+        "endereco": health_user['address'],
+        # Add more fields as needed
+    }
+
+    return jsonify(report_data), 200
 

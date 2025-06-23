@@ -139,7 +139,7 @@ def update_exercise(exercise_id, data):
     :return: True if the update was successful, False otherwise.
     """
     # Convert JSON string to dictionary
-    data = json.loads(data)
+    # data = json.loads(data)
     # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.update_one({"_id": ObjectId(exercise_id)}, {"$set": data})
     return result.modified_count > 0
@@ -151,8 +151,8 @@ def update_exercise_by_name(name, data):
     :param data: The updated exercise data as a dictionary.
     :return: True if the update was successful, False otherwise.
     """
-    # Convert JSON string to dictionary
-    data = json.loads(data)
+    # # Convert JSON string to dictionary
+    # data = json.loads(data)
     # mongo = app.extensions['pymongo']
     result = mongo.db.exercise.update_one({"name": name}, {"$set": data})
     return result.modified_count > 0

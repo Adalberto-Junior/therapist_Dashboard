@@ -146,6 +146,7 @@ export function groupBBEonBBEoffData(staticData = [], config) {
     Object.entries(item).forEach(([key, value]) => {
       Object.entries(config).forEach(([chartType, { match }]) => {
         const matchResult = key.match(match);
+        console.log("Match Result:", matchResult);
         if (matchResult && chartType === "radar") {
           let group = matchResult[1];
           if (group === "BBEon" || group === "BBEoff") {
@@ -212,5 +213,36 @@ export function groupNotBBEonBBEoffData(staticData = [], config) {
     });
   });
   // console.log("Final Grouped Data for Not BBEon_BBEoff:", result);
+  return result;
+}
+
+
+export function groupPhonactionData(staticData = [], config) {
+  const result = {};
+  Object.keys(config).forEach(chartType => {
+    result[chartType] = {};
+  });
+
+ 
+  // Processar dados estáticos (ex: radar)
+  staticData.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      Object.entries(config).forEach(([chartType, { match }]) => {
+        const matchResult = key.match(match);
+        if (matchResult && chartType === "radar") {
+          let group = matchResult[1];
+          if (group === "avg Shimmer" || group === "avg Jitter" || group === "avg apq" || group === "avg ppq") {
+            group = "ShimJitAPQPPQ"; // Agrupar ambos em um único grupo
+          }
+          key = key.replace(/avg|Avg/, ""); // Normalizar chave
+
+          if (group === "ShimJitAPQPPQ") {
+            if (!result[chartType][group]) result[chartType][group] = [];
+            result[chartType][group].push({ axis: key, value: parseFloat(value) });
+          }
+        }
+      });
+    });
+  });
   return result;
 }
