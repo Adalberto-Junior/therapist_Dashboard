@@ -145,6 +145,36 @@ class CreatDocumentToDB:
                     "done": done
                 }
         return self.data
+    
+    def relatoryDocument(self, title, type_of_analysis,observations,recommendations,internal_note, status,analysis_date,created_at,utente_id,therapist):
+        """
+        Create a document for the relatory.
+        :param title: The title of the relatory.
+        :param type_of_analysis: The type of analysis of the relatory.
+        :param observations: The observations of the relatory.
+        :param recommendations: The recommendations of the relatory.
+        :param internal_note: The internal note of the relatory.
+        :param status: The status of the relatory.
+        :param analysis_date: The date of analysis of the relatory.
+        :param created_at: The date of creation of the relatory.
+        :param utente_id: The id of the user (utente).
+        :param therapist: The id of the therapist.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "title": title,
+                    "type_of_analysis": type_of_analysis,
+                    "observations": observations,
+                    "recommendations": recommendations,
+                    "internal_note": internal_note,
+                    "status": status,
+                    "analysis_date": analysis_date,
+                    "created_at": created_at,
+                    "utente_id": self.ensure_objectid(utente_id),
+                    "therapist": self.ensure_objectid(therapist)
+                }
+        return self.data
 
     #NOTE:APagar isso depois. Não é importante
 

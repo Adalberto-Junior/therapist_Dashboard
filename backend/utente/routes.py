@@ -834,20 +834,37 @@ def generate_relatorio(utente_id):
 
     if not casa_viva_user:
         return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+    
+    data = request.json
+    
+    utente_id = data["utente_id"],
+    therapist = therapistId,
+    title = data["title"],
+    type_of_analysis =  data["type_of_analysis"],
+    observations =  data["observations"],
+    recommendations = data["recommendations"],
+    internal_note = data.get("internal_note", ""),
+    status = data["status"],
+    analysis_date = data["analysis_date"],
+    # created_at = datetime.utcnow()
+    created_at = data["created_at"]
 
-    # Generate the report data here
-    report_data = {
-        "utente_id": utente_id,
-        "nome": health_user['name'],
-        "email": health_user['email'],
-        "data_nascimento": health_user['date_of_birth'],
-        "observacao": health_user['observation'],
-        "condicao_medica": health_user['medical_condition'],
-        "numero_utente_saude": health_user['health_user_number'],
-        "celular": health_user['cellphone'],
-        "endereco": health_user['address'],
-        # Add more fields as needed
-    }
-
-    return jsonify(report_data), 200
+    document = CreatDocumentToDB()
+    doc = document.relatoryDocument(
+        utente_id=utente_id,
+        therapist=therapist,
+        title=title,
+        type_of_analysis=type_of_analysis,
+        observations=observations,
+        recommendations=recommendations,
+        internal_note=internal_note,
+        status=status,
+        analysis_date=analysis_date,
+        created_at=created_at
+    )
+    relatory = utente_model.create_health_user_relatory(doc)
+    if not relatory:
+        return jsonify({"error": "Erro ao salvar o relatório"}), 500
+    
+    return jsonify({"message": "Relatório salvo com sucesso."}), 201
 

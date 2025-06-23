@@ -145,7 +145,7 @@ export default function PhonotionResult() {
                 const response = await api.get(`/utente/${id}/analise/fonacao`);
                 setResults(response.data);
                 if (response.data.length > 0) {
-                    setSelectedDate(response.data[0].date); 
+                  setSelectedDate(response.data[response.data.length - 1].date);
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);

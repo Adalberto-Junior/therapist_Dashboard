@@ -131,3 +131,85 @@ def get_health_user_by_email_and_username_and_therapist(email, username, therapi
     return mongo.db.health_user.find_one({"email": email, "username": username, "therapist": ObjectId(therapist_id)})
 
 
+################Relatory
+
+def create_health_user_relatory(data):
+    """
+    Create a new health user relatory in the database.
+    :param data: JSON string containing relatory data.
+    :return: The ID of the created relatory.
+    """
+    #data = json.loads(data)
+    # mongo = app.extensions['pymongo']
+    relatory = mongo.db.health_user_relatory
+    result = relatory.insert_one(data)
+    return str(result.inserted_id)
+
+def get_health_user_relatory_by_id(relatory_id):
+    """
+    Get a health user relatory by its ID.
+    :param relatory_id: The ID of the relatory.
+    :return: The relatory data as a dictionary.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.health_user_relatory.find_one({"_id": ObjectId(relatory_id)})
+
+def get_health_user_relatory_by_user_id(user_id):
+    """
+    Get all relatories for a specific health user.
+    :param user_id: The ID of the health user.
+    :return: A list of relatory data as dictionaries.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.health_user_relatory.find({"user": ObjectId(user_id)})
+
+def get_health_user_relatory_by_user_id_and_date(user_id, date):
+    """
+    Get a health user relatory by user ID and date.
+    :param user_id: The ID of the health user.
+    :param date: The date of the relatory.
+    :return: The relatory data as a dictionary.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.health_user_relatory.find_one({"user": ObjectId(user_id), "date": date})
+
+def update_health_user_relatory(relatory_id, data):
+    """
+    Update a health user relatory.
+    :param relatory_id: The ID of the relatory.
+    :param data: Dictionary containing the updated relatory data.
+    :return: True if the update was successful, False otherwise.
+    """
+    # mongo = app.extensions['pymongo']
+    result = mongo.db.health_user_relatory.update_one({"_id": ObjectId(relatory_id)}, {"$set": data})
+    return result.modified_count > 0
+
+def delete_health_user_relatory(relatory_id):
+    """
+    Delete a health user relatory from the database.
+    :param relatory_id: The ID of the relatory.
+    :return: True if the deletion was successful, False otherwise.
+    """
+    # mongo = app.extensions['pymongo']
+    result = mongo.db.health_user_relatory.delete_one({"_id": ObjectId(relatory_id)})
+    return result.deleted_count > 0
+
+def get_all_health_user_relatories_by_therapist(therapist_id):
+    """
+    Get all health user relatories associated with a specific therapist.
+    :param therapist_id: The ID of the therapist.
+    :return: A list of relatory data as dictionaries.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.health_user_relatory.find({"therapist": ObjectId(therapist_id)})
+
+def get_health_user_relatory_by_user_id_and_therapist(user_id, therapist_id):
+    """
+    Get a health user relatory by user ID and associated therapist.
+    :param user_id: The ID of the health user.
+    :param therapist_id: The ID of the therapist.
+    :return: The relatory data as a dictionary.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.health_user_relatory.find_one({"user": ObjectId(user_id), "therapist": ObjectId(therapist_id)})
+
