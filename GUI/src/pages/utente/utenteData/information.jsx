@@ -88,16 +88,21 @@ export default function HealthUserInformation() {
         }
     };
 
-    const handleCreateReport = async () => {
+    const handleSeeReport = async () => {
         try {
-            await api.post(`/relatorios`, { ...report, utente_id: id });
-            setShowReportForm(false);
-            setReport({ title: '', observations: '', recommendations: '', internal_note: '' });
-            alert("Relatório criado com sucesso!");
+            if (!id) {
+                alert("Utente não encontrado.");
+                return;
+            }
+            // Navigate to the report page with the utente ID
+            navigate(`/utente/${id}/relatorio`);
         } catch (err) {
-            console.error("Erro ao criar relatório:", err);
+            console.error("Erro ao Abrir relatório:", err);
+            alert("Erro ao abrir relatório.");
         }
     };
+
+    
 
     const onSubmit = async (data) => {
         try {
@@ -146,14 +151,14 @@ export default function HealthUserInformation() {
     if (loading){
         return(
          <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-            <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Loading...</p>
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
         </div>
         );
     }
     if (error) {
          return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Error: {error.message}</p>
+                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
             </div>
          ) 
     }
@@ -170,6 +175,7 @@ export default function HealthUserInformation() {
                     ⬅️ Voltar
                 </button>
             </div> */}
+          
             <div className="absolute top-25 left-1">
                 <button 
                     onClick={() => navigate('/utente')}
@@ -178,6 +184,16 @@ export default function HealthUserInformation() {
                     ⬅️ Voltar
                 </button>
             </div>
+
+            {/* <div className="max-w-4xl w-full  bg-gray-100 dark:bg-zinc-900 shadow-md rounded-lg p-6"> */}
+                <button 
+                    onClick={() => handleSeeReport()}
+                    className="fixed top-26 right-1 z-50 bg-gray-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors dark:bg-zinc-900 dark:hover:bg-blue-800 shadow-md"
+                    >
+                    🩺 Relatório Médico
+                </button>
+            {/* </div> */}
+
             {/* <UtenteTabs /> */}
             {/* <div className=" container flex flex-col  mt-10 bg-transparent dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
                 {/* <div className="flex flex-col items-center mt-10"> */}
@@ -324,7 +340,7 @@ export default function HealthUserInformation() {
                     {/* Botão Flutuante */}
                     <button
                         onClick={() => setMostrarFormulario(true)}
-                        className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg text-xl"
+                        className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded shadow-lg text-xl"
                         aria-label="Criar relatório"
                     >
                         + Escrever Relatório

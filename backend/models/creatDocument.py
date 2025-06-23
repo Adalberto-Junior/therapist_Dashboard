@@ -25,7 +25,7 @@ class CreatDocumentToDB:
             return value
         try:
             return ObjectId(value)
-        except errors.InvalidId:
+        except errors.InvalidURI:
             return None  # ou raise ValueError("ID inválido")
 
     def userDocument(self, name, email, password,profession, date_of_birth):
@@ -146,7 +146,7 @@ class CreatDocumentToDB:
                 }
         return self.data
     
-    def relatoryDocument(self, title, type_of_analysis,observations,recommendations,internal_note, status,analysis_date,created_at,utente_id,therapist):
+    def relatoryDocument(self, title, type_of_analysis,observations,recommendations,internal_note, status,analysis_date,created_at,utenteId,therapist):
         """
         Create a document for the relatory.
         :param title: The title of the relatory.
@@ -161,6 +161,7 @@ class CreatDocumentToDB:
         :param therapist: The id of the therapist.
         :return: JSON string of the document.
         """
+        print("id:", type(utenteId))
         self.data.clear()
         self.data = {
                     "title": title,
@@ -171,7 +172,7 @@ class CreatDocumentToDB:
                     "status": status,
                     "analysis_date": analysis_date,
                     "created_at": created_at,
-                    "utente_id": self.ensure_objectid(utente_id),
+                    "utente_id": self.ensure_objectid(utenteId[0]) if isinstance(utenteId, tuple) else self.ensure_objectid(utenteId),  # utenteId is the id of the user (utente)
                     "therapist": self.ensure_objectid(therapist)
                 }
         return self.data

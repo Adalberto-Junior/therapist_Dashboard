@@ -76,6 +76,7 @@ import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
 import EditUtente from './pages/utente/utenteData/editUtent.jsx'
 import EditarExercicioForm from './pages/utente/exercise/editExercise.jsx'
+import ReportList from './pages/utente/utenteData/allReport.jsx'
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
@@ -102,6 +103,7 @@ export default function App() {
             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
             <Route path="utente/:id" element={<UtenteTabsLayout />}>
               <Route path="informacao" element={<HealthUserInformation />} />
+              <Route path="relatorio" element={<ReportList />} />
               <Route path="editar" element={<EditUtente />} />
               <Route path="analise/articulacao" element={<ArticulationResult />} />
               <Route path="analise/fonacao" element={<PhonotionResult />} />

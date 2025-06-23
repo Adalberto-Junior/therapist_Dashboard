@@ -471,6 +471,8 @@ export default function ArticulationResult() {
   const [results, setResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -481,7 +483,10 @@ export default function ArticulationResult() {
           setSelectedDate(response.data[response.data.length - 1].date);
         }
       } catch (error) {
+        setError(error);
         console.error("Erro ao buscar dados:", error);
+      }finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -545,7 +550,21 @@ export default function ArticulationResult() {
     return acc;
   }, {});
 
-
+  if (loading){
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    }
+    if (error) {
+         return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+                <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Error: {error.message}</p>
+            </div>
+         ) 
+    }
+    
   return (
     <div className="min-h-screen min-w-screen items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">

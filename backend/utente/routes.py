@@ -804,7 +804,7 @@ def delete_exercicio(exercise_id):
 #     return jsonify({"Sucess": "Exercício atualizado com sucesso"}), 200
 
 
-@utente_bp.route('/relatorio/<string:utente_id>/', methods=['POST'])
+@utente_bp.route('/<string:utente_id>/relatorio/', methods=['POST'])
 def generate_relatorio(utente_id):
     """
     Generate a report for a specific health user by their id.
@@ -837,7 +837,7 @@ def generate_relatorio(utente_id):
     
     data = request.json
     
-    utente_id = data["utente_id"],
+    utenteId = data["utente_id"],
     therapist = therapistId,
     title = data["title"],
     type_of_analysis =  data["type_of_analysis"],
@@ -849,10 +849,12 @@ def generate_relatorio(utente_id):
     # created_at = datetime.utcnow()
     created_at = data["created_at"]
 
+    
+
     document = CreatDocumentToDB()
     doc = document.relatoryDocument(
-        utente_id=utente_id,
-        therapist=therapist,
+        utenteId=utenteId,
+        therapist=therapistId,
         title=title,
         type_of_analysis=type_of_analysis,
         observations=observations,
