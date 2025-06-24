@@ -81,7 +81,7 @@ export default function HealthUserInformation() {
                 return; // User cancelled the deletion
             }
             await api.delete(`/utente/informacao/${utenteId}`);
-            setUtentes(utentes.filter((u) => u.id !== utenteId));
+            setUtente(utentes.filter((u) => u.id !== utenteId));
             navigate('/utente'); // Redirect to the list of utentes after deletion
         } catch (error) {
             console.error("Error deleting utente:", error);
@@ -420,6 +420,11 @@ export default function HealthUserInformation() {
                                             name="type_of_analysis"
                                             {...register("type_of_analysis", { required: true })}
                                             required
+                                            multiple
+                                            {...register('type_of_analysis', {
+                                                required: "Selecione pelo menos um tipo de Processamento aplicado.",
+                                                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
+                                            })}
                                             className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
                                         >
                                             <option value="articulacao">Articulação</option>

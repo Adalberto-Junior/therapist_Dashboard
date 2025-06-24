@@ -45,8 +45,21 @@ export default function EditUtente() {
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading){
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    }
+    if (error) {
+         return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
+            </div>
+         ) 
+    }
+    
 
   return (
     <div className="p-6 m-8 max-w-xl mx-auto bg-white dark:bg-zinc-800 rounded shadow">

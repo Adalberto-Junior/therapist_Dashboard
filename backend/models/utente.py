@@ -161,7 +161,7 @@ def get_health_user_relatory_by_user_id(user_id):
     :return: A list of relatory data as dictionaries.
     """
     # mongo = app.extensions['pymongo']
-    return mongo.db.health_user_relatory.find({"user": ObjectId(user_id)})
+    return mongo.db.health_user_relatory.find({"utente_id": ObjectId(user_id) if isinstance(user_id, str) else user_id})
 
 def get_health_user_relatory_by_user_id_and_date(user_id, date):
     """
@@ -171,7 +171,7 @@ def get_health_user_relatory_by_user_id_and_date(user_id, date):
     :return: The relatory data as a dictionary.
     """
     # mongo = app.extensions['pymongo']
-    return mongo.db.health_user_relatory.find_one({"user": ObjectId(user_id), "date": date})
+    return mongo.db.health_user_relatory.find_one({"utente_id": ObjectId(user_id), "date": date})
 
 def update_health_user_relatory(relatory_id, data):
     """
@@ -211,5 +211,5 @@ def get_health_user_relatory_by_user_id_and_therapist(user_id, therapist_id):
     :return: The relatory data as a dictionary.
     """
     # mongo = app.extensions['pymongo']
-    return mongo.db.health_user_relatory.find_one({"user": ObjectId(user_id), "therapist": ObjectId(therapist_id)})
+    return mongo.db.health_user_relatory.find_one({"utente_id": ObjectId(user_id), "therapist": ObjectId(therapist_id)})
 

@@ -380,7 +380,7 @@ export default function EditarExercicioForm () {
           type: data.type || "",
           name: data.name || "",
           description: data.description || "",
-          typeOfProcessing: data.typeOfProcessing || "",
+          typeOfProcessing: Array.isArray(data.typeOfProcessing)? data.typeOfProcessing : [data.typeOfProcessing],
           steps: data.steps || [],
           therapist: data.therapist || "",
           ID: data.ID || ""
@@ -462,6 +462,9 @@ export default function EditarExercicioForm () {
     const onSubmit = async (data) => {
         try {
         data.type = mapTipo(data.tipo);
+        if (!Array.isArray(data.typeOfProcessing)) {
+            data.typeOfProcessing = [data.typeOfProcessing];
+        }
         await api.put(`/utente/exercicio/${id_}/`, data);
         alert('Exercício editado com sucesso!');
         window.history.back();
@@ -550,15 +553,16 @@ export default function EditarExercicioForm () {
 
             <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                <select {...register('typeOfProcessing', { required: true })} 
-                 className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                <select
+                    multiple
+                    {...register('typeOfProcessing', { required: true })}
+                    className="w-full h-48 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 >
-                <option value="">Selecione...</option>
-                <option value="articulation">Articulação</option>
-                <option value="phonation">Fonação</option>
-                <option value="glotta">Glota</option>
-                <option value="prosody">Prosódia</option>
-                <option value="replearning">Reaprendizagem</option>
+                    <option value="articulation">Articulação</option>
+                    <option value="phonation">Fonação</option>
+                    <option value="glotta">Glota</option>
+                    <option value="prosody">Prosódia</option>
+                    <option value="replearning">Reaprendizagem</option>
                 </select>
             </div>
 

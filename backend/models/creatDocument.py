@@ -157,11 +157,11 @@ class CreatDocumentToDB:
         :param status: The status of the relatory.
         :param analysis_date: The date of analysis of the relatory.
         :param created_at: The date of creation of the relatory.
-        :param utente_id: The id of the user (utente).
+        :param utenteId: The id of the user (utente).
         :param therapist: The id of the therapist.
         :return: JSON string of the document.
         """
-        print("id:", type(utenteId))
+
         self.data.clear()
         self.data = {
                     "title": title,

@@ -68,6 +68,10 @@ export default function FloatingForm({ onClose }) {
   const onSubmit = async (data) => {
     try {
       data.type = mapTipo(data.type)
+      if (typeof data.typeOfProcessing === "string") {
+        data.typeOfProcessing = [data.typeOfProcessing];
+      }
+
       const response = await api.post(`/utente/${id}/exercicio/`, data);
       alert("Exercício adicionado com sucesso!");
       window.location.reload();
@@ -183,16 +187,18 @@ export default function FloatingForm({ onClose }) {
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
             <select
-              {...register('typeOfProcessing', { required: "Selecione um tipo de Processamento." })}
-               className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+              multiple
+              {...register('typeOfProcessing', {
+                required: "Selecione pelo menos um tipo de Processamento.",
+                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
+              })}
+              className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white h-40"
             >
-              <option value="">Selecione...</option>
               <option value="articulation">Articulação</option>
               <option value="phonation">Fonação</option>
               <option value="glotta">Glota</option>
               <option value="prosody">Prosódia</option>
               <option value="replearning">Reaprendizagem</option>
-              {/* <option value="novo">Novo</option> */}
             </select>
             <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
           </div>

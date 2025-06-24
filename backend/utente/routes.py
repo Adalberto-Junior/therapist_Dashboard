@@ -837,19 +837,17 @@ def generate_relatorio(utente_id):
     
     data = request.json
     
-    utenteId = data["utente_id"],
-    therapist = therapistId,
-    title = data["title"],
-    type_of_analysis =  data["type_of_analysis"],
-    observations =  data["observations"],
-    recommendations = data["recommendations"],
-    internal_note = data.get("internal_note", ""),
-    status = data["status"],
-    analysis_date = data["analysis_date"],
+    utenteId = casa_viva_user['_id']
+    therapist = therapistId
+    title = data["title"]
+    type_of_analysis =  data["type_of_analysis"]
+    observations =  data["observations"]
+    recommendations = data["recommendations"]
+    internal_note = data.get("internal_note", "")
+    status = data["status"]
+    analysis_date = data["analysis_date"]
     # created_at = datetime.utcnow()
     created_at = data["created_at"]
-
-    
 
     document = CreatDocumentToDB()
     doc = document.relatoryDocument(
@@ -869,4 +867,149 @@ def generate_relatorio(utente_id):
         return jsonify({"error": "Erro ao salvar o relatório"}), 500
     
     return jsonify({"message": "Relatório salvo com sucesso."}), 201
+
+@utente_bp.route('/<string:utente_id>/relatorio/', methods=['GET'])
+def get_relatorio(utente_id):
+    """
+    Get the reports for a specific health user by their id.
+    :param utente_id: The id of the health user.
+    :return: JSON response with the reports data.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    health_user = utente_model.get_health_user_by_id(utente_id)
+    if not health_user:
+        return jsonify({"error": "Utente não encontrado"}), 404
+    
+    casa_viva_user = user_model.get_user_by_email(health_user['email']) #TODO: Verificar se é necessário fazer a busca pelo email do utente na casa viva
+
+    if not casa_viva_user:
+        return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+    relatories = utente_model.get_health_user_relatory_by_user_id(casa_viva_user['_id'])
+    
+    if not relatories:
+        return jsonify({"error": "Relatórios não encontrados"}), 404
+    
+    if isinstance(relatories, Cursor):
+        relatories = list(relatories)
+    
+
+    return jsonify(relatories), 200
+
+@utente_bp.route('/relatorio/<string:reportId>/', methods=['GET'])
+def get_relatorio_by_id(reportId):
+    """
+    Get a specific report by its ID.
+    :param reportId: The ID of the report to be retrieved.
+    :return: JSON response with the report data.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    relatory = utente_model.get_health_user_relatory_by_id(reportId)
+
+    if not relatory:
+        return jsonify({"error": "Relatório não encontrado"}), 404
+    
+    return jsonify(relatory), 200
+
+
+@utente_bp.route('/relatorio/<string:reportId>/', methods=['PUT'])
+def update_relatorio(reportId):
+    """
+    Update a specific report by its ID.
+    :param reportId: The ID of the report to be updated.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    data = request.get_json()
+    
+    title = data["title"]
+    type_of_analysis =  data["type_of_analysis"]
+    observations =  data["observations"]
+    recommendations = data["recommendations"]
+    internal_note = data.get("internal_note", "")
+    status = data["status"]
+    analysis_date = data["analysis_date"]
+    created_at = data["created_at"]
+
+    document = CreatDocumentToDB()
+    doc = document.relatoryDocument(
+        title=title,
+        type_of_analysis=type_of_analysis,
+        observations=observations,
+        recommendations=recommendations,
+        internal_note=internal_note,
+        status=status,
+        analysis_date=analysis_date,
+        created_at=created_at
+    )
+    
+    relatory = utente_model.update_health_user_relatory(reportId, doc)
+
+    if not relatory:
+        return jsonify({"error": "Erro ao atualizar o relatório"}), 500
+    
+    return jsonify({"message": "Relatório atualizado com sucesso."}), 200
+
+@utente_bp.route('/<string:reportId>/relatorio/', methods=['DELETE'])
+def delete_relatorio(reportId):
+    """
+    Delete a specific report by its ID.
+    :param reportId: The ID of the report to be deleted.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    relatory = utente_model.delete_health_user_relatory(reportId)
+
+    if not relatory:
+        return jsonify({"error": "Relatório não encontrado"}), 404
+    
+    return jsonify({"message": "Relatório deletado com sucesso."}), 200
 
