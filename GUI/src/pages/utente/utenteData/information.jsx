@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import api from "../../../api.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 // import { Card, CardBody, CardFooter } from '@react-ui-org/react-ui';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { MultiSelect } from 'primereact/multiselect';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // ou outro tema
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 
 export default function HealthUserInformation() {
@@ -15,7 +19,7 @@ export default function HealthUserInformation() {
     const [showReportForm, setShowReportForm] = useState(false);
     const [report, setReport] = useState({ title: '', observations: '', recommendations: '', internal_note: '' });
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit, reset, control } = useForm();
     
 
 
@@ -416,7 +420,7 @@ export default function HealthUserInformation() {
                                     </div>
                                     <div>
                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Análise</label>
-                                        <select
+                                        {/* <select
                                             name="type_of_analysis"
                                             {...register("type_of_analysis", { required: true })}
                                             required
@@ -431,8 +435,32 @@ export default function HealthUserInformation() {
                                             <option value="fonacao">Fonação</option>
                                             <option value="prosodia">Prosódia</option>
                                             <option value="glotis">Glota</option>
-                                        </select>
+                                        </select> */}
+                                        <Controller
+                                            name="type_of_analysis"
+                                            control={control}
+                                            rules={{ required: "Selecione pelo menos um tipo de análise." }}
+                                            render={({ field }) => (
+                                                <MultiSelect
+                                                    {...field}
+                                                    options={[
+                                                        { label: 'Articulação', value: 'articulacao' },
+                                                        { label: 'Fonação', value: 'fonacao' },
+                                                        { label: 'Prosódia', value: 'prosodia' },
+                                                        { label: 'Glota', value: 'glota' },
+                                                        {label: 'Reaprendizagem', value: 'reaprendizagem'},
+                                                        
+
+                                                    ]}
+                                                    filter
+                                                    display="chip"
+                                                    placeholder="Selecione os tipos de análise"
+                                                    className="w-full h-13 border"
+                                                />
+                                            )}
+                                        />
                                     </div>
+                                    
                                     <div>
                                         <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Data da Análise</label>
                                         <input

@@ -113,9 +113,13 @@ export default function ExerciseDetail() {
                 if (key === "description") key = "Descrição do Exercício";
                 if (key === "type") key = "Tipo do Exercício";
                 if (key === "userName") key = "Nome do Utilizador";
-                if (key == "typeOfProcessing") {
-                    key = "Tipo de Processamento"
-                    value = processingInPT[value]
+                if (key === "typeOfProcessing") {
+                    key = "Tipo de Processamento";
+                    if (Array.isArray(value)) {
+                        value = value.map(v => processingInPT[v] || v).join(", ");
+                    } else {
+                        value = processingInPT[value] || value;
+                    }
                 } 
                 if (key === "user") {
                     // key = "Id do Utilizador";

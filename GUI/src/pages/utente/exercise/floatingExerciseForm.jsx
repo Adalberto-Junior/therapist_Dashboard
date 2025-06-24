@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import api from "../../../api";
 import { useParams } from 'react-router-dom';
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import '../../../App.css';
 import 'react-phone-number-input/style.css';
+import { MultiSelect } from 'primereact/multiselect';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // ou outro tema
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 export default function FloatingForm({ onClose }) {
   const { id } = useParams();
@@ -64,6 +68,14 @@ export default function FloatingForm({ onClose }) {
         append(novoStep);
     }
   };
+
+  const options = [
+    { label: 'Articulação', value: 'articulation' },
+    { label: 'Fonação', value: 'phonation' },
+    { label: 'Glota', value: 'glotta' },
+    { label: 'Prosódia', value: 'prosody' },
+    { label: 'Reaprendizagem', value: 'replearning' },
+  ];
 
   const onSubmit = async (data) => {
     try {
@@ -186,7 +198,7 @@ export default function FloatingForm({ onClose }) {
           {/* Tipo de Processamento */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-            <select
+            {/* <select
               multiple
               {...register('typeOfProcessing', {
                 required: "Selecione pelo menos um tipo de Processamento.",
@@ -199,7 +211,51 @@ export default function FloatingForm({ onClose }) {
               <option value="glotta">Glota</option>
               <option value="prosody">Prosódia</option>
               <option value="replearning">Reaprendizagem</option>
-            </select>
+            </select> */}
+            {/* <MultiSelect
+              {...register('typeOfProcessing', {
+                required: "Selecione pelo menos um tipo de Processamento.",
+                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
+              })}
+              options={options}
+              //  className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white h-40"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Selecione os tipos de processamento"
+              value={watch('typeOfProcessing')}
+              onChange={(e) => {
+                const value = e.value;
+                // Se for uma string, converte para array 
+                if (typeof value === "string") {
+                  setValue('typeOfProcessing', [value]);
+                } else {
+                  setValue('typeOfProcessing', value);
+                }
+              }}
+            /> */}
+            <Controller
+              name="typeOfProcessing"
+              control={control}
+              rules={{
+                required: "Selecione pelo menos um tipo de Processamento.",
+                validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
+              }}
+              render={({ field }) => (
+                <MultiSelect
+                  {...field}
+                  options={options}
+                  optionLabel="label"
+                  optionValue="value"
+                  filter 
+                  placeholder="Selecione os tipos de processamento"
+                  display="chip"
+                  className="w-full md:w-20rem "
+                  
+                />
+              )}
+            />
+            
+
             <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
           </div>
           

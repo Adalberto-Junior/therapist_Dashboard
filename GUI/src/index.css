@@ -58,6 +58,22 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
+/* Estiliza o botão de fechar do dropdown */
+.p-multiselect-close {
+  background: transparent !important;
+  border: none !important;
+  width: 6rem;
+  height: 2rem;
+  font-size: 0rem;
+  color: #6b7280; /* cinza elegante */
+}
+
+/* Opcional: muda a cor no dark mode */
+.dark .p-multiselect-close {
+  color: #d1d5db;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

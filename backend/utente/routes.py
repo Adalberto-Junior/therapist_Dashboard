@@ -936,7 +936,7 @@ def get_relatorio_by_id(reportId):
     return jsonify(relatory), 200
 
 
-@utente_bp.route('/relatorio/<string:reportId>/', methods=['PUT'])
+@utente_bp.route('/relatorio/<string:reportId>', methods=['PUT'])
 def update_relatorio(reportId):
     """
     Update a specific report by its ID.
@@ -955,7 +955,8 @@ def update_relatorio(reportId):
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
-
+    
+    
     data = request.get_json()
     
     title = data["title"]
@@ -967,8 +968,14 @@ def update_relatorio(reportId):
     analysis_date = data["analysis_date"]
     created_at = data["created_at"]
 
+    health_user_report = utente_model.get_health_user_relatory_by_id(reportId)
+    if not health_user_report:
+        return jsonify({"error": "Relatório não encontrado"}), 404
+    
     document = CreatDocumentToDB()
     doc = document.relatoryDocument(
+        utenteId=health_user_report['utente_id'],
+        therapist=therapistId,
         title=title,
         type_of_analysis=type_of_analysis,
         observations=observations,

@@ -312,11 +312,16 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import api from '../../../api';
 import { ErrorMessage } from '@hookform/error-message';
 import { useNavigate } from 'react-router-dom';
+
+import { MultiSelect } from 'primereact/multiselect';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // ou outro tema
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 export default function EditarExercicioForm () {
     const { id, id_ } = useParams();
@@ -553,7 +558,7 @@ export default function EditarExercicioForm () {
 
             <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                <select
+                {/* <select
                     multiple
                     {...register('typeOfProcessing', { required: true })}
                     className="w-full h-48 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
@@ -563,7 +568,29 @@ export default function EditarExercicioForm () {
                     <option value="glotta">Glota</option>
                     <option value="prosody">Prosódia</option>
                     <option value="replearning">Reaprendizagem</option>
-                </select>
+                </select> */}
+                <Controller
+                    name="typeOfProcessing"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                        <MultiSelect
+                            {...field}
+                            options={[
+                                { label: 'Articulação', value: 'articulation' },
+                                { label: 'Fonação', value: 'phonation' },
+                                { label: 'Glota', value: 'glotta' },
+                                { label: 'Prosódia', value: 'prosody' },
+                                { label: 'Reaprendizagem', value: 'relearning' }
+                            ]}
+                            placeholder="Selecione os tipos de processamento"
+                            filter
+                            display="chip"
+                            className="w-full h-14 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-600 dark:text-black"
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
             </div>
 
             <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-gray-300">

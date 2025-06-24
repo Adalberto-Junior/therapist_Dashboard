@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import api from "../../../api";
 import 'react-phone-number-input/style.css';
+import { useForm, Controller } from "react-hook-form";
+import { MultiSelect } from 'primereact/multiselect';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // ou outro tema
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 
 export default function EditReport() {
@@ -10,6 +15,7 @@ export default function EditReport() {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const { control, formState: { errors } } = useForm();
 
   useEffect(() => {
     async function fetchUtente() {
@@ -113,7 +119,7 @@ export default function EditReport() {
 
         <div>
           <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Análise</label>
-            <select
+            {/* <select
                 name="type_of_analysis"
                 value={report.type_of_analysis || ""}
                 onChange={handleChange}
@@ -124,7 +130,19 @@ export default function EditReport() {
                 <option value="fonacao">Fonação</option>
                 <option value="prosodia">Prosódia</option>
                 <option value="glotis">Glota</option>
-            </select>
+            </select> */}
+            <MultiSelect
+                value={report.type_of_analysis || []}
+                options={[
+                    { label: 'Articulação', value: 'articulacao' },
+                    { label: 'Fonação', value: 'fonacao' },
+                    { label: 'Prosódia', value: 'prosodia' },
+                    { label: 'Glota', value: 'glotis' }
+                ]}
+                onChange={(e) => setReport((prev) => ({ ...prev, type_of_analysis: e.value }))}
+                className="w-full"
+                placeholder="Selecione os tipos de análise"
+            />
         </div>
 
         <div>

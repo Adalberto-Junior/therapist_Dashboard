@@ -32,11 +32,11 @@ export default function ReportList() {
     const onDelete = async (relId) => {
         if (window.confirm("Tem certeza que deseja eliminar este relatório?")) {
             try {
-                relId_ = relId.$oid || relId; // Garante que relId é uma string
+                const relId_ = relId.$oid || relId; // Garante que relId é uma string
                 await api.delete(`/utente/${relId_}/relatorio/`);
                 setRelatorios(relatorios.filter(rel => rel._id !== relId));
                 alert("Relatório eliminado com sucesso.");
-                window.location.reload(); // Recarrega a página para atualizar a lista
+                // window.location.reload(); // Recarrega a página para atualizar a lista
             } catch (error) {
                 console.error("Erro ao eliminar relatório:", error);
                 alert("Erro ao eliminar relatório. Por favor, tente novamente.");
@@ -68,6 +68,15 @@ export default function ReportList() {
             if (notaEl) notaEl.style.display = originalDisplay || '';
         });
     };
+
+    const tipoDeAnalise = {
+      "articulacao": "Articulação",
+      "fonacao": "Fonação",
+      "glotis": "Glotal",
+      "prosodia": "Prosódia",
+      "glota": "Glota",
+      "reaprendizagem": "Reaprendizagem",
+    }
 
 
 
@@ -129,7 +138,17 @@ export default function ReportList() {
 
             {/* Corpo do relatório */}
             <div className="text-gray-700 dark:text-gray-500 font-serif space-y-4 text-lg leading-relaxed">
-              <p><strong className="dark:text-gray-900">Tipo de Análise:</strong> {rel.type_of_analysis}</p>
+              <p>
+                <strong className="dark:text-gray-900">Tipo de Análise:</strong>{" "}
+                {rel.type_of_analysis?.map((tipo, index) => (
+                    <span
+                    key={index}
+                    className="inline-block bg-gray-200 dark:bg-zinc-600 text-gray-800 dark:text-white px-2 py-1 rounded-full mr-2 text-sm"
+                    >
+                    {tipoDeAnalise[tipo] || tipo}
+                    </span>
+                ))}
+              </p>
               <p><strong className="dark:text-gray-900">Observações Clínicas:</strong><br /> {rel.observations}</p>
               <p><strong className="dark:text-gray-900">Recomendações Terapêuticas:</strong><br /> {rel.recommendations}</p>
               {rel.internal_note && (
