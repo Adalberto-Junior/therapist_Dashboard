@@ -534,9 +534,19 @@ export default function ArticulationResult() {
 
   const radarLabels = ['bbeon', 'bbeoff'];
 
+  const customChartConfig = {
+      ...chartConfig,
+      radar: {
+        ...chartConfig.radar,
+        match: /^avg ([a-zA-Z]+)_/, // versão específica apenas nesta página
+      }
+  };
+
   const allRadarGroupedData = filtered.reduce((acc, item, index) => {
     const staticResult = item.static_result || [];
-    const grouped = groupBBEonBBEoffData(staticResult, chartConfig);
+
+    
+    const grouped = groupBBEonBBEoffData(staticResult, customChartConfig);
 
     Object.entries(grouped).forEach(([type, charts]) => {
       if (!acc[type]) acc[type] = {};
@@ -623,6 +633,7 @@ export default function ArticulationResult() {
                   })}
                 </div>
               </div>
+              {/* Gráficos de Radar */}
               <div className="w-full md:basis-4/5  bg-white dark:bg-zinc-700 p-6 rounded shadow">
                 <h2 className="text-xl font-bold mb-4">Gráficos</h2>
                 <h3 className="text-md font-semibold mb-3">bbeon & bbeoff</h3>
@@ -656,7 +667,7 @@ export default function ArticulationResult() {
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
                         const staticResult = item.static_result || [];
-                        const groupedData = groupNotBBEonBBEoffData(staticResult, chartConfig);
+                        const groupedData = groupNotBBEonBBEoffData(staticResult, customChartConfig);
                         return (
                           <div key={idx} className="mb-6">
                             <h4 className="font-semibold mb-1">Passo {item.step}</h4>

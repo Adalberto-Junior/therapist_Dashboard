@@ -7,7 +7,7 @@ import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx
 import {chartConfig} from "./chartConfiguraction/chartConfig.jsx";
 import {ChartAccordion, DisplayChart} from "./chartConfiguraction/ChartAccordion.jsx";
 import {RadarChart, BarChart, StaticBarChart} from "../../../component/chart.jsx"
-import {groupChartData, groupBBEonBBEoffData, groupNotBBEonBBEoffData} from "./chartConfiguraction/groupChartData.jsx";
+import {groupChartData, groupAllData, groupNotBBEonBBEoffData} from "./chartConfiguraction/groupChartData.jsx";
 
 const keyTranslations = {
     static_result: "Resultados Estáticos",
@@ -198,7 +198,7 @@ export default function ProsodyResult() {
 
   const allRadarGroupedData = filtered.reduce((acc, item, index) => {
     const staticResult = item.static_result || [];
-    const grouped = groupBBEonBBEoffData(staticResult, chartConfig);
+    const grouped = groupAllData(staticResult, chartConfig,"prosody");
 
     Object.entries(grouped).forEach(([type, charts]) => {
       if (!acc[type]) acc[type] = {};

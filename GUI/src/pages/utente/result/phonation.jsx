@@ -237,7 +237,7 @@ export default function PhonotionResult() {
                   <h2 className="text-lg font-semibold mb-3">Dados Numéricos Relevantes</h2>
                   {filtered.map((item, idx) => {
                     const staticResult = item.static_result || [];
-                    const camposImportantes = ["avg Shimmer", "avg Jitter", "avg apq", "avg ppq","avg DF0", "avg DDF0"];
+                    const camposImportantes = ["avg Shimmer", "avg Jitter", "avg apq", "avg ppq","avg DF0", "avg DDF0","avg logE"];
                     const dadosRelevantes = staticResult.filter(obj => camposImportantes.includes(Object.keys(obj)[0]));
 
                     if (dadosRelevantes.length === 0) return null;
@@ -260,7 +260,7 @@ export default function PhonotionResult() {
                                 <tr key={idxs} className="odd:bg-gray-100 odd:dark:bg-gray-300">
                                   <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{translateKey(chave)}</td>
                                   <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">
-                                    {typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}
+                                    {typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(3) : 'N/A'}
                                   </td>
                                 </tr>
                               );
@@ -285,21 +285,8 @@ export default function PhonotionResult() {
                       />
                     </div>
                   ))}
-                {/* </div> */}
-                {/* <h3 className="text-md font-semibold mb-3">Radar: bbeon & bbeoff</h3>
-                {filtered.map((item, idx) => {
-                  const staticResult = item.static_result || [];
-                  const groupedData = groupBBEonBBEoffData(staticResult, chartConfig);
-                  
-                  return (
-                    <div key={idx} className="mb-6 items-center">
-                      <h4 className="font-semibold mb-1">Passo {idx + 1}</h4>
-                      <DisplayChart groupedData={groupedData} filterRadarOnly={false} labels={radarLabels} />
-                    </div>
-                  );
-                })} */}
-
-                <Accordion defaultActiveKey="x" className="mt-6">
+                {/* Outros Gráficos de Radar */}
+                {/* <Accordion defaultActiveKey="x" className="mt-6">
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>Outros Gráficos de Radar</Accordion.Header>
                     <Accordion.Body>
@@ -315,7 +302,7 @@ export default function PhonotionResult() {
                       })}
                     </Accordion.Body>
                   </Accordion.Item>
-                </Accordion>
+                </Accordion> */}
 
                 <Accordion defaultActiveKey="x" className="mt-6">
                   <Accordion.Item eventKey="0">
@@ -323,7 +310,7 @@ export default function PhonotionResult() {
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
                         const nonStaticResult = item.no_static_result || [];
-                        const groupedData = groupChartData([], nonStaticResult, chartConfig);
+                        const groupedData = groupChartData([], nonStaticResult, chartConfig, 40);
                         console.log("grouped data: ", groupedData)
                         return (
                           <div key={idx} className="mb-6">

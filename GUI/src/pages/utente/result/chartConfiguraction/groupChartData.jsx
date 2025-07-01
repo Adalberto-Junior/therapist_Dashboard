@@ -22,7 +22,7 @@
 //   return result;
 // }
 
-export function groupChartData(staticData = [], nonStaticData = [], config) {
+export function groupChartData(staticData = [], nonStaticData = [], config, ms = 20) {
   const result = {};
   Object.keys(config).forEach(chartType => {
     result[chartType] = {};
@@ -81,7 +81,7 @@ export function groupChartData(staticData = [], nonStaticData = [], config) {
         if (!result[chartType][group]) result[chartType][group] = [];
 
         const formattedData = valueArray.map((entry, i) => {
-          const timeLabel = `${i * 20} ms`; // 20ms por deslocamento
+          const timeLabel = `${i * ms} ms`; // 20ms por deslocamento
           if (typeof entry === "object" && entry !== null && "label" in entry && "value" in entry) {
             return { axis: timeLabel, value: parseFloat(entry.value) };
           } else {
@@ -223,26 +223,137 @@ export function groupPhonactionData(staticData = [], config) {
     result[chartType] = {};
   });
 
- 
-  // Processar dados estáticos (ex: radar)
   staticData.forEach(item => {
     Object.entries(item).forEach(([key, value]) => {
       Object.entries(config).forEach(([chartType, { match }]) => {
         const matchResult = key.match(match);
-        if (matchResult && chartType === "radar") {
-          let group = matchResult[1];
-          if (group === "avg Shimmer" || group === "avg Jitter" || group === "avg apq" || group === "avg ppq") {
-            group = "ShimJitAPQPPQ"; // Agrupar ambos em um único grupo
-          }
-          key = key.replace(/avg|Avg/, ""); // Normalizar chave
+        if (!matchResult) return;
 
-          if (group === "ShimJitAPQPPQ") {
-            if (!result[chartType][group]) result[chartType][group] = [];
-            result[chartType][group].push({ axis: key, value: parseFloat(value) });
+        if (chartType === "radar") {
+          let group = matchResult[2];
+          
+          // Agrupamento especial
+          if (["avg Shimmer","Shimmer", "avg Jitter", "Jitter", "avg apq", "apq", "avg ppq", "ppq", "DF0","avg DF0", "avg DDF0","DDF0","avg logE","logE"].includes(group)) {
+            group = "Shimmer & Jitter & apq & ppq & DF0 & DDF0 & logE"; // Agrupar todos esses em um único grupo
+          }else{
+            return; // Ignorar outros grupos
           }
+
+          // Normalização da chave para axis
+          let axis = key.replace(/avg|Avg/, "").trim(); // remove avg e espaços
+          const numericValue = parseFloat(value);
+          if (isNaN(numericValue)) return;
+
+          if (!result[chartType][group]) {
+            result[chartType][group] = [];
+          }
+
+          result[chartType][group].push({
+            axis,
+            value: numericValue
+          });
+        }
+
+        // Exemplo de uso para linha (se precisares disso também)
+        // if (chartType === "line") {
+        //   const group = matchResult[1]; // ou outro agrupador
+        //   const numericValue = parseFloat(value);
+        //   if (isNaN(numericValue)) return;
+
+        //   if (!result[chartType][group]) {
+        //     result[chartType][group] = [];
+        //   }
+
+        //   result[chartType][group].push({
+        //     name: key,
+        //     value: numericValue
+        //   });
+        // }
+      });
+    });
+  });
+  return result;
+}
+
+export function groupAllData(staticData = [], config,typeOfProcessing= "prosody") {
+  const result = {};
+  Object.keys(config).forEach(chartType => {
+    result[chartType] = {};
+  });
+
+  if (typeOfProcessing === "fonactionRadar") {
+   staticData.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      Object.entries(config).forEach(([chartType, { match }]) => {
+        const matchResult = key.match(match);
+        if (!matchResult) return;
+
+        if (chartType === "radar") {
+          let group = matchResult[1];
+
+          // Agrupamento especial
+          if (["avg Shimmer","Shimmer", "avg Jitter", "Jitter", "avg apq", "apq", "avg ppq", "ppq", "DF0","avg DF0", "avg DDF0","DDF0","avg logE","logE"].includes(group)) {
+            group = "Shimmer & Jitter & apq & ppq & DF0 & DDF0 & logE"; // Agrupar todos esses em um único grupo
+          }else{
+            return; // Ignorar outros grupos
+          }
+
+          // Normalização da chave para axis
+          let axis = key.replace(/avg|Avg/, "").trim(); // remove avg e espaços
+          const numericValue = parseFloat(value);
+          if (isNaN(numericValue)) return;
+
+          if (!result[chartType][group]) {
+            result[chartType][group] = [];
+          }
+
+          result[chartType][group].push({
+            axis,
+            value: numericValue
+          });
         }
       });
     });
   });
+  }else if (typeOfProcessing === "prosody") {
+    staticData.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      Object.entries(config).forEach(([chartType, { match }]) => {
+        const matchResult = key.match(match);
+        if (!matchResult) return;
+
+        if (chartType === "radar") {
+          let group = matchResult[2];
+          console.log("Match Result:", matchResult);
+
+          // Agrupamento especial
+          if (["F0avg", "F0std", "F0max", "Evoiced", "stdEvoiced", "lastEunvoiced", "Vrate", "durvoiced", "stddurpause", "stddurunvoiced", "durunvoiced", "stddurvoiced"].includes(group)) {
+            group = "F0 & Evoiced & Vrate & durvoiced & durpause & durunvoiced"; 
+          }else{
+            return; // Ignorar outros grupos
+          }
+          console.log("Group:", group);
+
+          // Normalização da chave para axis
+          // let axis = key.replace(/avg|Avg/, "").trim(); // remove avg e espaços
+          let axis = key.trim(); // remove avg, espaços e underscores
+          
+          const numericValue = parseFloat(value);
+          if (isNaN(numericValue)) return;
+
+          if (!result[chartType][group]) {
+            result[chartType][group] = [];
+          }
+
+          result[chartType][group].push({
+            axis,
+            value: numericValue
+          });
+        }
+      });
+    });
+  });
+  }
+
   return result;
 }
