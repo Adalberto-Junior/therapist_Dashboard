@@ -37,7 +37,7 @@ export default function FloatingForm({ onClose }) {
     leitura: ['Título', 'Texto', 'Descrição', 'ID'],
     discurso: ['Questão', 'Descrição','ID'],
     diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
-    novo: ['label', 'valor','ID']
+    novo: ["descrição",'label', 'valor','ID']
   };
 
   const camposPorTipoEn = {
@@ -46,7 +46,7 @@ export default function FloatingForm({ onClose }) {
     leitura: ['title', 'text', 'description','ID'],
     discurso: ['question', 'description','ID'],
     diadococinesia: ['typeOfConsonant', 'syllables', 'description','ID'],
-    novo: ['label', 'value','ID']
+    novo: ['description','label', 'value','ID']
   };
 
    const mapTipo = (tipo) => {
@@ -59,15 +59,19 @@ export default function FloatingForm({ onClose }) {
     }[tipo] || tipo;
   };
 
-  const appendStep = () => {
+ const appendStep = () => {
     if (type === 'novo') {
-        append({ label: '', valor: '' });
+      append({
+        description: '',
+        id: '',
+        pairs: [{ label: '', value: '' }] // novo array dinâmico
+      });
     } else {
-        const campos = camposPorTipo[type] || [];
-        const novoStep = Object.fromEntries(campos.map(key => [key, '']));
-        append(novoStep);
+      const campos = camposPorTipo[type] || [];
+      const novoStep = Object.fromEntries(campos.map(key => [key, '']));
+      append(novoStep);
     }
-  };
+};
 
   const options = [
     { label: 'Articulação', value: 'articulation' },
@@ -113,31 +117,17 @@ export default function FloatingForm({ onClose }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* ID do Utente */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">ID do Utente</label>
+            {/* <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">ID do Utente</label> */}
             <input
               type="text"
               {...register("userId", { required: "Id do utilizador é obrigatório." })}
             //    className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
              className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
               readOnly
+              hidden
             />
             <ErrorMessage errors={errors} name="userId" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
           </div>
-
-          {/* Email do Utente: Opcional */}
-          {/* <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Email do Utente</label>
-            <input
-              type="email"
-              placeholder='Opcional'
-              {...register("email", {pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Digite um email válido."
-                }})}
-             className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-            />
-            <ErrorMessage errors={errors} name="email" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-          </div> */}
 
           {/* Tipo de Exercício */}
           <div>
@@ -198,41 +188,6 @@ export default function FloatingForm({ onClose }) {
           {/* Tipo de Processamento */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-            {/* <select
-              multiple
-              {...register('typeOfProcessing', {
-                required: "Selecione pelo menos um tipo de Processamento.",
-                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
-              })}
-              className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white h-40"
-            >
-              <option value="articulation">Articulação</option>
-              <option value="phonation">Fonação</option>
-              <option value="glotta">Glota</option>
-              <option value="prosody">Prosódia</option>
-              <option value="replearning">Reaprendizagem</option>
-            </select> */}
-            {/* <MultiSelect
-              {...register('typeOfProcessing', {
-                required: "Selecione pelo menos um tipo de Processamento.",
-                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
-              })}
-              options={options}
-              //  className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white h-40"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Selecione os tipos de processamento"
-              value={watch('typeOfProcessing')}
-              onChange={(e) => {
-                const value = e.value;
-                // Se for uma string, converte para array 
-                if (typeof value === "string") {
-                  setValue('typeOfProcessing', [value]);
-                } else {
-                  setValue('typeOfProcessing', value);
-                }
-              }}
-            /> */}
             <Controller
               name="typeOfProcessing"
               control={control}
@@ -271,6 +226,13 @@ export default function FloatingForm({ onClose }) {
                                 {type === 'novo' ? (
                                     <>
                                         <div className="mb-2">
+                                            <label className="block text-sm">Descrição:</label>
+                                            <input
+                                                {...register(`steps.${index}.description`, { required: true })}
+                                                className="w-full p-2 border rounded dark:bg-zinc-600"
+                                            />
+                                        </div>
+                                        <div className="mb-2">
                                             <label className="block text-sm">Label:</label>
                                             <input
                                                 {...register(`steps.${index}.label`, { required: true })}
@@ -284,23 +246,15 @@ export default function FloatingForm({ onClose }) {
                                                 className="w-full p-2 border rounded dark:bg-zinc-600"
                                             />
                                         </div>
+                                        <div className="mb-2">
+                                            <label className="block text-sm">ID:</label>
+                                            <input
+                                                {...register(`steps.${index}.id`, { required: true })}
+                                                className="w-full p-2 border rounded dark:bg-zinc-600"
+                                            />
+                                        </div>
                                     </>
                                 ) : (
-                                    // (camposPorTipo[type] || []).map((campo) => (
-                                    //     <div className="mb-2" key={campo}>
-                                    //         <label className="block text-sm capitalize">{campo}:</label>
-                                    //         {campo === 'Texto' ? (
-                                    //           <textarea
-                                    //             className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                    //             {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
-                                    //         ></textarea>
-                                    //         ):(<input
-                                    //             {...register(`steps.${index}.${camposPorTipoEn[type]?.[camposPorTipo[type].indexOf(campo)]}`, { required: true })}
-                                    //             className="w-full p-2 border rounded dark:bg-zinc-600"
-                                    //         />
-                                    //         )}
-                                    //     </div>
-                                    // ))
                                     (camposPorTipo[type] || []).map((campo, campoIdx) => {
                                         const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
 
@@ -344,6 +298,122 @@ export default function FloatingForm({ onClose }) {
              </>
             )}
           </div>
+          
+          {/* <div className="mb-4">
+          {type !== null && (
+            <>
+              {fields.length > 0 && (
+                <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                  <h3 className="text-lg font-semibold mb-2">Passos</h3>
+                  {fields.map((field, index) => {
+                    const pairName = `steps.${index}.pairs`;
+                    const {
+                      fields: pairFields,
+                      append: appendPair,
+                      remove: removePair
+                    } = useFieldArray({
+                      control,
+                      name: pairName
+                    });
+
+                    return (
+                      <div key={field.id} className="mb-4 border p-2 rounded">
+                        {type === 'novo' ? (
+                          <>
+                            {/* Descrição e ID fixos *}
+                            <div className="mb-2">
+                              <label className="block text-sm">Descrição:</label>
+                              <input
+                                {...register(`steps.${index}.description`, { required: true })}
+                                className="w-full p-2 border rounded dark:bg-zinc-600"
+                              />
+                            </div>
+                            <div className="mb-2">
+                              <label className="block text-sm">ID:</label>
+                              <input
+                                {...register(`steps.${index}.id`, { required: true })}
+                                className="w-full p-2 border rounded dark:bg-zinc-600"
+                              />
+                            </div>
+
+                           
+                            <div className="mb-2">
+                              <label className="block text-sm font-medium">Pares Label/Value:</label>
+                              {pairFields.map((pair, pairIndex) => (
+                                <div key={pair.id} className="flex gap-2 mb-2">
+                                  <input
+                                    {...register(`steps.${index}.pairs.${pairIndex}.label`, { required: true })}
+                                    placeholder="Label"
+                                    className="w-1/2 p-2 border rounded dark:bg-zinc-600"
+                                  />
+                                  <input
+                                    {...register(`steps.${index}.pairs.${pairIndex}.value`, { required: true })}
+                                    placeholder="Value"
+                                    className="w-1/2 p-2 border rounded dark:bg-zinc-600"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removePair(pairIndex)}
+                                    className="text-red-500"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() => appendPair({ label: '', value: '' })}
+                                className="text-blue-500 mt-2"
+                              >
+                                + Adicionar Par
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          (camposPorTipo[type] || []).map((campo, campoIdx) => {
+                            const fieldName = camposPorTipoEn[type]?.[campoIdx];
+
+                            return (
+                              <div className="mb-2" key={campo}>
+                                <label className="block text-sm capitalize">{campo}:</label>
+                                {campo === 'Texto' ? (
+                                  <textarea
+                                    {...register(`steps.${index}.${fieldName}`, { required: true })}
+                                    className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                  ></textarea>
+                                ) : (
+                                  <input
+                                    {...register(`steps.${index}.${fieldName}`, { required: true })}
+                                    className="w-full p-2 border rounded dark:bg-zinc-600"
+                                  />
+                                )}
+                              </div>
+                            );
+                          })
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="mt-2 text-red-600 hover:underline rounded"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={appendStep}
+                    className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                  >
+                    Adicionar mais passos
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div> */}
+
 
           {/* Botões */}
           <div className="flex flex-col gap-2 mt-4">
