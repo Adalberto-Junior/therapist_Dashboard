@@ -156,6 +156,10 @@ export default function ReportList() {
                   <strong>Nota Interna:</strong> {rel.internal_note}
                 </p>
               )}
+              <p><strong className="dark:text-gray-900">Status:</strong> {rel.status}</p>
+              <p><strong className="dark:text-gray-900">Visualizações:</strong> {rel.views || 0}</p>
+              <p><strong className="dark:text-gray-900">Criado em:</strong> {new Date(rel.created_at).toLocaleDateString()}</p>
+              {/* <p><strong className="dark:text-gray-900">Utente ID:</strong> {rel.utente_id.$oid || rel.utente_id}</p> */}
 
               {/* Assinatura fictícia */}
             {/* <div className="mt-12 text-right">

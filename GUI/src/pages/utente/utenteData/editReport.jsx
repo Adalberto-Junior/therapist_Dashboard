@@ -36,12 +36,17 @@ export default function EditReport() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setReport((prev) => ({ ...prev, [name]: value }));
+    console.log(report);
+    
     
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!report.views) {
+        report.views = 0; // Define views como 0 se não estiver definido
+      }
       await api.put(`/utente/relatorio/${id_}`, report);
       alert("Relatório atualizado com sucesso!");
       navigate(`/utente/${id}/relatorio`); 
@@ -175,6 +180,31 @@ export default function EditReport() {
                 className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
                 rows="3"
             ></textarea>
+        </div>
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Status</label>
+            <select
+                name="status"
+                value={report.status || ""}
+                onChange={handleChange}
+                className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
+            >
+                <option value="">Selecione...</option>
+                <option value="rascunho">Rascunho</option>
+                <option value="finalizado">Finalizado</option>
+            </select>
+        </div>
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Visualizações</label>
+            <input
+                type="number"
+                name="views"
+                value={report.views || 0}
+                onChange={handleChange}
+                className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
+                min="0"
+                //disabled // Desabilitado para edição, pois é gerenciado automaticamente
+            />
         </div>
 
         <div className="flex items-center">

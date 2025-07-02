@@ -966,6 +966,7 @@ def update_relatorio(reportId):
     internal_note = data.get("internal_note", "")
     status = data["status"]
     analysis_date = data["analysis_date"]
+    views = data["views"]
     created_at = data["created_at"]
 
     health_user_report = utente_model.get_health_user_relatory_by_id(reportId)
@@ -983,6 +984,7 @@ def update_relatorio(reportId):
         internal_note=internal_note,
         status=status,
         analysis_date=analysis_date,
+        views=views,
         created_at=created_at
     )
     

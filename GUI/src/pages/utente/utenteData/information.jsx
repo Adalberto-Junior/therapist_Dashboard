@@ -120,7 +120,8 @@ export default function HealthUserInformation() {
                 ...data,
                 utente_id: id,
                 terapeuta_id: "",
-                status: "finalizado",
+                status: data.status,
+                views: 0, // Inicializa views como 0
                 created_at: new Date().toISOString(),
             };
 
@@ -501,6 +502,19 @@ export default function HealthUserInformation() {
                                             className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
                                         ></textarea>
                                     </div>
+                                    <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Status do Relatório</label>
+                                        <select
+                                            name="status"
+                                            {...register("status", { required: true })}
+                                            required
+                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                        >
+                                            <option value="rascunho">Rascunho</option>
+                                            <option value="finalizado">Finalizado</option>
+                                        </select>
+                                    </div>
+
                                     <div className="flex justify-between mt-4">
                                         <button
                                             type="submit"

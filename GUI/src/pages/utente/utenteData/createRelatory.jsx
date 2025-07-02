@@ -14,6 +14,7 @@ export default function RelatorioAnaliseForm({ utenteId, terapeutaId, onSave }) 
       utente_id: utenteId,
       terapeuta_id: terapeutaId,
       status: "finalizado",
+      views: 0,
       created_at: new Date().toISOString(),
     };
 
@@ -76,6 +77,13 @@ export default function RelatorioAnaliseForm({ utenteId, terapeutaId, onSave }) 
           rows={2}
           {...register("internal_note")}
         />
+        <Select
+          label="Status do Relatório"
+          {...register("status", { required: true })}
+        >
+          <option value="rascunho">Rascunho</option>
+          <option value="finalizado">Finalizado</option>
+        </Select>
 
         <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
           Salvar Relatório
