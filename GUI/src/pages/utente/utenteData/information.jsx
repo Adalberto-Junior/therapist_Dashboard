@@ -20,6 +20,9 @@ export default function HealthUserInformation() {
     const [report, setReport] = useState({ title: '', observations: '', recommendations: '', internal_note: '' });
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const { register, handleSubmit, reset, control } = useForm();
+    const [tiposSelecionados, setTiposSelecionados] = useState([]);
+    const [comentariosAnalises, setComentariosAnalises] = useState({});
+
     
 
 
@@ -36,6 +39,17 @@ export default function HealthUserInformation() {
         };
         fetchData();
     }, [id]);
+
+    const formatarTipo = (tipo) => {
+        const mapa = {
+            articulacao: "Articulação",
+            fonacao: "Fonação",
+            prosodia: "Prosódia",
+            glota: "Glota",
+            reaprendizagem: "Reaprendizagem",
+        };
+        return mapa[tipo] || tipo;
+    };
 
 
 
@@ -115,9 +129,15 @@ export default function HealthUserInformation() {
                 alert("Utente não encontrado.");
                 return;
             }
-            
+
+            const analises = tiposSelecionados.map((tipo) => ({
+                tipo,
+                resultado: comentariosAnalises[tipo] || "",
+            }));
+                        
             const payload = {
                 ...data,
+                analises,
                 utente_id: id,
                 terapeuta_id: "",
                 status: data.status,
@@ -134,22 +154,6 @@ export default function HealthUserInformation() {
             alert("Erro ao enviar relatório.");
             return;
         }
-           
-            // const response = await fetch("/api/relatorios", {
-            // method: "POST",
-            // headers: { "Content-Type": "application/json" },
-            // body: JSON.stringify(payload),
-            // });
-
-            // if (response.ok) {
-            // const result = await response.json();
-            // onSave?.(result);
-            // reset();
-            // alert("Relatório salvo com sucesso!");
-            // setMostrarFormulario(false);
-            // } else {
-            // alert("Erro ao salvar relatório.");
-            // }
     };
     
 
@@ -408,111 +412,122 @@ export default function HealthUserInformation() {
                             <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 py-3 w-full max-w-lg">
                                 <h2 className="text-2xl font-semibold mb-4 text-center dark:text-white">Novo Relatório</h2>
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Título</label>
-                                        <input
-                                            type="text"
-                                            name="title"
-                                            placeholder="Ex: Análise de Fonação - 10/06/2025"
-                                            {...register("title", { required: true })}
-                                            required
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        />
-                                    </div>
-                                    <div>
-                                       <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Análise</label>
-                                        {/* <select
-                                            name="type_of_analysis"
-                                            {...register("type_of_analysis", { required: true })}
-                                            required
-                                            multiple
-                                            {...register('type_of_analysis', {
-                                                required: "Selecione pelo menos um tipo de Processamento aplicado.",
-                                                validate: value => value.length > 0 || "Selecione pelo menos um tipo."
-                                            })}
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        >
-                                            <option value="articulacao">Articulação</option>
-                                            <option value="fonacao">Fonação</option>
-                                            <option value="prosodia">Prosódia</option>
-                                            <option value="glotis">Glota</option>
-                                        </select> */}
-                                        <Controller
-                                            name="type_of_analysis"
-                                            control={control}
-                                            rules={{ required: "Selecione pelo menos um tipo de análise." }}
-                                            render={({ field }) => (
-                                                <MultiSelect
-                                                    {...field}
-                                                    options={[
-                                                        { label: 'Articulação', value: 'articulacao' },
-                                                        { label: 'Fonação', value: 'fonacao' },
-                                                        { label: 'Prosódia', value: 'prosodia' },
-                                                        { label: 'Glota', value: 'glota' },
-                                                        {label: 'Reaprendizagem', value: 'reaprendizagem'},
-                                                        
+                                    <div className="max-h-[70vh] overflow-y-auto pr-2">
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Título</label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                placeholder="Ex: Análise de Fonação - 10/06/2025"
+                                                {...register("title", { required: true })}
+                                                required
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            />
+                                        </div>
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Análise</label>      
+                                            <Controller
+                                                name="type_of_analysis"
+                                                control={control}
+                                                rules={{ required: "Selecione pelo menos um tipo de análise." }}
+                                                render={({ field }) => (
+                                                    <MultiSelect
+                                                        {...field}
+                                                        value={tiposSelecionados}
+                                                        onChange={(e) => {
+                                                            const selected = e.value || [];
+                                                            setTiposSelecionados(selected);
+                                                            field.onChange(selected);
+                                                        }}
+                                                        options={[
+                                                            { label: 'Articulação', value: 'articulacao' },
+                                                            { label: 'Fonação', value: 'fonacao' },
+                                                            { label: 'Prosódia', value: 'prosodia' },
+                                                            { label: 'Glota', value: 'glota' },
+                                                            { label: 'Reaprendizagem', value: 'reaprendizagem' }
+                                                        ]}
+                                                        filter
+                                                        display="chip"
+                                                        placeholder="Selecione os tipos de análise"
+                                                        className="w-full h-13 border"
+                                                    />
 
-                                                    ]}
-                                                    filter
-                                                    display="chip"
-                                                    placeholder="Selecione os tipos de análise"
-                                                    className="w-full h-13 border"
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Data da Análise</label>
-                                        <input
-                                            type="date"
-                                            name="analysis_date"
-                                            {...register("analysis_date", { required: true })}
-                                            required
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Observações Principais</label>
-                                        <textarea
-                                            name="observations"
-                                            rows="5"
-                                            {...register("observations")}
-                                            placeholder="Descreva os principais achados da análise..."
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        ></textarea>
-                                    </div>
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Recomendações ao Paciente</label>
-                                        <textarea
-                                            name="recommendations"
-                                            rows="5"
-                                            {...register("recommendations")}
-                                            placeholder="Sugira exercícios ou hábitos para a próxima semana..."
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        ></textarea>
-                                    </div>
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nota Confidencial (opcional)</label>
-                                        <textarea
-                                            name="internal_note"
-                                            rows="2"
-                                            {...register("internal_note")}
-                                            placeholder="Visível apenas para o terapeuta."
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        ></textarea>
-                                    </div>
-                                    <div>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Status do Relatório</label>
-                                        <select
-                                            name="status"
-                                            {...register("status", { required: true })}
-                                            required
-                                            className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
-                                        >
-                                            <option value="rascunho">Rascunho</option>
-                                            <option value="finalizado">Finalizado</option>
-                                        </select>
+                                                )}
+                                            />
+
+                                            {tiposSelecionados.map((tipo) => (
+                                                <div key={tipo} className="mt-4">
+                                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">
+                                                    Comentário sobre {formatarTipo(tipo)}
+                                                    </label>
+                                                    <textarea
+                                                    rows="3"
+                                                    placeholder={`Descreva a análise de ${tipo}...`}
+                                                    className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                                    value={comentariosAnalises[tipo] || ""}
+                                                    onChange={(e) =>
+                                                        setComentariosAnalises((prev) => ({
+                                                        ...prev,
+                                                        [tipo]: e.target.value,
+                                                        }))
+                                                    }
+                                                    ></textarea>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Data da Análise</label>
+                                            <input
+                                                type="date"
+                                                name="analysis_date"
+                                                {...register("analysis_date", { required: true })}
+                                                required
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Observações Principais</label>
+                                            <textarea
+                                                name="observations"
+                                                rows="5"
+                                                {...register("observations")}
+                                                placeholder="Descreva os principais achados da análise..."
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Recomendações ao Paciente</label>
+                                            <textarea
+                                                name="recommendations"
+                                                rows="5"
+                                                {...register("recommendations")}
+                                                placeholder="Sugira exercícios ou hábitos para a próxima semana..."
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nota Confidencial (opcional)</label>
+                                            <textarea
+                                                name="internal_note"
+                                                rows="2"
+                                                {...register("internal_note")}
+                                                placeholder="Visível apenas para o terapeuta."
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Status do Relatório</label>
+                                            <select
+                                                name="status"
+                                                {...register("status", { required: true })}
+                                                required
+                                                className="w-full border rounded p-2 dark:bg-zinc-700 dark:text-white"
+                                            >
+                                                <option value="rascunho">Rascunho</option>
+                                                <option value="finalizado">Finalizado</option>
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div className="flex justify-between mt-4">
