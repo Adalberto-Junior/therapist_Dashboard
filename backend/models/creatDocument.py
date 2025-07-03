@@ -146,7 +146,7 @@ class CreatDocumentToDB:
                 }
         return self.data
 
-    def relatoryDocument(self, title, type_of_analysis,observations,recommendations,internal_note, status,analysis_date,created_at,utenteId,therapist,views = 0):
+    def relatoryDocument(self, title, type_of_analysis,observations,recommendations,internal_note, status,analysis_date,created_at,utenteId,therapist,analysis,views = 0):
         """
         Create a document for the relatory.
         :param title: The title of the relatory.
@@ -159,6 +159,7 @@ class CreatDocumentToDB:
         :param created_at: The date of creation of the relatory.
         :param utenteId: The id of the user (utente).
         :param therapist: The id of the therapist.
+        :param analysis: The comentary of the analysis of the relatory.
         :param views: The number of views of the relatory, default is 0.
         :type views: int
         :return: JSON string of the document.
@@ -176,6 +177,7 @@ class CreatDocumentToDB:
                     "created_at": created_at,
                     "utente_id": self.ensure_objectid(utenteId[0]) if isinstance(utenteId, tuple) else self.ensure_objectid(utenteId),  # utenteId is the id of the user (utente)
                     "therapist": self.ensure_objectid(therapist),
+                    "analysis": analysis,  # analysis is the comentary of the analysis of the relatory
                     "views": views,  # views is the number of views of the relatory
                 }
         return self.data

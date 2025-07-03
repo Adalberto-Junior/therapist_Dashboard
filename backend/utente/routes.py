@@ -848,6 +848,7 @@ def generate_relatorio(utente_id):
     analysis_date = data["analysis_date"]
     # created_at = datetime.utcnow()
     created_at = data["created_at"]
+    analysis = data["analises"]
 
     document = CreatDocumentToDB()
     doc = document.relatoryDocument(
@@ -860,7 +861,8 @@ def generate_relatorio(utente_id):
         internal_note=internal_note,
         status=status,
         analysis_date=analysis_date,
-        created_at=created_at
+        created_at=created_at,
+        analysis=analysis
     )
     relatory = utente_model.create_health_user_relatory(doc)
     if not relatory:
@@ -968,6 +970,7 @@ def update_relatorio(reportId):
     analysis_date = data["analysis_date"]
     views = data["views"]
     created_at = data["created_at"]
+    analysis = data["analises"]
 
     health_user_report = utente_model.get_health_user_relatory_by_id(reportId)
     if not health_user_report:
@@ -985,7 +988,8 @@ def update_relatorio(reportId):
         status=status,
         analysis_date=analysis_date,
         views=views,
-        created_at=created_at
+        created_at=created_at,
+        analysis=analysis
     )
     
     relatory = utente_model.update_health_user_relatory(reportId, doc)

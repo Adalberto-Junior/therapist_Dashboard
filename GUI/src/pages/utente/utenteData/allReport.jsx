@@ -78,6 +78,17 @@ export default function ReportList() {
       "reaprendizagem": "Reaprendizagem",
     }
 
+    const formatarTipo = (tipo) => {
+        const mapa = {
+            articulacao: "Articulação",
+            fonacao: "Fonação",
+            prosodia: "Prosódia",
+            glota: "Glota",
+            reaprendizagem: "Reaprendizagem",
+        };
+        return mapa[tipo] || tipo;
+    };
+
 
 
     if (loading){
@@ -150,6 +161,20 @@ export default function ReportList() {
                 ))}
               </p>
               <p><strong className="dark:text-gray-900">Observações Clínicas:</strong><br /> {rel.observations}</p>
+              <p>
+                <strong className="dark:text-gray-900">Comentários da Análise:</strong>{" "}
+                {rel.analysis?.map((comentario,index) =>(
+                  <ul
+                  key={index}
+                  //  className="text-sm italic dark:text-zinc-500 nota-interna"
+                  >
+                    <li>
+                      <strong className="dark:text-gray-700">{formatarTipo(comentario.tipo)}: </strong>{comentario.resultado}
+                    </li>
+                  </ul>
+                ))}
+
+              </p>
               <p><strong className="dark:text-gray-900">Recomendações Terapêuticas:</strong><br /> {rel.recommendations}</p>
               {rel.internal_note && (
                 <p className="text-sm italic dark:text-zinc-500 nota-interna">
