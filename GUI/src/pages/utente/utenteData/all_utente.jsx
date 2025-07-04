@@ -75,21 +75,21 @@ export default function AllUtente() {
         // }
     };
 
-    if (loading) {
+    if (loading){
         return(
          <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-            <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Loading...</p>
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
         </div>
         );
-    };
-
+    }
     if (error) {
          return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Error: {error.message}</p>
+                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
             </div>
          ) 
-    };
+    }
+    
     if (utentes.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">

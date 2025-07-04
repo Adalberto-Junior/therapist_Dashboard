@@ -15,7 +15,7 @@ export default function LoginForm () {
       const response = await api.post("/auth/login", data);
       localStorage.setItem("token", response.data.token);
       
-      navigate("/utente"); 
+      navigate("/"); 
       window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);

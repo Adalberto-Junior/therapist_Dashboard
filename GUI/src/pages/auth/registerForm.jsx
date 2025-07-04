@@ -19,7 +19,7 @@ export default function RegisterForm () {
       localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
       
       alert("Utilizador registado com sucesso!");
-      navigate("/utente"); 
+      navigate("/"); 
       window.location.reload(); // Recarrega a página para refletir o estado autenticado
 
     } catch (error) {

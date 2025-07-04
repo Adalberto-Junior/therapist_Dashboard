@@ -409,7 +409,9 @@ export default function HealthUserInformation() {
                     )} */}
                     {mostrarFormulario && (
                         <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
-                            <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 py-3 w-full max-w-lg">
+                            <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+
+                            {/* <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 py-3 w-full max-w-lg"> */}
                                 <h2 className="text-2xl font-semibold mb-4 text-center dark:text-white">Novo Relatório</h2>
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                                     <div className="max-h-[70vh] overflow-y-auto pr-2">

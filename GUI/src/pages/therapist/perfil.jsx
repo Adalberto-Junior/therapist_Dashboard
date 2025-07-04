@@ -264,9 +264,20 @@ export default function Profile() {
   const tarefasAtivas = notasOrdenadas.filter(n => !n.done);
   const tarefasFeitas = notasOrdenadas.filter(n => n.done);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">A carregar...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">Erro: {error.message}</div>;
-
+  if (loading){
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    }
+  if (error) {
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+              <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
+          </div>
+        ) 
+  }
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 text-black dark:text-white p-6">
       <div className="container mx-auto max-w-4xl mt-10 p-5 bg-white dark:bg-zinc-800 rounded-lg shadow-md">
@@ -276,6 +287,11 @@ export default function Profile() {
             Logout
           </button>
         </div>
+        <button onclick="toggleTheme()" id="theme-toggle" class="flex items-center gap-2 px-4 py-2 rounded shadow-md bg-gray-200 dark:bg-zinc-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
+          <span id="theme-icon">🌞</span>
+          <span class="text-sm">Alternar Modo</span>
+        </button>
+
 
         {perfil && (
           <div className="grid grid-cols-2 gap-4 mb-8">
@@ -286,7 +302,7 @@ export default function Profile() {
           </div>
         )}
 
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h2 className="text-2xl font-semibold mb-4">Nova Tarefa</h2>
           <div className="space-y-4">
             <textarea
@@ -358,33 +374,6 @@ export default function Profile() {
         </div>
 
         <div className="mt-8">
-          {/* <Accordion defaultActiveKey="0">
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>Tarefas Pendentes</Accordion.Header>
-              <Accordion.Body>
-                <ul className="space-y-4">
-                  {tarefasAtivas.map(nota => (
-                    <li key={nota._id} className={`border-l-4 p-4 rounded shadow-md dark:bg-zinc-700 ${nota.priority === 'alta' ? 'border-red-500' : nota.priority === 'média' ? 'border-yellow-500' : 'border-green-500'}`}>
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold capitalize">Prioridade: {nota.priority}</span>
-                        <input
-                          type="checkbox"
-                          checked={nota.done}
-                          onChange={() => handleToggleDone(nota)}
-                          className="w-5 h-5"
-                        />
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-300">
-                        {nota.dataExecucao ? `Para: ${new Date(nota.dataExecucao).toLocaleDateString()}` : 'Sem data'} | Categoria: {nota.category || 'Não definida'}
-                      </div>
-                      <p className="mt-2 whitespace-pre-line">{nota.note || nota.texto}</p>
-                    </li>
-                  ))}
-                </ul>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion> */}
-
           <h2 className="text-xl font-semibold mt-8 mb-2">Tarefas Concluídas</h2>
           <Accordion defaultActiveKey="0" className="mb-6">
             <Accordion.Item eventKey="0">
@@ -415,7 +404,7 @@ export default function Profile() {
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
-        </div>
+        </div> */}
       </div>
     </div>
   );

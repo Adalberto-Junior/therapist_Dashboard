@@ -483,20 +483,21 @@ export default function EditarExercicioForm () {
     //     setType(tipoSelecionado);
     // }, [tipoSelecionado]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Carregando...</p>
-            </div>
+    if (loading){
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+        </div>
         );
     }
     if (error) {
-        return (
+         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Erro: {error}</p>
+                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
             </div>
-        );
+         ) 
     }
+
     if (!exercicio) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
@@ -510,7 +511,9 @@ export default function EditarExercicioForm () {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4 p-5">
-        <div className="w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+        {/* <div className=" w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6"> */}
+        <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+
             <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Editar Exercício</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...register('user')} />
@@ -558,17 +561,6 @@ export default function EditarExercicioForm () {
 
             <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                {/* <select
-                    multiple
-                    {...register('typeOfProcessing', { required: true })}
-                    className="w-full h-48 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                >
-                    <option value="articulation">Articulação</option>
-                    <option value="phonation">Fonação</option>
-                    <option value="glotta">Glota</option>
-                    <option value="prosody">Prosódia</option>
-                    <option value="replearning">Reaprendizagem</option>
-                </select> */}
                 <Controller
                     name="typeOfProcessing"
                     control={control}
@@ -586,7 +578,7 @@ export default function EditarExercicioForm () {
                             placeholder="Selecione os tipos de processamento"
                             filter
                             display="chip"
-                            className="w-full h-14 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-600 dark:text-black"
+                            className="w-full h-16 p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-600 dark:text-black"
                         />
                     )}
                 />
