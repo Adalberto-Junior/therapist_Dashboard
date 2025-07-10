@@ -112,7 +112,7 @@ export default function FloatingForm({ onClose }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Adicionar Exercício</h2>
+        <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Adicionar Exercício para Utente</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* ID do Utente */}

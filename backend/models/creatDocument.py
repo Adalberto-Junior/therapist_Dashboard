@@ -121,6 +121,28 @@ class CreatDocumentToDB:
                     "therapist": self.ensure_objectid(therapist),          # therapist is the id of the therapist
                 }
         return self.data
+    
+    def genericExerciseDocument(self, type, name, description, steps,typeOfProcessing,therapist):
+        """
+        Create a document for the exercise.
+        :param type: The type of the exercise.
+        :param name: The name of the exercise.
+        :param description: The description of the exercise.
+        :param typeOfProcessing: the type of processing of exercise.
+        :param steps: The steps of the exercise.
+        :param therapist: The therapist id.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "type": type,                                    # type is the type of exercise: speech, reading, writing, etc
+                    "name": name,
+                    "description": description,
+                    "typeOfProcessing":typeOfProcessing,
+                    "steps": steps,                      # steps is a list of dictionaries
+                    "therapist": self.ensure_objectid(therapist),          # therapist is the id of the therapist
+                }
+        return self.data
 
     def noteDocument(self, note, priority, date, therapist, dataExecucao, category, done):
         """

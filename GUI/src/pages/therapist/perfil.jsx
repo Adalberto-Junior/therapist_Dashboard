@@ -287,9 +287,9 @@ export default function Profile() {
             Logout
           </button>
         </div>
-        <button onclick="toggleTheme()" id="theme-toggle" class="flex items-center gap-2 px-4 py-2 rounded shadow-md bg-gray-200 dark:bg-zinc-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
+        <button onClick="toggleTheme()" id="theme-toggle" class="flex items-center gap-2 px-4 py-2 rounded shadow-md bg-gray-200 dark:bg-zinc-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
           <span id="theme-icon">🌞</span>
-          <span class="text-sm">Alternar Modo</span>
+          <span className="text-sm">Alternar Modo</span>
         </button>
 
 

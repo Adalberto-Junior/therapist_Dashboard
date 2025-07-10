@@ -635,6 +635,38 @@ def get_exercicio(exercise_id):
 
     return jsonify(exercise), 200
 
+@utente_bp.route('/exercicio/', methods=['GET'])
+def get_all_exercicio():
+    """
+    Get the exercises in the database.
+    :return: JSON response with the exercises.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    exercises = exercise_model.get_exercise(therapistId)
+
+    if not exercises:
+        return jsonify({"error": "Exercícios não encontrados"}), 404
+    
+    if isinstance(exercises, Cursor):
+        exercises = list(exercises)
+    
+    print(exercises)
+
+    return jsonify(exercises), 200
+
+
 @utente_bp.route('/<string:user_id>/exercicio/', methods=['POST'])
 def add_exercicio(user_id):
     """
@@ -679,6 +711,42 @@ def add_exercicio(user_id):
 
     docuemnto = CreatDocumentToDB()
     doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps,typeOfProcessing=typeOfProcessing, therapist=therapistId)
+    
+    exercise_id = exercise_model.create_exercise(doc)
+
+    return jsonify({"message": "Exercício adicionado com sucesso", "id": str(exercise_id)}), 201
+
+@utente_bp.route('/exercicio/', methods=['POST'])
+def add_generic_exercicio():
+    """
+    Add a new exercise in database.
+    :return: JSON response with the exercise ID and a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    data = request.get_json()
+    name = data.get('name')
+    type = data.get('type')
+    description = data.get('description')
+    typeOfProcessing = data.get('typeOfProcessing')
+    steps = data.get('steps')
+
+    if exercise_model.get_exercise_by_name(name):
+        return jsonify({"error": "Já há exercício com este nome registrado"}), 400
+
+    docuemnto = CreatDocumentToDB()
+    doc = docuemnto.genericExerciseDocument(name=name, type=type, description=description, steps=steps,typeOfProcessing=typeOfProcessing, therapist=therapistId)
     
     exercise_id = exercise_model.create_exercise(doc)
 

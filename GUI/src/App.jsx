@@ -73,6 +73,7 @@ import PhonotionResult from './pages/utente/result/phonation.jsx'
 import GlottalResult from './pages/utente/result/glottal.jsx'
 import ReplearningResult from './pages/utente/result/repleaning.jsx'
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
+import AllGenericExercise from './pages/utente/exercise/allExerciseGeneric.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
 import EditUtente from './pages/utente/utenteData/editUtent.jsx'
 import EditarExercicioForm from './pages/utente/exercise/editExercise.jsx'
@@ -99,7 +100,10 @@ export default function App() {
         {isAuth ? (
           <>
             <Route path="/" element={<Home />} />
-            <Route path="utente" element={<AllUtente />} />
+            <Route path="utente" element={<AllUtente />}/> 
+            <Route path="exercicios/genericos" element={<AllGenericExercise/>} />
+            
+
             <Route path="me" element={<Profile />} />
             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
             <Route path="utente/:id" element={<UtenteTabsLayout />}>

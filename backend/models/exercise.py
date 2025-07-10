@@ -52,6 +52,16 @@ def crearte_many_exercise(data):
     result = exercises.insert_many(data)
     return str(result.inserted_ids)
 
+def get_exercise(therapistId):
+    """
+    Get all exercise by therapist Id.
+    :param exercise_id: The ID of the exercise.
+    :return: The list of exercise data.
+    """
+
+    # mongo = app.extensions['pymongo']
+    return mongo.db.exercise.find({"therapist": ObjectId(therapistId)})
+
 def get_exercise_by_id(exercise_id):
     """
     Get an exercise by its ID.
