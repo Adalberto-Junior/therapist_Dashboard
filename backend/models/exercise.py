@@ -87,9 +87,9 @@ def get_exercise_by_type(type):
     :param type: The type of the exercise.
     :return: The exercise data as a dictionary.
     """
-
+    print("oiiiiii")
     # mongo = app.extensions['pymongo']
-    return mongo.db.exercise.find_one({"type": type})
+    return mongo.db.exercise.find({"type": type})
 
 def get_exercise_by_user(user_name):
     """

@@ -666,6 +666,39 @@ def get_all_exercicio():
 
     return jsonify(exercises), 200
 
+@utente_bp.route('/exercicios/tipo/<string:type>/', methods=['GET'])
+def get_all_exercise_by_type(type):
+    """
+    Get all exercises by type in the database.
+    :param type: The type of the exercise.
+    :return: JSON response with the exercises.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        therapistId = decoded['user_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    exercises = exercise_model.get_exercise_by_type(type)
+    print(exercises)
+
+    if not exercises:
+        return jsonify({"error": "Exercícios não encontrados"}), 404
+    
+    if isinstance(exercises, Cursor):
+        exercises = list(exercises)
+    
+    print(exercises)
+
+    return jsonify(exercises), 200
+
 
 @utente_bp.route('/<string:user_id>/exercicio/', methods=['POST'])
 def add_exercicio(user_id):
