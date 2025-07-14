@@ -187,7 +187,7 @@ export default function HealthUserInformation() {
           
             <div className="absolute top-25 left-1">
                 <button 
-                    onClick={() => navigate('/utente')}
+                    onClick={() => navigate('/utentes')}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-800 shadow-md"
                     >
                     ⬅️ Voltar

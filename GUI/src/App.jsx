@@ -64,6 +64,8 @@ import NoPage from './pages/NoPage.jsx'
 import LoginForm from './pages/auth/login.jsx'
 import Home from './pages/Home.jsx'
 import LabTabs from "./component/labTabs.jsx";
+import UtenteExerciseTab from "./component/utenteExerciseTab.jsx";
+import ConditionalUtenteExerciseTab from "./component/ConditionalUtenteExerciseTab.jsx";
 import AllUtente from './pages/utente/utenteData/all_utente.jsx'
 import Profile from './pages/therapist/perfil.jsx'
 import HealthUserInformation from './pages/utente/utenteData/information.jsx'
@@ -82,30 +84,77 @@ import EditReport from "./pages/utente/utenteData/editReport.jsx";
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
+// export default function App() {
+//   // const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+
+//   // const handleLogin = () => setIsLoggedIn(true);
+//   // const handleLogout = () => {
+//   //   localStorage.removeItem('token');
+//   //   setIsLoggedIn(false);
+//   // };
+
+//   const isAuth = localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
+
+//   return (
+//     <BrowserRouter>
+//       {isAuth && <LabTabs />}
+//       <Routes>
+//         {isAuth ? (
+//           <>
+//             <Route path="/" element={<Home />} />
+//             <Route path="utente" element={<AllUtente />}/> 
+//             <Route path="exercicios/genericos" element={<AllGenericExercise/>} />
+            
+
+//             <Route path="me" element={<Profile />} />
+//             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
+//             <Route path="utente/:id" element={<UtenteTabsLayout />}>
+//               <Route path="informacao" element={<HealthUserInformation />} />
+//               <Route path="relatorio" element={<ReportList />} />
+//               <Route path="relatorio/edit/:id_" element={<EditReport />} />
+//               <Route path="editar" element={<EditUtente />} />
+//               <Route path="analise/articulacao" element={<ArticulationResult />} />
+//               <Route path="analise/fonacao" element={<PhonotionResult />} />
+//               <Route path="analise/prosodia" element={<ProsodyResult />} />
+//               <Route path="analise/glota" element={<GlottalResult />} />
+//               <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
+//               <Route path="exercicios" element={<AllExercise />} />
+//               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
+//               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />
+//               {/* Adicione outras subtabs aqui */}
+//             </Route>
+
+//             <Route path="*" element={<NoPage />} />
+//           </>
+//         ) : (
+//           <>
+//             <Route path="/" element={<LoginForm />} />
+//             <Route path="register" element={<RegisterForm />} />
+//             <Route path="*" element={<NoPage />} />
+//           </>
+//         )}
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
 export default function App() {
-  // const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
-
-  // const handleLogin = () => setIsLoggedIn(true);
-  // const handleLogout = () => {
-  //   localStorage.removeItem('token');
-  //   setIsLoggedIn(false);
-  // };
-
   const isAuth = localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
 
   return (
     <BrowserRouter>
       {isAuth && <LabTabs />}
+      {isAuth && <ConditionalUtenteExerciseTab />}
+
       <Routes>
         {isAuth ? (
           <>
             <Route path="/" element={<Home />} />
-            <Route path="utente" element={<AllUtente />}/> 
-            <Route path="exercicios/genericos" element={<AllGenericExercise/>} />
-            
+            <Route path="utentes" element={<AllUtente />} />
+            <Route path="exercicios/genericos" element={<AllGenericExercise />} />
 
             <Route path="me" element={<Profile />} />
-            {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
+
             <Route path="utente/:id" element={<UtenteTabsLayout />}>
               <Route path="informacao" element={<HealthUserInformation />} />
               <Route path="relatorio" element={<ReportList />} />
@@ -119,7 +168,6 @@ export default function App() {
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />
-              {/* Adicione outras subtabs aqui */}
             </Route>
 
             <Route path="*" element={<NoPage />} />
