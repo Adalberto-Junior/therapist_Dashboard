@@ -9,27 +9,38 @@ import { MultiSelect } from 'primereact/multiselect';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { StepFields, StepFieldsReadOnly } from './StepFields';
+import { StepFields } from './StepFields';
 import { ExerciseMetaFields } from './ExerciseMetaFields';
 
-function ExerciseSteps({ type, fields, register, camposPorTipo, camposPorTipoEn, remove, appendStep }) {
+function ExerciseSteps({ type, fields, camposPorTipo, camposPorTipoEn, editable, register, remove, appendStep }) {
   if (!fields || fields.length === 0) return null;
   return (
     <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
       <h3 className="text-lg font-semibold mb-2">Passos</h3>
+      {console.log("step fields: ", fields)}
       {fields.map((field, index) => (
-        <div key={field.id} className="mb-4 border p-2 rounded">
-          <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />
+        <div key={field.id || index} className="mb-4 border p-2 rounded">
+          <StepFields
+            index={index}
+            type={type}
+            field={field}
+            camposPorTipo={camposPorTipo}
+            camposPorTipoEn={camposPorTipoEn}
+            editable={editable}
+            register={register}
+            remove={remove}
+          />
         </div>
       ))}
-      <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
+      {editable && (
+        <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
+      )}
     </div>
   );
 }
 
 function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDadosExercicioSelecionado, control, options, errors, type, camposPorTipo, camposPorTipoEn, register, remove, appendStep }) {
   if (!dadosExercicioSelecionado) return null;
-  {console.log("dados execicios selecionado: ", dadosExercicioSelecionado)}
   return (
     <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-600 dark:border-zinc-600 dark:text-white">
       <div>
@@ -68,19 +79,16 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
       </div>
       <div className="mb-4">
         {type !== null && dadosExercicioSelecionado.steps.length > 0 && (
-          <div className="w-full m-1.5 p-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-            <h3 className="text-lg font-semibold mb-2">Passos</h3>
-            {dadosExercicioSelecionado.steps.map((field, index) => (
-              <div key={field.id} className="mb-4 border p-2 rounded">
-                 <StepFieldsReadOnly field={field} index={index} type={type} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} />
-                {/* {modoEdicao === "default"
-                  : <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />} */}
-              </div>
-            ))}
-            {modoEdicao === "personalizar" && (
-              <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
-            )}
-          </div>
+          <ExerciseSteps
+            type={type}
+            fields={dadosExercicioSelecionado.steps}
+            camposPorTipo={camposPorTipo}
+            camposPorTipoEn={camposPorTipoEn}
+            editable={modoEdicao === "personalizar"}
+            register={register}
+            remove={remove}
+            appendStep={appendStep}
+          />
         )}
       </div>
     </div>
@@ -286,7 +294,16 @@ export default function FloatingForm({ onClose }) {
               {!dadosExercicioSelecionado && (
                 <>
                   <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
-                  <ExerciseSteps type={type} fields={fields} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} appendStep={appendStep} />
+                  <ExerciseSteps
+                    type={type}
+                    fields={fields}
+                    camposPorTipo={camposPorTipo}
+                    camposPorTipoEn={camposPorTipoEn}
+                    editable={true}
+                    register={register}
+                    remove={remove}
+                    appendStep={appendStep}
+                  />
                 </>
               )}
 
