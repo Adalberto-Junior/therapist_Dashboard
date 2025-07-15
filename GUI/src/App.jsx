@@ -149,8 +149,8 @@ export default function App() {
       <Routes>
         {isAuth ? (
           <>
-            <Route path="/" element={<Home />} />
-            <Route path="utentes" element={<AllUtente />} />
+            <Route path="/" element={<AllUtente />} />
+            {/* <Route path="utentes" element={<AllUtente />} /> */}
             <Route path="exercicios/genericos" element={<AllGenericExercise />} />
 
             <Route path="me" element={<Profile />} />

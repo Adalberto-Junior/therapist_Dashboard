@@ -7,7 +7,7 @@ export default function ConditionalUtenteExerciseTab() {
   
   // Mostra subtab apenas em /utentes ou /exercicios/genericos
   const showSubTab =
-    location.pathname === "/utentes" ||
+    location.pathname === "/" ||
     location.pathname === "/exercicios/genericos";
 
   return showSubTab ? <UtenteExerciseTab /> : null;

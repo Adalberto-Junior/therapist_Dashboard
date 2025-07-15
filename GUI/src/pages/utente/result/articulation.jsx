@@ -601,6 +601,18 @@ export default function ArticulationResult() {
                     const camposImportantes = ["avg DF1", "avg F1", "avg DDF1", "avg F2", "avg DF2", "avg DDF2"];
                     const dadosRelevantes = staticResult.filter(obj => camposImportantes.includes(Object.keys(obj)[0]));
 
+                    const prioridade = campo => {
+                      if (campo.includes("DDF")) return 3;
+                      if (campo.includes("DF")) return 2;
+                      return 1;
+                    };
+
+                    dadosRelevantes.sort((a, b) => {
+                      const chaveA = Object.keys(a)[0];
+                      const chaveB = Object.keys(b)[0];
+                      return prioridade(chaveA) - prioridade(chaveB);
+                    });
+
                     if (dadosRelevantes.length === 0) return null;
                     return (
                       <div key={idx} className="mb-6">

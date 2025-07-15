@@ -63,11 +63,11 @@ export default function ExerciseDetail() {
             if (!window.confirm("Tem a certeza que deseja eliminar este exercício?")) {
                 return; // If the user cancels, do nothing
             }
-            await api.delete(`/utente/exercicio/${id_}`); // Adjust the endpoint as needed
-            setExercise(exercise.filter((exercise) => exercise.id !== id_)); // Remove the deleted exercise from the state
+            await api.delete(`/utente/exercicio/${id_}/`); // Adjust the endpoint as needed
+            // setExercise(exercise.filter((exercise) => exercise.id !== id_)); // Remove the deleted exercise from the state
             window.history.back(); // Redirect back to the previous page
         } catch (error) {
-            console.error(`Erro ao Deletar o exercício ${exercicioId}:`, error);
+            console.error(`Erro ao Deletar o exercício ${id_}:`, error);
         }
     };
     

@@ -73,7 +73,7 @@ export default function UtenteExerciseTab() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if (newValue === "1") navigate("/utentes");
+    if (newValue === "1") navigate("/");
     if (newValue === "2") navigate("/exercicios/genericos");
   };
 

@@ -732,6 +732,7 @@ def add_exercicio(user_id):
         return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
 
     data = request.get_json()
+    print(data)
     name = data.get('name')
     type = data.get('type')
     description = data.get('description')
