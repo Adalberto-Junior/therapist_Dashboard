@@ -1,7 +1,7 @@
 import React from 'react';
 import { ErrorMessage } from "@hookform/error-message";
 
-export function StepFields({ index, type, register, camposPorTipo, camposPorTipoEn, remove }) {
+export function StepFields({field, index, type, register, camposPorTipo, camposPorTipoEn, remove }) {
   if (type === 'novo') {
     return (
       <>

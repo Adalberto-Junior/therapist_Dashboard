@@ -12,6 +12,81 @@ import 'primeicons/primeicons.css';
 import { StepFields, StepFieldsReadOnly } from './StepFields';
 import { ExerciseMetaFields } from './ExerciseMetaFields';
 
+function ExerciseSteps({ type, fields, register, camposPorTipo, camposPorTipoEn, remove, appendStep }) {
+  if (!fields || fields.length === 0) return null;
+  return (
+    <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+      <h3 className="text-lg font-semibold mb-2">Passos</h3>
+      {fields.map((field, index) => (
+        <div key={field.id} className="mb-4 border p-2 rounded">
+          <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />
+        </div>
+      ))}
+      <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
+    </div>
+  );
+}
+
+function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDadosExercicioSelecionado, control, options, errors, type, camposPorTipo, camposPorTipoEn, register, remove, appendStep }) {
+  if (!dadosExercicioSelecionado) return null;
+  {console.log("dados execicios selecionado: ", dadosExercicioSelecionado)}
+  return (
+    <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-600 dark:border-zinc-600 dark:text-white">
+      <div>
+        <label className="font-bold">Nome:</label>
+        <input type="text" value={dadosExercicioSelecionado.name} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, name: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
+      </div>
+      <div>
+        <label className="font-bold">Descrição:</label>
+        <textarea value={dadosExercicioSelecionado.description} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, description: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
+      </div>
+      <div>
+        <label className="font-bold">Tipo de Processamento</label>
+        {modoEdicao === "default" ? (
+          <Controller
+            name="typeOfProcessing"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" display="chip" disabled className="w-full md:w-20rem bg-gray-400" />
+            )}
+          />
+        ) : (
+          <Controller
+            name="typeOfProcessing"
+            control={control}
+            rules={{
+              required: "Selecione pelo menos um tipo de Processamento.",
+              validate: (value) => value?.length > 0 || "Selecione pelo menos um tipo."
+            }}
+            render={({ field }) => (
+              <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem bg-gray-800" />
+            )}
+          />
+        )}
+        <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => (<p className="text-red-500 text-sm">{message}</p>)} />
+      </div>
+      <div className="mb-4">
+        {type !== null && dadosExercicioSelecionado.steps.length > 0 && (
+          <div className="w-full m-1.5 p-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+            <h3 className="text-lg font-semibold mb-2">Passos</h3>
+            {dadosExercicioSelecionado.steps.map((field, index) => (
+              <div key={field.id} className="mb-4 border p-2 rounded">
+                 <StepFieldsReadOnly field={field} index={index} type={type} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} />
+                {/* {modoEdicao === "default"
+                  : <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />} */}
+              </div>
+            ))}
+            {modoEdicao === "personalizar" && (
+              <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function FloatingForm({ onClose }) {
   const { id } = useParams();
   const [type, setType] = useState('');
@@ -211,76 +286,25 @@ export default function FloatingForm({ onClose }) {
               {!dadosExercicioSelecionado && (
                 <>
                   <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
-                  <div className="mb-4">
-                    {type !== null && fields.length > 0 && (
-                      <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                        <h3 className="text-lg font-semibold mb-2">Passos</h3>
-                        {fields.map((field, index) => (
-                          <div key={field.id} className="mb-4 border p-2 rounded">
-                            <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />
-                          </div>
-                        ))}
-                        <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
-                      </div>
-                    )}
-                  </div>
+                  <ExerciseSteps type={type} fields={fields} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} appendStep={appendStep} />
                 </>
               )}
 
               {dadosExercicioSelecionado && (
-                <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-600 dark:border-zinc-600 dark:text-white">
-                  <div>
-                    <label className="font-bold">Nome:</label>
-                    <input type="text" value={dadosExercicioSelecionado.name} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, name: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
-                  </div>
-                  <div>
-                    <label className="font-bold">Descrição:</label>
-                    <textarea value={dadosExercicioSelecionado.description} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, description: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
-                  </div>
-                  <div>
-                    <label className="font-bold">Tipo de Processamento</label>
-                    {modoEdicao === "default" ? (
-                      <Controller
-                        name="typeOfProcessing"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                          <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" display="chip" disabled className="w-full md:w-20rem bg-gray-400" />
-                        )}
-                      />
-                    ) : (
-                      <Controller
-                        name="typeOfProcessing"
-                        control={control}
-                        rules={{
-                          required: "Selecione pelo menos um tipo de Processamento.",
-                          validate: (value) => value?.length > 0 || "Selecione pelo menos um tipo."
-                        }}
-                        render={({ field }) => (
-                          <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem bg-gray-800" />
-                        )}
-                      />
-                    )}
-                    <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => (<p className="text-red-500 text-sm">{message}</p>)} />
-                  </div>
-                  <div className="mb-4">
-                    {type !== null && dadosExercicioSelecionado.steps.length > 0 && (
-                      <div className="w-full m-1.5 p-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                        <h3 className="text-lg font-semibold mb-2">Passos</h3>
-                        {dadosExercicioSelecionado.steps.map((field, index) => (
-                          <div key={field.id} className="mb-4 border p-2 rounded">
-                            {modoEdicao === "default"
-                              ? <StepFieldsReadOnly field={field} index={index} type={type} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} />
-                              : <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />}
-                          </div>
-                        ))}
-                        {modoEdicao === "personalizar" && (
-                          <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <ExerciseSelectedDetails
+                  dadosExercicioSelecionado={dadosExercicioSelecionado}
+                  modoEdicao={modoEdicao}
+                  setDadosExercicioSelecionado={setDadosExercicioSelecionado}
+                  control={control}
+                  options={options}
+                  errors={errors}
+                  type={type}
+                  camposPorTipo={camposPorTipo}
+                  camposPorTipoEn={camposPorTipoEn}
+                  register={register}
+                  remove={remove}
+                  appendStep={appendStep}
+                />
               )}
 
               <div className="flex flex-col gap-2 mt-4">
