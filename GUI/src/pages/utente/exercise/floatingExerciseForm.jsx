@@ -17,7 +17,6 @@ function ExerciseSteps({ type, fields, camposPorTipo, camposPorTipoEn, editable,
   return (
     <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
       <h3 className="text-lg font-semibold mb-2">Passos</h3>
-      {console.log("step fields: ", fields)}
       {fields.map((field, index) => (
         <div key={field.id || index} className="mb-4 border p-2 rounded">
           <StepFields

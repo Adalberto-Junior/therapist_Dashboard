@@ -52,22 +52,13 @@ export function StepFields({ field, index, type, camposPorTipo, camposPorTipoEn,
       {(camposPorTipo[type] || []).map((campo, campoIdx) => {
         const fieldName = camposPorTipoEn[type]?.[campoIdx];
         const value = getFieldValue(fieldName);
-        console.log("fieellllllds: ", fieldName, "campos: ", campoIdx, "value: ", value)
         return (
           <div className="mb-2" key={campo}>
             <label className="block text-sm capitalize">{campo}:</label>
             {campo === 'Texto' ? (
-                <textarea value={value} readOnly className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-400 dark:border-zinc-600 dark:text-black" />
-            //   editable ? (
-            //     <textarea {...register(`steps.${index}.${fieldName}`, { required: true })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
-            //   ) : (
-            //   )
+                <textarea defaultValue={value} readOnly={!editable} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-400 dark:border-zinc-600 dark:text-black" />
             ) : (
-                <input value={value} readOnly className="w-full p-2 border rounded dark:bg-gray-400 dark:text-black" />
-            //   editable ? (
-            //     <input {...register(`steps.${index}.${fieldName}`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-            //   ) : (
-            //   )
+                <input defaultValue={value} readOnly={!editable} className="w-full p-2 border rounded dark:bg-gray-400 dark:text-black" />
             )}
           </div>
         );
