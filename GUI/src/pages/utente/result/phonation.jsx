@@ -239,6 +239,17 @@ export default function PhonotionResult() {
                     const staticResult = item.static_result || [];
                     const camposImportantes = ["avg Shimmer", "avg Jitter", "avg apq", "avg ppq","avg DF0", "avg DDF0","avg logE"];
                     const dadosRelevantes = staticResult.filter(obj => camposImportantes.includes(Object.keys(obj)[0]));
+                    const prioridade = campo => {
+                      if (campo.includes("DDF")) return 3;
+                      if (campo.includes("DF")) return 2;
+                      return 1;
+                    };
+
+                    dadosRelevantes.sort((a, b) => {
+                      const chaveA = Object.keys(a)[0];
+                      const chaveB = Object.keys(b)[0];
+                      return prioridade(chaveA) - prioridade(chaveB);
+                    });
 
                     if (dadosRelevantes.length === 0) return null;
                     return (

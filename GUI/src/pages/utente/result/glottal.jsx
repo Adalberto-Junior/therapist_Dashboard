@@ -275,6 +275,17 @@ export default function GlottalResult() {
                     const staticResult = item.static_result || [];
                     const camposImportantes = ["F0avg", "F0std", "F0max", "avgEvoiced", "stdEvoiced", "avglastEunvoiced", "Vrate", "avgdurvoiced", "stddurpause", "stddurunvoiced", "avgdurunvoiced", "stddurvoiced"];
                     const dadosRelevantes = staticResult.filter(obj => camposImportantes.includes(Object.keys(obj)[0]));
+                    const prioridade = campo => {
+                      if (campo.includes("DDF")) return 3;
+                      if (campo.includes("DF")) return 2;
+                      return 1;
+                    };
+
+                    dadosRelevantes.sort((a, b) => {
+                      const chaveA = Object.keys(a)[0];
+                      const chaveB = Object.keys(b)[0];
+                      return prioridade(chaveA) - prioridade(chaveB);
+                    });
 
                     if (dadosRelevantes.length === 0) return null;
                     return (

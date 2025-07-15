@@ -63,8 +63,8 @@ export default function LabTabs() {
   const navigate = useNavigate();
 
   const getTabValueFromPath = () => {
-    if (location.pathname.startsWith("/utente") || location.pathname.startsWith("/exercicios")) return "2";
-    if (location.pathname.startsWith("/me")) return "3";
+    // if (location.pathname.startsWith("/utente") || location.pathname.startsWith("/exercicios")) return "1";
+    if (location.pathname.startsWith("/me")) return "2";
     return "1";
   };
 
@@ -77,8 +77,8 @@ export default function LabTabs() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === "1") navigate("/");
-    if (newValue === "2") navigate("/utentes");
-    if (newValue === "3") navigate("/me");
+    // if (newValue === "2") navigate("/utentes");
+    if (newValue === "2") navigate("/me");
   };
 
   return (
@@ -91,9 +91,9 @@ export default function LabTabs() {
             variant="fullWidth"
             sx={{ px: 0, width: "100%" }}
           >
-            <Tab label="Home" value="1" />
-            <Tab label="Utente" value="2" />
-            <Tab label="Perfil" value="3" />
+            {/* <Tab label="Home" value="1" /> */}
+            <Tab label="Utente" value="1" />
+            <Tab label="Perfil" value="2" />
           </TabList>
         </TabContext>
       </Box>
