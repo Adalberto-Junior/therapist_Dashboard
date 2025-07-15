@@ -9,6 +9,8 @@ import { MultiSelect } from 'primereact/multiselect';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import { StepFields, StepFieldsReadOnly } from './StepFields';
+import { ExerciseMetaFields } from './ExerciseMetaFields';
 
 export default function FloatingForm({ onClose }) {
   const { id } = useParams();
@@ -149,61 +151,6 @@ export default function FloatingForm({ onClose }) {
     }
   }, [exercicioSelecionadoId, exerciciosDisponiveis]);
 
-  // Render helpers
-  const renderStepFields = (index, type, register, camposPorTipo, camposPorTipoEn) => {
-    if (type === 'novo') {
-      return (
-        <>
-          <div className="mb-2">
-            <label className="block text-sm">Descrição:</label>
-            <input {...register(`steps.${index}.description`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm">Label:</label>
-            <input {...register(`steps.${index}.label`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm">Valor:</label>
-            <input {...register(`steps.${index}.value`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm">ID:</label>
-            <input {...register(`steps.${index}.id`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-          </div>
-        </>
-      );
-    }
-    return (camposPorTipo[type] || []).map((campo, campoIdx) => {
-      const fieldName = camposPorTipoEn[type]?.[campoIdx];
-      return (
-        <div className="mb-2" key={campo}>
-          <label className="block text-sm capitalize">{campo}:</label>
-          {campo === 'Texto' ? (
-            <textarea {...register(`steps.${index}.${fieldName}`, { required: true })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
-          ) : (
-            <input {...register(`steps.${index}.${fieldName}`, { required: true })} className="w-full p-2 border rounded dark:bg-zinc-600" />
-          )}
-        </div>
-      );
-    });
-  };
-
-  const renderStepFieldsReadOnly = (field, index, type, camposPorTipo, camposPorTipoEn) => {
-    return (type === 'novo' ? camposPorTipo['novo'] : camposPorTipo[type] || []).map((campo, i) => {
-      const key = type === 'novo' ? campo.toLowerCase() : camposPorTipoEn[type]?.[i];
-      const isTextarea = campo === 'Texto';
-      return (
-        <div className="mb-2" key={campo}>
-          <label className="block text-sm capitalize">{campo}:</label>
-          {isTextarea ? (
-            <textarea value={field[key]} readOnly className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-400 dark:border-zinc-600 dark:text-black" />
-          ) : (
-            <input value={field[key]} readOnly className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-400 dark:border-zinc-600 dark:text-black" />
-          )}
-        </div>
-      );
-    });
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
@@ -263,39 +210,14 @@ export default function FloatingForm({ onClose }) {
 
               {!dadosExercicioSelecionado && (
                 <>
-                  <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
-                    <input type="text" {...register("name", { required: "Nome do exercício é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
-                    <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                  </div>
-                  <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
-                    <input type="text" {...register("description", { required: "Descrição é obrigatória." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
-                    <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                  </div>
-                  <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                    <Controller
-                      name="typeOfProcessing"
-                      control={control}
-                      rules={{
-                        required: "Selecione pelo menos um tipo de Processamento.",
-                        validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
-                      }}
-                      render={({ field }) => (
-                        <MultiSelect {...field} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem " />
-                      )}
-                    />
-                    <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                  </div>
+                  <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
                   <div className="mb-4">
                     {type !== null && fields.length > 0 && (
                       <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                         <h3 className="text-lg font-semibold mb-2">Passos</h3>
                         {fields.map((field, index) => (
                           <div key={field.id} className="mb-4 border p-2 rounded">
-                            {renderStepFields(index, type, register, camposPorTipo, camposPorTipoEn)}
-                            <button type="button" onClick={() => remove(index)} className="mt-2 text-red-600 hover:underline rounded">Remover</button>
+                            <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />
                           </div>
                         ))}
                         <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar mais passos</button>
@@ -348,13 +270,8 @@ export default function FloatingForm({ onClose }) {
                         {dadosExercicioSelecionado.steps.map((field, index) => (
                           <div key={field.id} className="mb-4 border p-2 rounded">
                             {modoEdicao === "default"
-                              ? renderStepFieldsReadOnly(field, index, type, camposPorTipo, camposPorTipoEn)
-                              : (
-                                <>
-                                  {renderStepFields(index, type, register, camposPorTipo, camposPorTipoEn)}
-                                  <button type="button" onClick={() => remove(index)} className="mt-2 text-red-600 hover:underline rounded">Remover</button>
-                                </>
-                              )}
+                              ? <StepFieldsReadOnly field={field} index={index} type={type} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} />
+                              : <StepFields index={index} type={type} register={register} camposPorTipo={camposPorTipo} camposPorTipoEn={camposPorTipoEn} remove={remove} />}
                           </div>
                         ))}
                         {modoEdicao === "personalizar" && (
