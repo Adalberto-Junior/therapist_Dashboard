@@ -310,7 +310,7 @@ import * as d3 from 'd3';
 export function RadarChart({
   data,
   width = 600,
-  height = 600,
+  height = 500,
   levels = 10,
   margin = { top: 60, right: 60, bottom: 60, left: 60 },
   maxValue

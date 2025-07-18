@@ -149,28 +149,25 @@ export function groupBBEonBBEoffData(staticData = [], config) {
         console.log("Match Result:", matchResult);
         if (matchResult && chartType === "radar") {
           let group = matchResult[1];
-          if (group === "BBEon" || group === "BBEoff") {
-            group = "BBEon_BBEoff"; // Agrupar ambos em um único grupo
+          if (group === "BBEon") {
+            group = "BBEon"; 
+          }
+          if (group === "BBEoff") {
+            group = "BBEoff";
           }
           key = key.replace(/avg|Avg/, ""); // Normalizar chave
       
           
           
-          if (group === "BBEon_BBEoff") {
+          if (group === "BBEon" || group === "BBEoff") {
             if (!result[chartType][group]) result[chartType][group] = [];
 
             result[chartType][group].push({ axis: key, value: parseFloat(value) });
           } 
-
-          // else {
-          //   result[chartType][group].push({ axis: key, value: parseFloat(value) });
-          // }
-          
         }
       });
     });
   });
-  // console.log("Final Grouped Data for BBEon_BBEoff:", result);
   return result;
 }
 

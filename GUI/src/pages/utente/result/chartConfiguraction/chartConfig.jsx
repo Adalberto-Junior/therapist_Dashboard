@@ -9,8 +9,6 @@ export const chartConfig = {
     chartComponent: RadarChart,
   },
 
-
-
   line: {
     match: /^(.+)$/,
     labelPrefix: "",

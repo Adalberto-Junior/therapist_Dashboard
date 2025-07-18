@@ -280,7 +280,7 @@ export function DisplayChart({ groupedData, filterRadarOnly = false, labels = []
         const isRadar = chartType === "radar";
 
         if (isRadar) {
-          const { labelPrefix, chartComponent: ChartComp } = chartConfig.radar;
+          const {labelPrefix, chartComponent: ChartComp } = chartConfig.radar;
 
           return (
             <div key={`${chartType}-${idx}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">

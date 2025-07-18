@@ -344,6 +344,54 @@ export default function ReplearningResult() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
+                <Accordion defaultActiveKey="x" className="mt-6">
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
+                    <Accordion.Body>
+                      {filtered.map((item, idx) => {
+                        const imagens = item.pathToChart?.slice(0, 4) || []; // no máximo 4 imagens
+                        const imagensComErro = new Set(); // para rastrear imagens que falharam
+
+                        const todasFalharam = imagens.length > 0 && imagensComErro.size === imagens.length;
+
+                        return (
+                          <div key={idx} className="mb-6">
+                            <h4 className="font-semibold mb-2">Passo {item.step}</h4>
+
+                            {/* Se não há imagens ou todas falharam */}
+                            {imagens.length === 0 ? (
+                              <p className="text-red-500">Imagens não encontradas para este passo.</p>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                {imagens.map((src, i) => (
+                                  <img
+                                    key={i}
+                                    src={src}
+                                    alt={`Gráfico ${i + 1} do Passo ${item.step}`}
+                                    className="w-full h-auto rounded border shadow-sm dark:border-zinc-600"
+                                    onError={(e) => {
+                                      imagensComErro.add(i);
+                                      e.target.style.display = "none";
+
+                                      // Se todas falharem, força re-render para mostrar a mensagem
+                                      if (imagensComErro.size === imagens.length) {
+                                        e.target.closest("div").innerHTML =
+                                          '<p class="text-red-500">Imagens não encontradas para este passo.</p>';
+                                      }
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+
+                
               </div>
             </div>
 
