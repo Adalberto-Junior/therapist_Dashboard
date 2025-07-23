@@ -68,6 +68,19 @@ class CreatDocumentToDB:
                 }
         data = json.dumps(self.data)
         return self.data
+
+    def userCasaVivaDocument(self, name, age, email, password, therapist, email_therapist):
+        self.data.clear()
+        self.data = {
+                    "name": name,
+                    "age": age,
+                    "email": email,
+                    "password": password,       # password must be hashed
+                    "therapist": therapist,
+                    "email_therapist": email_therapist
+                }
+        # data = json.dumps(self.data)
+        return self.data
     
     
     def schedulingDocument(self, title, date, time, local, description, guest, type, user):
@@ -252,37 +265,6 @@ class CreatDocumentToDB:
             }
         return json.dumps(self.data)
     
-    def recordingDocument(self, name, time, path,exercise, exerciseStep, user):
-        self.data.clear()
-        self.data = {
-                    "name": name,               # name is the name of the Audio file
-                    "path": path,
-                    "time": time,
-                    "exercise": exercise,         # exercise is the id of the exercise
-                    "exerciseStep": exerciseStep, # exerciseStep is the id of the exercise step
-                    "user": user,                 # user is the id of the user
-                    }
-        return json.dumps(self.data)
-    
-    def resultDocument(self, static_result, no_static_result, date, recording,step):
-        self.data.clear()
-        self.data = {
-                    "static_result": static_result,               # result is a list of dictionaries
-                    "no_static_result": no_static_result,               # result is a list of dictionaries
-                    "date": date,                   # date is the date produced the result
-                    "recording": recording,          # recording is the id of the recording
-                    "step": step
-                    }
-        return json.dumps(self.data)
-    
-    def resultFildDocument(self,key, value, unit):
-        self.data.clear()
-        self.data = {
-                     key: value,                   # key is the name of the field
-                    "unidade": unit                # unit is the unit of the value (Hz, dB, etc)
-                    }
-        return json.dumps(self.data)
-
 
     def healthUserDocument(self, name, email, date_of_birth, therapist,observation, medical_condition,health_user_number, cellphone, address):
         """
@@ -312,4 +294,73 @@ class CreatDocumentToDB:
 
                 }
         # data = json.dumps(self.data)
+        return self.data
+    
+
+    def sessionDocument(self, date, start, end, user):
+        """
+        Create a document for the session.
+        :param date: The date of the session.
+        :param start: The start time of the session.
+        :param end: The end time of the session.
+        :param user: The user of the session.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "date": date,
+                    "start": start,
+                    "end": end,
+                    "user": self.ensure_objectid(user)            # user is the id of the user
+                }
+        
+        return self.data
+    
+    def recordingDocument(self, name, time, path,exercise, exerciseStep, user):
+        """
+        Create a document for the recording.
+        :param name: The name of the recording.
+        :param time: The duration of the recording.
+        :param path: The path to the recording file.
+        :param exercise: The exercise associated with the recording.
+        :param exerciseStep: The exercise step associated with the recording.
+        :param user: The user who made the recording.
+        :return: JSON string of the document.
+        """
+
+        self.data.clear()
+        self.data = {
+                    "name": name,               # name is the name of the Audio file
+                    "path": path,
+                    "time": time,
+                    "exercise": self.ensure_objectid(exercise),         # exercise is the id of the exercise
+                    "exerciseStep": exerciseStep, # exerciseStep is the id of the exercise step
+                    "user": self.ensure_objectid(user),                 # user is the id of the user
+                    }
+        return self.data
+    
+    def resultDocument(self, static_result, no_static_result, date, recording,user,step,processing_type, pathToChart):
+        """
+        Create a document for the result.
+        :param static_result: The static result of the processing.
+        :param no_static_result: The non-static result of the processing.
+        :param date: The date the result was produced.
+        :param recording: The recording associated with the result.
+        :param user: The user who produced the result.
+        :param step: The step of the processing.
+        :param processing_type: The type of processing.
+        :param pathToChart: The path to the chart.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "static_result": static_result,               # result is a list of dictionaries
+                    "no_static_result": no_static_result,               # result is a list of dictionaries
+                    "date": date,                   # date is the date produced the result
+                    "recording": self.ensure_objectid(recording),          # recording is the id of the recording
+                    "user": self.ensure_objectid(user),                   # user is the id of the user
+                    "step": step,
+                    "processing_type": processing_type, # processing_type is the type of processing: articulation, phonology, etc
+                    "pathToChart": pathToChart,
+                    }
         return self.data

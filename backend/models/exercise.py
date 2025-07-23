@@ -91,6 +91,16 @@ def get_exercise_by_type(type):
     # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"type": type})
 
+def get_exercise_by_processingType_and_userId(processingType, userId):
+    """
+    Get an exercise by its processing type and user ID.
+    :param processingType: The processing type of the exercise.
+    :param userId: The ID of the user.
+    :return: The exercise data as a dictionary.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.exercise.find({"processingType": processingType, "user": ObjectId(userId)})
+
 def get_exercise_by_user(user_name):
     """
     Get all exercises by user name.
@@ -118,6 +128,17 @@ def get_exercise_by_user_and_type(user_name, type):
     """
     # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"userName": user_name, "type": type})
+
+def get_exercise_by_userId_and_type(user_id, type):
+    """
+    Get all exercises by user ID and type.
+    :param user_id: The ID of the user.
+    :param type: The type of the exercise.
+    :return: A list of exercises as dictionaries.
+    """
+    # mongo = app.extensions['pymongo']
+    return mongo.db.exercise.find({"user": ObjectId(user_id), "type": type})
+
 
 def get_exercise_by_user_and_name(user_name, name):
     """
@@ -237,4 +258,38 @@ def get_exercise_id_by_user_and_name_and_type(user_name, name, type):
         return str(result['_id'])
     else:
         return None
+    
+
+def pause_analysis(data):
+    """
+    Pause the analysis.
+    :param data: JSON string containing the data to pause the analysis.
+    :return: The ID of the paused analysis.
+    """
+
+    # mongo = app.extensions['pymongo']
+    result = mongo.db.diagnosticProgress.insert_one(data)
+    return str(result.inserted_id)
+
+def get_status_analysis(user_id):
+    """
+    Get the status of an analysis by user ID.
+    :param user_id: The ID of the user.
+    :return: The status of the analysis as a dictionary.
+    """
+    
+    # mongo = app.extensions['pymongo']
+    return mongo.db.diagnosticProgress.find_one({"user_id": user_id})
+
+def delete_status_analysis(user_id):
+    """
+    Delete the status of an analysis by user ID.
+    :param user_id: The ID of the user.
+    :return: True if the deletion was successful, False otherwise.
+    """
+    
+    # mongo = app.extensions['pymongo']
+    result = mongo.db.diagnosticProgress.delete_one({"user": user_id})
+    return result.deleted_count > 0
+
 

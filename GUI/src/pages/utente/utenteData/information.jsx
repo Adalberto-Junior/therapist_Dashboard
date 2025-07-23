@@ -99,8 +99,8 @@ export default function HealthUserInformation() {
                 return; // User cancelled the deletion
             }
             await api.delete(`/utente/informacao/${utenteId}`);
-            setUtente(utentes.filter((u) => u.id !== utenteId));
-            navigate('/utente'); // Redirect to the list of utentes after deletion
+            setUtente(utente.filter((u) => u.id !== utenteId));
+            navigate('/'); // Redirect to the list of utentes after deletion    
         } catch (error) {
             console.error("Error deleting utente:", error);
         }
@@ -199,7 +199,7 @@ export default function HealthUserInformation() {
                     onClick={() => handleSeeReport()}
                     className="fixed top-26 right-1 z-50 bg-gray-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors dark:bg-zinc-900 dark:hover:bg-blue-800 shadow-md"
                     >
-                    🩺 Relatório Médico
+                    🩺 Relatório
                 </button>
             {/* </div> */}
 

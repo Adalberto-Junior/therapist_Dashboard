@@ -25,13 +25,16 @@ import os
 from dotenv import load_dotenv
 from auth import auth_bp
 from utente import utente_bp
+from casaViva import casaViva_bp
 from extensions import mongo
 
 # Load environment variables
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "mysecretkey")
 
-app = Flask(__name__)
+# Initialize Flask app
+app = Flask(__name__, static_url_path="/static")
+
 CORS(app)
 
 # Configurações
@@ -46,6 +49,8 @@ mongo.init_app(app)
 api_bp = Blueprint('api', __name__, url_prefix='/casa_viva')
 api_bp.register_blueprint(auth_bp)
 api_bp.register_blueprint(utente_bp)
+api_bp.register_blueprint(casaViva_bp)
+
 app.register_blueprint(api_bp)
 
 #app.register_blueprint(auth_bp)

@@ -8,11 +8,12 @@ import bcrypt
 import jwt
 import datetime
 from . import auth_bp
-# from models import users as user_model
+from models import users as user_model
 from models import therapist as therapist_model
 from models.creatDocument import *
+from models import session as session_model
 
-def create_token(user_id,user_name):
+def create_token(user_id,user_name,session_id=None):
     """
     Create a JWT token for the user.
     :param user_id: The ID of the user.
@@ -23,6 +24,7 @@ def create_token(user_id,user_name):
     payload = {
         "user_id": str(user_id),
         "user_name": user_name,
+        "session_id": str(session_id) if session_id else None,
         "iat": datetime.datetime.now(datetime.timezone.utc),
         "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=12)
     }
@@ -64,19 +66,19 @@ def register():
     name = data.get('name')
     email = data.get('email').lower()
     password = data.get('password')
-    profession = data.get('profession')
-    date_birth = data.get('date_birth')
+    therapist = data.get('therapist')
+    email_therapist = data.get('email_therapist')
+    age = data.get('age')
 
-    if therapist_model.get_therapist_by_email(email):
+    if user_model.get_user_by_email(email):
         return jsonify({"error": "Email já registrado"}), 400
 
 
-    # hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     hashed_pw = hash_password(password)
 
-    docuemnto = CreatDocumentToDB()
-    doc = docuemnto.userDocument(name=name, email=email, profession=profession, date_of_birth=date_birth, password=hashed_pw,)
-    user_id = therapist_model.create_therapist(doc)
+    documento = CreatDocumentToDB()
+    doc = documento.userCasaVivaDocument(name=name, email=email, age=age, therapist=therapist, email_therapist=email_therapist, password=hashed_pw)
+    user_id = user_model.create_user(doc)
 
     return jsonify({"message": "Utilizador registrado", "id": str(user_id)}), 201
 
@@ -91,22 +93,78 @@ def login():
     email = data.get('email').lower()
     password = data.get('password')
 
-    user = therapist_model.get_therapist_by_email(email)
+    user = user_model.get_user_by_email(email)
     if not user or not verify_password(password, user['password']):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
-    #payload = {
-    #    'user_id': str(user['_id']),
-    #    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=12)
-    #}
-    # token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
-    token = create_token(user['_id'], user['name'])
-    print(token)
+    status = create_session(user['_id'])
+    if not status:
+        return jsonify({"error": "Erro ao criar sessão"}), 500
     
-    return jsonify({'token': token, 'user': {'id': str(user['_id']), 'name': user['name']}})
+    token = create_token(user['_id'], user['name'], status)
+
+
+    return jsonify({'token': token, 'user': {'userId': str(user['_id']), 'name': user['name'], 'email': user['email'], 'therapist': user['therapist'], 'email_therapist': user['email_therapist'], 'age': user['age']}}), 200
+
+
+def create_session(userId):
+    """
+    Create a new session.
+    :return: JSON response with the created session data.
+    """
+    
+    today = datetime.datetime.now().strftime('%d-%m-%Y')
+    start = datetime.datetime.now().strftime('%H:%M:%S')
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Dados inválidos."}), 400
+
+    session_data = {
+        "user": ObjectId(userId),
+        "date": today,
+        "start": start,
+        "end": None
+    }
+
+
+    session_id = session_model.create_session(session_data)
+    if not session_id:
+        return None
+
+    return  str(session_id)
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    """
+    Logout a user and invalidate the JWT token.
+    :return: JSON response with a success message.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        userId = decoded['user_id']
+        session_id = decoded['session_id']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    endDate = datetime.datetime.now().strftime('%H:%M:%S')
+
+    status = session_model.update_session(session_id, endDate)
+
+    if not status:
+        return jsonify({"error": "Erro ao atualizar sessão."}), 500
+
+    return jsonify({"message": "Logout realizado com sucesso."}), 200
 
 # Exemplo de rota protegida
-@auth_bp.route('/me', methods=['GET'])
+@auth_bp.route('/user', methods=['GET'])
 def get_profile():
     """
     Get the current user's profile information.
@@ -125,13 +183,9 @@ def get_profile():
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    user = therapist_model.get_therapist_by_id(user_id)
-
-    print(user)
+    user = user_model.get_user_by_id(user_id)
 
     if not user:
         return jsonify({"error": "Utilizador não encontrado"}), 404
 
-    return jsonify({"user": {"id": str(user['_id']), "name": user['name'], "email": user['email'], "profession": user['profession'], "date_of_birth": user['date_of_birth']}}), 200
-
-# Exemplo de rota protegida
+    return jsonify({"user": {"id": str(user['_id']), "name": user['name'], "email": user['email'], "age": user['age'], "therapist": user['therapist'], "email_therapist": user['email_therapist']}}), 200
