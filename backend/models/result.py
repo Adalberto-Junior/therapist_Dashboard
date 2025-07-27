@@ -21,7 +21,7 @@ def create_result(data):
     
     # Convert JSON string to dictionary
     #data = json.loads(data)
-    results = mongo.db.result
+    results = mongo.db.results
     result = results.insert_one(data)
     return str(result.inserted_id)
 

@@ -30,35 +30,56 @@ def decode_token(token):
         return None
 
 
+# @casaViva_bp.route("/upload-imagem", methods=["POST"])
+# def upload_imagem():
+#     """ Upload an image file to the server.
+#     :return: JSON response with the path of the uploaded image.
+#     """
+
+#     # token = request.headers.get('Authorization')
+#     # if not token or not token.startswith("Bearer "):
+#     #     return jsonify({"error": "Token ausente"}), 401
+    
+#     # try:
+#     #     token = token.replace("Bearer ", "")
+#     #     decoded = decode_token(token)
+#     #     userId = decoded['user_id']
+
+#     # except jwt.ExpiredSignatureError:
+#     #     return jsonify({"error": "Token expirado"}), 401
+#     # except jwt.InvalidTokenError:
+#     #     return jsonify({"error": "Token inválido"}), 401
+    
+
+
+#     data = request.get_json()
+#     if not data or "file" not in data or "userName" not in data:
+#         return jsonify({"error": "Dados inválidos ou em falta."}), 400
+    
+#     file = data.get("file")
+#     userName = data.get("userName")
+#     subpasta = data.get("subpasta", "outros")  # tipo 'articulation', 'prosody', etc.
+
+#     if not file or not userName:
+#         return jsonify({"error": "Ficheiro ou nome do utilizador em falta."}), 400
+
+#     pasta_destino = os.path.join("static", "grafico", userName, subpasta)
+#     os.makedirs(pasta_destino, exist_ok=True)
+
+#     caminho_absoluto = os.path.join(pasta_destino, file.filename)
+#     file.save(caminho_absoluto)
+
+#     caminho_relativo = f"/static/grafico/{userName}/{subpasta}/{file.filename}"
+#     return jsonify({"path": caminho_relativo}), 200
+
 @casaViva_bp.route("/upload-imagem", methods=["POST"])
 def upload_imagem():
     """ Upload an image file to the server.
     :return: JSON response with the path of the uploaded image.
     """
-
-    # token = request.headers.get('Authorization')
-    # if not token or not token.startswith("Bearer "):
-    #     return jsonify({"error": "Token ausente"}), 401
-    
-    # try:
-    #     token = token.replace("Bearer ", "")
-    #     decoded = decode_token(token)
-    #     userId = decoded['user_id']
-
-    # except jwt.ExpiredSignatureError:
-    #     return jsonify({"error": "Token expirado"}), 401
-    # except jwt.InvalidTokenError:
-    #     return jsonify({"error": "Token inválido"}), 401
-    
-
-
-    data = request.get_json()
-    if not data or "file" not in data or "userName" not in data:
-        return jsonify({"error": "Dados inválidos ou em falta."}), 400
-    
-    file = data.get("file")
-    userName = data.get("userName")
-    subpasta = data.get("subpasta", "outros")  # tipo 'articulation', 'prosody', etc.
+    file = request.files.get("file")
+    userName = request.form.get("userName")
+    subpasta = request.form.get("subpasta", "outros")  # Ex: articulation, prosody...
 
     if not file or not userName:
         return jsonify({"error": "Ficheiro ou nome do utilizador em falta."}), 400
@@ -71,6 +92,7 @@ def upload_imagem():
 
     caminho_relativo = f"/static/grafico/{userName}/{subpasta}/{file.filename}"
     return jsonify({"path": caminho_relativo}), 200
+
 
 @casaViva_bp.route("/upload-audio", methods=["POST"])
 def upload_audio():

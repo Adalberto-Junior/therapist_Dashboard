@@ -473,6 +473,7 @@ export default function ArticulationResult() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const BACKEND_URL = "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -567,13 +568,13 @@ export default function ArticulationResult() {
         </div>
         );
     }
-    if (error) {
-         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Error: {error.message}</p>
-            </div>
-         ) 
-    }
+    // if (error) {
+    //      return (
+    //         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+    //             <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Error: {error.message}</p>
+    //         </div>
+    //      ) 
+    // }
     
   return (
     <div className="min-h-screen min-w-screen items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
@@ -715,7 +716,7 @@ export default function ArticulationResult() {
                     <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
-                        const imagens = item.pathToChart?.slice(0, 4) || []; // no máximo 4 imagens
+                        const imagens = item.pathToChart?.slice(0, 4).map(img => `${BACKEND_URL}${img}`) || [];
                         const imagensComErro = new Set(); // para rastrear imagens que falharam
 
                         const todasFalharam = imagens.length > 0 && imagensComErro.size === imagens.length;

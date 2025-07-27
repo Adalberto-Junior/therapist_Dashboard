@@ -137,6 +137,7 @@ export default function ReplearningResult() {
   const [results, setResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const { id } = useParams();
+  const BACKEND_URL = "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -350,7 +351,7 @@ export default function ReplearningResult() {
                     <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
-                        const imagens = item.pathToChart?.slice(0, 4) || []; // no máximo 4 imagens
+                        const imagens = item.pathToChart?.slice(0, 4).map(img => `${BACKEND_URL}${img}`) || [];
                         const imagensComErro = new Set(); // para rastrear imagens que falharam
 
                         const todasFalharam = imagens.length > 0 && imagensComErro.size === imagens.length;

@@ -18,6 +18,11 @@ const componentDescriptions = {
   DDMFCCoff: "Coeficientes cepstrais dinâmicos de segunda derivada em transições de fim",
   DDMFCCon: "Coeficientes cepstrais dinâmicos de segunda derivada em transições de início",
   F1: "Primeiro Formante",
+  F2: "Segundo Formante",
+  F3: "Terceiro Formante",
+  F4: "Quarto Formante",
+  Apq: "Quociente de perturbação da amplitude"
+
 };
 
 const prefixTranslations = {
@@ -31,7 +36,7 @@ const prefixTranslations = {
 export function translateKey(key) {
   // Traduções diretas
   if (baseTranslations[key]) return baseTranslations[key];
-
+  if (key.startsWith("no_static_result")) return baseTranslations.no_static_result;
   // Padrões tipo "avg BBEon_1" ou "dst MFCCoff_2"
   const pattern = /^(avg|std|skewness|kurtosis|Avg) ([A-Za-z]+)_(\d+)$/;
   const match = key.match(pattern);
