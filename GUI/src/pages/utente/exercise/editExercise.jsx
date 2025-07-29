@@ -573,7 +573,8 @@ export default function EditarExercicioForm () {
                                 { label: 'Fonação', value: 'phonation' },
                                 { label: 'Glota', value: 'glotta' },
                                 { label: 'Prosódia', value: 'prosody' },
-                                { label: 'Reaprendizagem', value: 'relearning' }
+                                { label: 'Reaprendizagem', value: 'relearning' },
+                                { label: 'Fonológico', value: 'phonological' }
                             ]}
                             placeholder="Selecione os tipos de processamento"
                             filter

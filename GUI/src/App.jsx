@@ -74,6 +74,7 @@ import ProsodyResult from './pages/utente/result/prosody.jsx'
 import PhonotionResult from './pages/utente/result/phonation.jsx'
 import GlottalResult from './pages/utente/result/glottal.jsx'
 import ReplearningResult from './pages/utente/result/repleaning.jsx'
+import PhonologicalResult from "./pages/utente/result/phonological.jsx"; 
 import AllExercise from './pages/utente/exercise/allExercise.jsx'
 import AllGenericExercise from './pages/utente/exercise/allExerciseGeneric.jsx'
 import ExerciseDetail from './pages/utente/exercise/exerciseDetail.jsx'
@@ -164,6 +165,7 @@ export default function App() {
               <Route path="analise/fonacao" element={<PhonotionResult />} />
               <Route path="analise/prosodia" element={<ProsodyResult />} />
               <Route path="analise/glota" element={<GlottalResult />} />
+              <Route path="analise/fonologica" element={<PhonologicalResult />} />
               <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
