@@ -281,7 +281,7 @@ export function DisplayChart({ groupedData, filterRadarOnly = false, labels = []
 
         if (isRadar) {
           const {labelPrefix, chartComponent: ChartComp } = chartConfig.radar;
-
+          console.log("data: ",data)
           return (
             <div key={`${chartType}-${idx}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(data).map(([dataKey, chartData], i) => (
@@ -297,16 +297,28 @@ export function DisplayChart({ groupedData, filterRadarOnly = false, labels = []
 
         if (chartType === "line") {
           const { labelPrefix, chartComponent: ChartComponent } = chartConfig.line;
-
+          
           return (
             <div key={`${chartType}-${idx}`} className="grid gap-4">
               {Object.entries(data).map(([dataKey, chartData], i) => (
+                
                 <div key={`${chartType}-${dataKey}-${i}`} className="bg-white dark:bg-zinc-800 p-4 rounded shadow">
                   <h5 className="text-center mb-2">{labelPrefix} {translateKey(dataKey)}</h5>
                   <ChartComponent data={chartData} />
                 </div>
               ))}
             </div>
+          );
+        }
+
+        if (chartType === "acousticSpace"){
+          const { labelPrefix, chartComponent: ChartComponent } = chartConfig.acousticSpace;
+          console.log("chartData: ",data)
+          return(
+            <div key={`${chartType}-${idx}`} className="grid gap-4">
+                <ChartComponent data={data} />
+            </div>
+
           );
         }
 

@@ -2,310 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 
 
-// RadarChart Component
-// export function RadarChart({ data, width = 900, height = 600, levels = 10, maxValue }) {
-//   const ref = useRef();
-
-//   useEffect(() => {
-//     const svg = d3.select(ref.current);
-//     svg.selectAll('*').remove();
-
-//     const allAxes = data.map(d => d.axis);
-//     const total = allAxes.length;
-//     const radius = Math.min(width, height) / 2;
-//     const angleSlice = (Math.PI * 2) / total;
-//     const maxVal = maxValue || d3.max(data, d => d.value);
-
-//     const rScale = d3.scaleLinear()
-//       .range([0, radius])
-//       .domain([0, maxVal]);
-
-//     const g = svg.append('g')
-//       .attr('transform', `translate(${width/2},${height/2})`);
-
-//     // Draw grid levels
-//     for (let level = 0; level < levels; level++) {
-//       const rLevel = radius * ((level + 1) / levels);
-//       g.append('circle')
-//         .attr('r', rLevel)
-//         .style('fill', 'none')
-//         .style('stroke', '#bbb')
-//         .style('stroke-width', '0.5px');
-
-//       // Level labels
-//       g.append('text')
-//         .attr('x', 4)
-//         .attr('y', -rLevel)
-//         .attr('dy', '0.4em')
-//         .style('font-size', '10px')
-//         .style('fill', '#666')
-//         .text(((level + 1) * maxVal / levels).toFixed(2));
-//     }
-
-//     // Draw axis lines and labels
-//     const axis = g.selectAll('.axis')
-//       .data(allAxes)
-//       .enter()
-//       .append('g')
-//       .attr('class', 'axis');
-
-//     axis.append('line')
-//       .attr('x1', 0)
-//       .attr('y1', 0)
-//       .attr('x2', (_, i) => rScale(maxVal * 1.1) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('y2', (_, i) => rScale(maxVal * 1.1) * Math.sin(angleSlice * i - Math.PI/2))
-//       .style('stroke', '#ccc')
-//       .style('stroke-width', '1px');
-
-//     axis.append('text')
-//       .attr('class', 'legend')
-//       .attr('x', (_, i) => rScale(maxVal * 1.2) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('y', (_, i) => rScale(maxVal * 1.2) * Math.sin(angleSlice * i - Math.PI/2))
-//       .attr('dy', '0.35em')
-//       .style('font-size', '11px')
-//       .style('fill', '#333')
-//       .style('text-anchor', 'middle')
-//       .text(d => d);
-
-//     // Radar area
-//     const radarLine = d3.lineRadial()
-//       .radius(d => rScale(d.value))
-//       .angle((_, i) => i * angleSlice)
-//       .curve(d3.curveLinearClosed);
-
-//     g.append('path')
-//       .datum(data)
-//       .attr('d', radarLine)
-//       .style('fill', '#3b82f6')
-//       .style('fill-opacity', 0.3)
-//       .style('stroke', '#3b82f6')
-//       .style('stroke-width', '2px');
-
-//     // Tooltip
-//     const tooltip = d3.select('body')
-//       .append('div')
-//       .attr('class', 'tooltip')
-//       .style('position', 'absolute')
-//       .style('background', '#fff')
-//       .style('padding', '4px 8px')
-//       .style('border', '1px solid #999')
-//       .style('border-radius', '4px')
-//       .style('pointer-events', 'none')
-//       .style('opacity', 0);
-
-//     // Dots and interaction
-//     g.selectAll('.radarCircle')
-//       .data(data)
-//       .enter()
-//       .append('circle')
-//       .attr('class', 'radarCircle')
-//       .attr('r', 4)
-//       .attr('cx', (_, i) => rScale(data[i].value) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('cy', (_, i) => rScale(data[i].value) * Math.sin(angleSlice * i - Math.PI/2))
-//       .style('fill', '#3b82f6')
-//       .style('fill-opacity', 0.8)
-//       .on('mouseover', (event, d) => {
-//         tooltip.transition().duration(200).style('opacity', 0.9);
-//         tooltip.html(`<strong>${d.axis}</strong>: ${d.value.toFixed(2)}`)
-//           .style('left', (event.pageX + 10) + 'px')
-//           .style('top', (event.pageY - 28) + 'px');
-//       })
-//       .on('mouseout', () => tooltip.transition().duration(200).style('opacity', 0));
-//   }, [data, width, height, levels, maxValue]);
-
-//   return <svg ref={ref} width={width} height={height}></svg>;
-// }
-
-// BarChart Component
-// export function BarChart({ data, width = 400, height = 200, margin = { top: 20, right: 20, bottom: 30, left: 40 } }) {
-//   const ref = useRef();
-
-//   useEffect(() => {
-//     const svg = d3.select(ref.current);
-//     svg.selectAll('*').remove();
-
-//     const x = d3.scaleBand()
-//       .domain(data.map((_, i) => i))
-//       .range([margin.left, width - margin.right])
-//       .padding(0.1);
-
-//     const y = d3.scaleLinear()
-//       .domain([0, d3.max(data)])
-//       .nice()
-//       .range([height - margin.bottom, margin.top]);
-
-//     const g = svg.append('g');
-
-//     // X Axis
-//     g.append('g')
-//       .attr('transform', `translate(0,${height - margin.bottom})`)
-//       .call(d3.axisBottom(x).tickFormat(i => i + 1));
-
-//     // Y Axis
-//     g.append('g')
-//       .attr('transform', `translate(${margin.left},0)`)
-//       .call(d3.axisLeft(y));
-
-//     // Tooltip
-//     const tooltip = d3.select('body')
-//       .append('div')
-//       .attr('class', 'tooltip')
-//       .style('position', 'absolute')
-//       .style('background', '#fff')
-//       .style('padding', '4px 8px')
-//       .style('border', '1px solid #999')
-//       .style('border-radius', '4px')
-//       .style('pointer-events', 'none')
-//       .style('opacity', 0);
-
-//     // Bars
-//     g.selectAll('.bar')
-//       .data(data)
-//       .enter()
-//       .append('rect')
-//       .attr('class', 'bar')
-//       .attr('x', (_, i) => x(i))
-//       .attr('y', d => y(d))
-//       .attr('height', d => y(0) - y(d))
-//       .attr('width', x.bandwidth())
-//       .style('fill', '#3b82f6')
-//       .on('mouseover', (event, d) => {
-//         tooltip.transition().duration(200).style('opacity', 0.9);
-//         tooltip.html(d.toFixed(2))
-//           .style('left', (event.pageX + 10) + 'px')
-//           .style('top', (event.pageY - 28) + 'px');
-//       })
-//       .on('mouseout', () => tooltip.transition().duration(200).style('opacity', 0));
-//   }, [data, width, height, margin]);
-
-//   return <svg ref={ref} width={width} height={height}></svg>;
-// }
-
-// src/component/charts.jsx
-
-
-// export function RadarChart({
-//   data,
-//   width = 1000,
-//   height = 1000,
-//   levels = 10,
-//   margin = { top: 70, right: 40, bottom: 200, left: 0 },
-//   maxValue
-// }) {
-//   const ref = useRef();
-
-//   useEffect(() => {
-//     const svg = d3.select(ref.current);
-//     svg.selectAll('*').remove();
-
-//     const innerWidth = width - margin.left - margin.right;
-//     const innerHeight = height - margin.top - margin.bottom;
-//     const cx = margin.left + innerWidth / 2;
-//     const cy = margin.top + innerHeight / 2;
-//     const radius = Math.min(innerWidth, innerHeight) / 2;
-//     const allAxes = data.map(d => d.axis);
-//     const total = allAxes.length;
-//     const angleSlice = (Math.PI * 2) / total;
-//     const maxVal = maxValue ?? d3.max(data, d => d.value);
-
-//     const rScale = d3.scaleLinear()
-//       .range([0, radius])
-//       .domain([0, maxVal]);
-
-//     const g = svg.append('g')
-//       .attr('transform', `translate(${cx},${cy})`);
-
-//     // grid levels
-//     for (let lvl = 0; lvl < levels; lvl++) {
-//       const rLvl = radius * ((lvl + 1) / levels);
-//       g.append('circle')
-//         .attr('r', rLvl)
-//         .style('fill', 'none')
-//         .style('stroke', '#bbb')
-//         .style('stroke-width', '0.5px');
-
-//       g.append('text')
-//         .attr('x', 4)
-//         .attr('y', -rLvl)
-//         .attr('dy', '0.4em')
-//         .style('font-size', '10px')
-//         .style('fill', '#666')
-//         .text(((lvl + 1) * maxVal / levels).toFixed(2));
-//     }
-
-//     // axes
-//     const axis = g.selectAll('.axis')
-//       .data(allAxes)
-//       .enter()
-//       .append('g')
-//       .attr('class', 'axis');
-
-//     axis.append('line')
-//       .attr('x1', 0).attr('y1', 0)
-//       .attr('x2', (_, i) => rScale(maxVal * 1.05) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('y2', (_, i) => rScale(maxVal * 1.05) * Math.sin(angleSlice * i - Math.PI/2))
-//       .style('stroke', '#ccc')
-//       .style('stroke-width', '1px');
-
-//     axis.append('text')
-//       .attr('class', 'legend')
-//       .attr('x', (_, i) => rScale(maxVal * 1.15) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('y', (_, i) => rScale(maxVal * 1.15) * Math.sin(angleSlice * i - Math.PI/2))
-//       .attr('dy', '0.35em')
-//       .style('font-size', '11px')
-//       .style('fill', '#333')
-//       .style('text-anchor', 'middle')
-//       .text(d => d);
-
-//     // radar area
-//     const radarLine = d3.lineRadial()
-//       .radius(d => rScale(d.value))
-//       .angle((_, i) => i * angleSlice)
-//       .curve(d3.curveLinearClosed);
-
-//     g.append('path')
-//       .datum(data)
-//       .attr('d', radarLine)
-//       .style('fill', '#3b82f6')
-//       .style('fill-opacity', 0.3)
-//       .style('stroke', '#3b82f6')
-//       .style('stroke-width', '2px');
-
-//     // dots + tooltip
-//     const tooltip = d3.select('body').append('div')
-//       .attr('class', 'tooltip')
-//       .style('position', 'absolute')
-//       .style('background', '#fff')
-//       .style('padding', '4px 8px')
-//       .style('border', '1px solid #999')
-//       .style('border-radius', '4px')
-//       .style('pointer-events', 'none')
-//       .style('opacity', 0);
-
-//     g.selectAll('.radarCircle')
-//       .data(data)
-//       .enter().append('circle')
-//       .attr('class', 'radarCircle')
-//       .attr('r', 4)
-//       .attr('cx', (_, i) => rScale(data[i].value) * Math.cos(angleSlice * i - Math.PI/2))
-//       .attr('cy', (_, i) => rScale(data[i].value) * Math.sin(angleSlice * i - Math.PI/2))
-//       .style('fill', '#3b82f6')
-//       .style('fill-opacity', 0.8)
-//       .on('mouseover', (event, d) => {
-//         tooltip.transition().duration(200).style('opacity', 0.9);
-//         tooltip.html(`<strong>${d.axis}</strong>: ${d.value.toFixed(2)}`)
-//           .style('left', (event.pageX + 10) + 'px')
-//           .style('top', (event.pageY - 28) + 'px');
-//       })
-//       .on('mouseout', () => tooltip.transition().duration(200).style('opacity', 0));
-//   }, [data, width, height, levels, margin, maxValue]);
-
-//   return (
-//     <svg ref={ref} width={width} height={height}>
-//       {/* opcionalmente bg com classe Tailwind */}  
-//     </svg>
-//   );
-// }
 
 export function RadarChart({
   data,
@@ -620,134 +316,6 @@ export function StaticBarChart({
   return <svg ref={ref} width={width} height={height}></svg>;
 }
 
-// LineChart
-// import {
-//   LineChart as RechartsLineChart,
-//   Line,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   CartesianGrid,
-//   ResponsiveContainer,
-// } from "recharts";
-
-// export function LineChart({ data }) {
-//   const chartData = data.map((value, index) => ({
-//     name: `Ponto ${index + 1}`,
-//     value,
-//   }));
-
-//   return (
-//     <ResponsiveContainer width="100%" height={300}>
-//       <RechartsLineChart data={chartData}>
-//         <CartesianGrid strokeDasharray="3 3" />
-//         <XAxis dataKey="name" />
-//         <YAxis />
-//         <Tooltip />
-//         <Line
-//           type="monotone"
-//           dataKey="value"
-//           stroke="#8884d8"
-//           activeDot={{ r: 8 }}
-//         />
-//       </RechartsLineChart>
-//     </ResponsiveContainer>
-//   );
-// }
-
-
-//LineChart.jsx
-// export function LineChart({ data }) {
-//   const ref = useRef();
-
-//   useEffect(() => {
-//     // console.log("Dados recebidos pelo LineChart:", data);
-//     // Limpar SVG anterior
-//     d3.select(ref.current).selectAll("*").remove();
-
-//     if (!data || data.length < 2) return;
-
-//     const margin = { top: 20, right: 20, bottom: 50, left: 50 };
-//     const width = 1150 - margin.left - margin.right;
-//     const height = 300 - margin.top - margin.bottom;
-
-//     const svg = d3
-//       .select(ref.current)
-//       .append("svg")
-//       .attr("width", width + margin.left + margin.right)
-//       .attr("height", height + margin.top + margin.bottom)
-//       .append("g")
-//       .attr("transform", `translate(${margin.left},${margin.top})`);
-
-//     // Escalas
-//     const x = d3.scalePoint()
-//       .domain(data.map(d => d.axis))
-//       .range([0, width]);
-
-//     const y = d3.scaleLinear()
-//       .domain([
-//         d3.min(data, d => d.value) - 1,
-//         d3.max(data, d => d.value) + 1
-//       ])
-//       .range([height, 0]);
-
-//     // Eixos
-//     svg.append("g")
-//       .attr("transform", `translate(0,${height})`)
-//       .call(d3.axisBottom(x))
-//       .selectAll("text")
-//       .attr("transform", "rotate(-45)")
-//       .style("text-anchor", "end");
-
-//     svg.append("g").call(d3.axisLeft(y));
-
-//     // Linha
-//     const line = d3.line()
-//       .x(d => x(d.axis))
-//       .y(d => y(d.value));
-
-//     svg.append("path")
-//       .datum(data)
-//       .attr("fill", "none")
-//       .attr("stroke", "#4f46e5")
-//       .attr("stroke-width", 2)
-//       .attr("d", line);
-
-//     // Pontos
-//     svg.selectAll("circle")
-//       .data(data)
-//       .enter()
-//       .append("circle")
-//       .attr("cx", d => x(d.axis))
-//       .attr("cy", d => y(d.value))
-//       .attr("r", 4)
-//       .attr("fill", "#4f46e5");
-
-//     // Tooltip
-//     const tooltip = d3.select(ref.current)
-//       .append("div")
-//       .style("position", "absolute")
-//       .style("background", "#fff")
-//       .style("border", "1px solid #ccc")
-//       .style("padding", "4px 8px")
-//       .style("font-size", "12px")
-//       .style("pointer-events", "none")
-//       .style("opacity", 0);
-
-//     svg.selectAll("circle")
-//       .on("mouseover", function (event, d) {
-//         tooltip
-//           .html(`<strong>${d.axis}</strong><br/>${d.value}`)
-//           .style("left", `${event.pageX + 10}px`)
-//           .style("top", `${event.pageY - 28}px`)
-//           .style("opacity", 1);
-//       })
-//       .on("mouseout", () => tooltip.style("opacity", 0));
-//   }, [data]);
-
-//   return <div ref={ref} style={{ position: "relative" }} />;
-// }
-
 
 export function LineChart({ data }) {
   const ref = useRef();
@@ -944,150 +512,74 @@ export function LineChartCategory({ dataGroup }) {
 
 
 
-// export function LineChart({ data = [] }) {
-//   const wrapper = useRef();          // div wrapper
-//   const svgRef = useRef();           // svg element
+export function AcousticSpaceD3({ data }) {
+  const svgRef = useRef();
 
-//   useEffect(() => {
-//     if (!data || data.length < 2) return;
-//     const parsed = data.map((d, i) =>
-//       typeof d === "object"
-//         ? { label: d.axis ?? `Ponto ${i + 1}`, value: +d.value }
-//         : { label: `Ponto ${i + 1}`, value: +d }
-//     );
+  useEffect(() => {
+    if (!data || data.length === 0) return;
 
-//     // ——— Dimensions ———
-//     const W = 600;
-//     const H = 300;
-//     const margin = { top: 20, right: 20, bottom: 50, left: 50 };
-//     const width = W - margin.left - margin.right;
-//     const height = H - margin.top - margin.bottom;
+    const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+    const width = 600 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
 
-    
+    const svg = d3.select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom);
 
-//     // ——— Clear previous draw ———
-//     d3.select(svgRef.current).selectAll("*").remove();
+    svg.selectAll("*").remove(); // limpar SVG
 
-//     // ——— Scales ———
-//     const x = d3
-//       .scalePoint()
-//       .domain(parsed.map(d => d.label))
-//       .range([margin.left, width + margin.left]);
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-//     const y = d3
-//       .scaleLinear()
-//       .domain(d3.extent(parsed, d => d.value))
-//       .nice()
-//       .range([height + margin.top, margin.top]);
+    // Escalas invertidas
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.F2)).nice()
+      .range([width, 0]); // invertido
 
-//     // ——— SVG root ———
-//     const svg = d3
-//       .select(svgRef.current)
-//       .attr("viewBox", `0 0 ${W} ${H}`)
-//       .attr("width", "100%")
-//       .attr("height", "auto")
-//       .style("overflow", "visible")
-//       .style("font", "10px sans-serif")
-//       .style("-webkit-tap-highlight-color", "transparent")
-//       .on("pointerenter pointermove", pointermoved)
-//       .on("pointerleave", pointerleft)
-//       .on("touchstart", e => e.preventDefault());
+    const y = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.F1)).nice()
+      .range([0, height]); // invertido
 
-//     // ——— Axes ———
-//     svg
-//       .append("g")
-//       .attr("transform", `translate(0,${height + margin.top})`)
-//       .call(d3.axisBottom(x))
-//       .selectAll("text")
-//       .attr("transform", "rotate(-45)")
-//       .style("text-anchor", "end");
+    // Eixos
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", 35)
+      .attr("fill", "#000")
+      .text("F2 (Hz)");
 
-//     svg
-//       .append("g")
-//       .attr("transform", `translate(${margin.left},0)`)
-//       .call(d3.axisLeft(y))
-//       .call(g => g.select(".domain").remove())
-//       .call(g =>
-//         g
-//           .selectAll(".tick line")
-//           .clone()
-//           .attr("x2", width)
-//           .attr("stroke-opacity", 0.1)
-//       );
+    g.append("g")
+      .call(d3.axisLeft(y))
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", -40)
+      .attr("fill", "#000")
+      .text("F1 (Hz)");
 
-//     // ——— Line generator ———
-//     const line = d3
-//       .line()
-//       .x(d => x(d.label))
-//       .y(d => y(d.value));
+    // Pontos + etiquetas
+    g.selectAll(".dot")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(d.F2))
+      .attr("cy", d => y(d.F1))
+      .attr("r", 5)
+      .style("fill", "#4e79a7");
 
-//     svg
-//       .append("path")
-//       .datum(parsed)
-//       .attr("fill", "none")
-//       .attr("stroke", "#4f46e5")
-//       .attr("stroke-width", 1.5)
-//       .attr("d", line);
+    g.selectAll(".label")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d.F2))
+      .attr("y", d => y(d.F1) - 10)
+      .attr("text-anchor", "middle")
+      .text(d => d.id)
+      .style("font-size", "14px");
 
-//     // ——— Tooltip group ———
-//     const tooltip = svg.append("g").style("display", "none");
+  }, [data]);
 
-//     // Helpers
-//     const bisect = d3.bisector(d => d.label).center; // para scalePoint
-//     function pointermoved(event) {
-//       const xm = event.layerX;
-//       const label = x.invert ? x.invert(xm) : parsed[bisect(parsed, xm)].label;
-//       const i = parsed.findIndex(d => d.label === label);
-//       if (i === -1) return;
-//       const d = parsed[i];
+  return <svg ref={svgRef}></svg>;
+};
 
-//       tooltip.style("display", null);
-//       tooltip.attr(
-//         "transform",
-//         `translate(${x(d.label)},${y(d.value)})`
-//       );
-
-//       const path = tooltip
-//         .selectAll("path")
-//         .data([null])
-//         .join("path")
-//         .attr("fill", "white")
-//         .attr("stroke", "black");
-
-//       const text = tooltip
-//         .selectAll("text")
-//         .data([null])
-//         .join("text")
-//         .call(t =>
-//           t
-//             .selectAll("tspan")
-//             .data([d.label, d.value.toFixed(2)])
-//             .join("tspan")
-//             .attr("x", 0)
-//             .attr("y", (_, j) => `${j * 1.1}em`)
-//             .attr("font-weight", (_, j) => (j ? null : "bold"))
-//             .text(s => s)
-//         );
-
-//       size(text, path);
-//     }
-
-//     function pointerleft() {
-//       tooltip.style("display", "none");
-//     }
-
-//     // dar forma ao balão
-//     function size(text, path) {
-//       const { x: bx, y: by, width: bw, height: bh } = text.node().getBBox();
-//       text.attr("transform", `translate(${-bw / 2},${15 - by})`);
-//       path.attr(
-//         "d",
-//         `M${-bw / 2 - 10},5H-5l5,-5l5,5H${bw / 2 + 10}v${bh + 20}h-${
-//           bw + 20
-//         }z`
-//       );
-//     }
-//   }, [data]);
-
-//   return <svg ref={svgRef} />;
-// }

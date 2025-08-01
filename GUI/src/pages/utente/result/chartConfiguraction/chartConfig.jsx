@@ -1,5 +1,5 @@
 // chartConfig.jsx
-import { RadarChart, BarChart, StaticBarChart, LineChart } from "../../../../component/chart.jsx";
+import { RadarChart, BarChart, StaticBarChart, LineChart, AcousticSpaceD3 } from "../../../../component/chart.jsx";
 
 export const chartConfig = {
   radar: {
@@ -13,6 +13,12 @@ export const chartConfig = {
     match: /^(.+)$/,
     labelPrefix: "",
     chartComponent: LineChart,
+  },
+
+  acousticSpace: {
+    match: /^(avg) (F1|F2)$/,
+    labelPrefix: "Média",
+    chartComponent: AcousticSpaceD3,
   },
 
 };

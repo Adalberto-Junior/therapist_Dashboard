@@ -1,6 +1,8 @@
 // export function groupChartData(dataArr, config) {
 //   const result = {};
 
+import { Key } from "lucide-react";
+
 //   Object.entries(config).forEach(([chartType]) => {
 //     result[chartType] = {};
 //   });
@@ -146,7 +148,7 @@ export function groupBBEonBBEoffData(staticData = [], config) {
     Object.entries(item).forEach(([key, value]) => {
       Object.entries(config).forEach(([chartType, { match }]) => {
         const matchResult = key.match(match);
-        console.log("Match Result:", matchResult);
+        // console.log("Match Result:", matchResult);
         if (matchResult && chartType === "radar") {
           let group = matchResult[1];
           if (group === "BBEon") {
@@ -168,6 +170,8 @@ export function groupBBEonBBEoffData(staticData = [], config) {
       });
     });
   });
+  // console.log("Final Grouped Data for BBEon_BBEoff:", result);
+  // console.log("Static Data:", staticData);
   return result;
 }
 
@@ -321,7 +325,7 @@ export function groupAllData(staticData = [], config,typeOfProcessing= "prosody"
 
         if (chartType === "radar") {
           let group = matchResult[2];
-          console.log("Match Result:", matchResult);
+          // console.log("Match Result:", matchResult);
 
           // Agrupamento especial
           if (["F0avg", "F0std", "F0max", "Evoiced", "stdEvoiced", "lastEunvoiced", "Vrate", "durvoiced", "stddurpause", "stddurunvoiced", "durunvoiced", "stddurvoiced"].includes(group)) {
@@ -329,7 +333,7 @@ export function groupAllData(staticData = [], config,typeOfProcessing= "prosody"
           }else{
             return; // Ignorar outros grupos
           }
-          console.log("Group:", group);
+          // console.log("Group:", group);
 
           // Normalização da chave para axis
           // let axis = key.replace(/avg|Avg/, "").trim(); // remove avg e espaços
@@ -353,4 +357,43 @@ export function groupAllData(staticData = [], config,typeOfProcessing= "prosody"
   }
 
   return result;
+}
+
+export function groupF1F2DataToSpAcustic(data = []) {
+  const result = {
+    acousticSpace: []
+  };
+
+  data.forEach(item => {
+    const staticResult = item.static_result;
+    
+    if (!staticResult) return;
+    
+    let F1 = null, F2 = null;
+
+    Object.entries(staticResult).forEach(([k, v]) => {
+      
+      Object.entries(v).forEach(([key, value]) => {
+        // console.log("KEY: ",key, "Value: ", value)
+      if (key.toLowerCase().includes("avg") && (key.includes("F1") && !key.includes("D"))) {
+        F1 = parseFloat(value);
+      }
+      if (key.toLowerCase().includes("avg") && (key.includes("F2") && !key.includes("D"))) {
+        F2 = parseFloat(value);
+        console.log("F2: ", F2)
+      }
+      });
+    });
+
+    if (F1 !== null && F2 !== null) {
+      result.acousticSpace.push({
+        id: item.step || "",
+        F1,
+        F2
+      });
+    }
+  });
+  // console.log("Result: ",result)
+  return result;
+  
 }
