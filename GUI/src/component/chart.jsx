@@ -512,6 +512,91 @@ export function LineChartCategory({ dataGroup }) {
 
 
 
+// export function AcousticSpaceD3({ data }) {
+//   const svgRef = useRef();
+
+//   useEffect(() => {
+//     if (!data || data.length === 0) return;
+
+//     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+//     const width = 600 - margin.left - margin.right;
+//     const height = 500 - margin.top - margin.bottom;
+
+//     const svg = d3.select(svgRef.current)
+//       .attr("width", width + margin.left + margin.right)
+//       .attr("height", height + margin.top + margin.bottom);
+
+//     svg.selectAll("*").remove(); // limpar SVG
+
+//     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+//     // Escalas invertidas
+//     const x = d3.scaleLinear()
+//       .domain(d3.extent(data, d => d.F2)).nice()
+//       .range([width, 0]); // invertido
+
+//     const y = d3.scaleLinear()
+//       .domain(d3.extent(data, d => d.F1)).nice()
+//       .range([0, height]); // invertido
+
+//      const tooltip = d3
+//       .select(svgRef.current)
+//       .append("div")
+//       .style("position", "absolute")
+//       .style("background", "#fff")
+//       .style("border", "1px solid #ccc")
+//       .style("border-radius", "4px")
+//       .style("padding", "6px 10px")
+//       .style("font-size", "12px")
+//       .style("pointer-events", "none")
+//       .style("opacity", 0)
+//       .style("box-shadow", "0 2px 6px rgba(0, 0, 0, 0.2)");
+
+//     // Eixos
+//     g.append("g")
+//       .attr("transform", `translate(0,${height})`)
+//       .call(d3.axisBottom(x))
+//       .append("text")
+//       .attr("x", width / 2)
+//       .attr("y", 35)
+//       .attr("fill", "#000")
+//       .text("F2 (Hz)");
+
+//     g.append("g")
+//       .call(d3.axisLeft(y))
+//       .append("text")
+//       .attr("transform", "rotate(-90)")
+//       .attr("x", -height / 2)
+//       .attr("y", -40)
+//       .attr("fill", "#000")
+//       .text("F1 (Hz)");
+
+//     // Pontos + etiquetas
+//     g.selectAll(".dot")
+//       .data(data)
+//       .enter()
+//       .append("circle")
+//       .attr("cx", d => x(d.F2))
+//       .attr("cy", d => y(d.F1))
+//       .attr("r", 5)
+//       .style("fill", "#4e79a7");
+
+//     g.selectAll(".label")
+//       .data(data)
+//       .enter()
+//       .append("text")
+//       .attr("x", d => x(d.F2))
+//       .attr("y", d => y(d.F1) - 10)
+//       .attr("text-anchor", "middle")
+//       .text(d => d.id)
+//       .style("font-size", "14px");
+
+//   }, [data]);
+
+//   return <svg ref={svgRef}></svg>;
+// };
+
+
 export function AcousticSpaceD3({ data }) {
   const svgRef = useRef();
 
@@ -530,6 +615,15 @@ export function AcousticSpaceD3({ data }) {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
+    g.append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "none")
+    .style("stroke", "#000")
+    .style("stroke-width", 2);
+
     // Escalas invertidas
     const x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.F2)).nice()
@@ -538,6 +632,39 @@ export function AcousticSpaceD3({ data }) {
     const y = d3.scaleLinear()
       .domain(d3.extent(data, d => d.F1)).nice()
       .range([0, height]); // invertido
+      
+
+    // Grade
+    const xGrid = d3.axisBottom(x).tickSize(-height).tickFormat("");
+    const yGrid = d3.axisLeft(y).tickSize(-width).tickFormat("");
+
+    // Eixo X com grid cinzenta
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x)
+        .tickSize(-height)  // ativa linhas da grid
+        .tickPadding(10))
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc") // cinzento claro
+      .select(".domain").remove();
+
+    // Eixo Y com grid cinzenta
+    g.append("g")
+      .call(d3.axisLeft(y)
+        .tickSize(-width)   // ativa linhas da grid
+        .tickPadding(10))
+      .selectAll(".tick line")
+      .attr("stroke", "#ccc") // cinzento claro
+      .select(".domain").remove();
+
+    // g.append("g")
+    //   .attr("class", "x grid")
+    //   .attr("transform", `translate(0,${height})`)
+    //   .call(xGrid);
+
+    // g.append("g")
+    //   .attr("class", "y grid")
+    //   .call(yGrid);
 
     // Eixos
     g.append("g")
@@ -558,7 +685,19 @@ export function AcousticSpaceD3({ data }) {
       .attr("fill", "#000")
       .text("F1 (Hz)");
 
-    // Pontos + etiquetas
+    // Tooltip (div flutuante)
+    const tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "#fff")
+      .style("border", "1px solid #ccc")
+      .style("padding", "8px")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none")
+      .style("font-size", "14px")
+      .style("opacity", 0);
+
+    // Pontos + eventos de tooltip
     g.selectAll(".dot")
       .data(data)
       .enter()
@@ -566,8 +705,18 @@ export function AcousticSpaceD3({ data }) {
       .attr("cx", d => x(d.F2))
       .attr("cy", d => y(d.F1))
       .attr("r", 5)
-      .style("fill", "#4e79a7");
+      .style("fill", "#4e79a7")
+      .on("mouseover", (event, d) => {
+        tooltip.transition().duration(200).style("opacity", 1);
+        tooltip.html(`<strong>${d.id}</strong><br>F1: ${d.F1} Hz<br>F2: ${d.F2} Hz`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      })
+      .on("mouseout", () => {
+        tooltip.transition().duration(200).style("opacity", 0);
+      });
 
+    // Etiquetas (opcional)
     g.selectAll(".label")
       .data(data)
       .enter()
@@ -581,5 +730,145 @@ export function AcousticSpaceD3({ data }) {
   }, [data]);
 
   return <svg ref={svgRef}></svg>;
-};
+}
 
+
+
+export function AcousticSpaceD3V2({ data }) {
+  const svgRef = useRef();
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+
+    const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+    const width = 600 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
+
+    const svg = d3.select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom);
+
+    svg.selectAll("*").remove(); // limpar SVG
+
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    g.append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", width)
+      .attr("height", height)
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("stroke-width", 2);
+
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.F2)).nice()
+      .range([width, 0]);
+
+    const y = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.F1)).nice()
+      .range([0, height]);
+
+    // Eixos com grid
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickSize(-height).tickPadding(10))
+      .selectAll(".tick line").attr("stroke", "#ccc");
+
+    g.append("g")
+      .call(d3.axisLeft(y).tickSize(-width).tickPadding(10))
+      .selectAll(".tick line").attr("stroke", "#ccc");
+
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", 35)
+      .attr("fill", "#000")
+      .text("F2 (Hz)");
+
+    g.append("g")
+      .call(d3.axisLeft(y))
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", -40)
+      .attr("fill", "#000")
+      .text("F1 (Hz)");
+
+    // Paleta de cores por data
+    const labels = Array.from(new Set(data.map(d => d.label)));
+    const color = d3.scaleOrdinal().domain(labels).range(d3.schemeCategory10);
+
+    const tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "#fff")
+      .style("border", "1px solid #ccc")
+      .style("padding", "8px")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none")
+      .style("font-size", "14px")
+      .style("opacity", 0);
+
+    // Pontos
+    g.selectAll(".dot")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(d.F2))
+      .attr("cy", d => y(d.F1))
+      .attr("r", 5)
+      .style("fill", d => color(d.label || "default"))
+      .on("mouseover", (event, d) => {
+        tooltip.transition().duration(200).style("opacity", 1);
+        tooltip.html(`<strong>${d.id}</strong><br>F1: ${d.F1} Hz<br>F2: ${d.F2} Hz<br>Data: ${d.label}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      })
+      .on("mouseout", () => {
+        tooltip.transition().duration(200).style("opacity", 0);
+      });
+
+    // Etiquetas dos pontos
+    g.selectAll(".label")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d.F2))
+      .attr("y", d => y(d.F1) - 10)
+      .attr("text-anchor", "middle")
+      .text(d => d.id)
+      .style("font-size", "14px");
+
+    // Legenda
+    const legend = svg.append("g")
+      .attr("transform", `translate(${margin.left},${height + margin.top + 60})`);
+
+    labels.forEach((label, i) => {
+      const legendRow = legend.append("g")
+        .attr("transform", `translate(${i * 160}, 0)`);
+
+      legendRow.append("rect")
+        .attr("width", 14)
+        .attr("height", 14)
+        .attr("fill", color(label));
+
+      legendRow.append("text")
+        .attr("x", 20)
+        .attr("y", 12)
+        .attr("fill", "#000")
+        .style("font-size", "14px")
+        .text(label);
+    });
+
+    // Cleanup do tooltip ao desmontar
+    return () => {
+      tooltip.remove();
+    };
+
+  }, [data]);
+
+  return <svg ref={svgRef}></svg>;
+}

@@ -397,3 +397,41 @@ export function groupF1F2DataToSpAcustic(data = []) {
   return result;
   
 }
+
+
+export function mergeF1F2DataToCompare(results = []) {
+  const result = {
+    acousticSpaceGrouped: []
+  };
+
+  results.forEach(item => {
+    const staticResult = item.static_result;
+    const label = item.date;
+
+    if (!staticResult) return;
+
+    let F1 = null, F2 = null;
+
+    Object.entries(staticResult).forEach(([_, v]) => {
+      Object.entries(v).forEach(([key, value]) => {
+        if (key.toLowerCase().includes("avg") && key.includes("F1") && !key.includes("D")) {
+          F1 = parseFloat(value);
+        }
+        if (key.toLowerCase().includes("avg") && key.includes("F2") && !key.includes("D")) {
+          F2 = parseFloat(value);
+        }
+      });
+    });
+
+    if (F1 !== null && F2 !== null) {
+      result.acousticSpaceGrouped.push({
+        id: `${item.step} (${label})`,
+        F1,
+        F2,
+        label,
+      });
+    }
+  });
+
+  return result;
+}
