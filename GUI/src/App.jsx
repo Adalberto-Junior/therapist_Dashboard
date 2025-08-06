@@ -106,6 +106,7 @@ export default function App() {
               <Route path="relatorio/edit/:id_" element={<EditReport />} />
               <Route path="editar" element={<EditUtente />} />
               <Route path="analise/articulacao" element={<ArticulationResultPage />} />
+              {/* <Route path="analise/articulacao" element={<ArticulationResult />} /> */}
               <Route path="analise/fonacao" element={<PhonotionResult />} />
               <Route path="analise/prosodia" element={<ProsodyResult />} />
               <Route path="analise/glota" element={<GlottalResult />} />

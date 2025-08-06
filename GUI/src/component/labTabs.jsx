@@ -82,7 +82,7 @@ export default function LabTabs() {
   };
 
   return (
-    <div className="z-50 fixed top-0 left-0 right-0 bg-white">
+    <div className="z-50 fixed top-0 left-0 right-0 bg-white dark:bg-gray-600">
       <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
         <TabContext value={value}>
           <TabList

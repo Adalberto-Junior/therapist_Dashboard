@@ -49,49 +49,49 @@ export default function UtenteTabs() {
           <Tab label="Informação" value="1"sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen', // verde claro quando ativo
               },
             }} />
           <Tab label="Articulação" value="2" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }} />
           <Tab label="Fonação" value="3" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }} />
           <Tab label="Glota" value="4" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }} />
           <Tab label="Prosódia" value="5" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }}/>
           <Tab label="Fonológica" value="6" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }}/>
           <Tab label="Reaprendizagem" value="7" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }}/>
           <Tab label="Exercícios" value="8" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
-                color: '#3b82f6', // azul quando ativo
+                color: 'lightgreen',
               },
             }} />
         </TabList>

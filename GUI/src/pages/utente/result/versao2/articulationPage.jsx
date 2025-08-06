@@ -797,8 +797,8 @@ export default function ArticulationResultPage() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
-        <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Articulação</div>
-        <div className="flex items-center gap-4 mb-4">
+        <div className="text-4xl font-bold text-center mb-1 p-3 text-gray-900 dark:text-white">Resultados de Articulação</div>
+        <div className="flex items-center gap-4 mb-3">
             <span className="text-lg dark:text-white">Modo de Comparação</span>
 
             <label className="inline-flex items-center cursor-pointer">
