@@ -96,13 +96,11 @@ def upload_imagem():
 
 @casaViva_bp.route("/upload-audio", methods=["POST"])
 def upload_audio():
-    data = request.get_json()
-    if not data or "file" not in data or "userName" not in data:
-        return jsonify({"error": "Dados inválidos ou em falta."}), 400
     
-    file = data.get("file")
-    userName = data.get("userName")
-    subpasta = data.get("subpasta", "outros")
+    file = request.files.get("file")
+    userName = request.form.get("userName")
+    subpasta = request.form.get("subpasta", "outros")  #
+
 
     if not file or not userName:
         return jsonify({"error": "Ficheiro ou nome do utilizador em falta."}), 400

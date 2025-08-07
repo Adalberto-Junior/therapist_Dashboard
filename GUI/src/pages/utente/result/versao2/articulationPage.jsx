@@ -665,6 +665,7 @@ export default function ArticulationResultPage() {
       try {
         const res = await api.get(`/utente/${id}/analise/articulacao`);
         setResults(res.data);
+        console.log("resultados: ",res.data)
         if (res.data.length) {
           setSelectedDate(res.data[res.data.length - 1].date);
         }
@@ -786,6 +787,34 @@ export default function ArticulationResultPage() {
     });
   };
 
+  const renderExerciseAudio = () => {
+    return filtered.map((item, idx) => {
+      const audio = item.pathToRecord || "";
+
+      console.log("Audio:",audio)
+
+      return (
+        <div key={idx} className="mb-6">
+          <h4 className="font-semibold mb-2">Passo {item.step}</h4>
+          {audio === "" ? (
+            <p className="text-red-500">Áudio não encontrado para este passo.</p>
+          ) : (
+            <audio
+              controls
+              src={`${BACKEND_URL}${audio}`}
+              className="w-full"
+            >
+              Seu navegador não suporta o elemento de áudio.
+            </audio>
+          )}
+        </div>
+      );
+    });
+  };
+
+  
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
@@ -846,14 +875,32 @@ export default function ArticulationResultPage() {
               <DisplayChart groupedData={data} />
 
               {!compareMode && (
+                <>
                 <Accordion defaultActiveKey="x" className="mt-6">
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
                     <Accordion.Body>{renderChartImages()}</Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
+                <Accordion defaultActiveKey="x" className="mt-6">
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Áudios dos exercícios</Accordion.Header>
+                    <Accordion.Body>{renderExerciseAudio()}</Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+                </>
               )}
+              <div className="w-full mt-8 flex justify-center">
+              <button
+                className="mb-4 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-700 dark:hover:bg-red-800"
+                onClick={() => handleDelete()}
+              >
+                Eliminar Todos os Resultados
+              </button>
             </div>
+            </div>
+            
           ) : (
             <div className="w-full bg-gray-100 dark:bg-zinc-900 rounded-lg p-9">
               <p className="text-center mt-5 text-3xl dark:text-white">

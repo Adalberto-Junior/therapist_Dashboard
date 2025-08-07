@@ -24,6 +24,7 @@ from models import analysisResult as result_model
 from models import exercise as exercise_model
 from models import utente as utente_model
 from models import users as user_model
+from models import recording as record_model
 from models.creatDocument import *
 
 def decode_token(token):
@@ -277,6 +278,13 @@ def get_analise_fonacao(user_id):
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
 
+    
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
+    
     return jsonify(analysis_results), 200
 
 @utente_bp.route('/<string:user_id>/analise/articulacao', methods=['GET'])
@@ -318,6 +326,12 @@ def get_analise_articulacao(user_id):
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
 
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
+
     return jsonify(analysis_results), 200
 
 @utente_bp.route('/<string:user_id>/analise/prosodia', methods=['GET'])
@@ -358,6 +372,12 @@ def get_analise_prosodia(user_id):
     
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
+    
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
 
     return jsonify(analysis_results), 200
 
@@ -399,6 +419,12 @@ def get_analise_glotal(user_id):
     
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
+    
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
 
     return jsonify(analysis_results), 200
 
@@ -441,6 +467,12 @@ def get_analise_reaprendizado(user_id):
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
 
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
+
     return jsonify(analysis_results), 200
 
 @utente_bp.route('/<string:user_id>/analise/fonologica', methods=['GET'])
@@ -481,6 +513,12 @@ def get_analise_fonologica(user_id):
     
     if isinstance(analysis_results, Cursor):
         analysis_results = list(analysis_results)
+    
+    for result in analysis_results:
+        recordId = result.get('recording')
+        if recordId:
+            record = record_model.get_recording_by_id(recordId)
+            result['pathToRecord'] = record.get('path') if record else None
 
     return jsonify(analysis_results), 200
 
