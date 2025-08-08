@@ -148,7 +148,11 @@ export function DisplayChart({
           case "acousticSpace":
             return renderAcousticChart(data, idx);
           case "acousticSpaceGrouped":
+            return renderGroupedAcousticChart(data, idx, true);
+          case "acousticSpaceCompared":
             return renderGroupedAcousticChart(data, idx);
+          case "Boxplot":
+            return renderBoxChart(data, idx)
           default:
             return null;
         }
@@ -204,18 +208,86 @@ function renderAcousticChart(data, idx) {
   const { chartComponent: ChartComponent } = chartConfig.acousticSpace;
 
   return (
-    <div key={`acousticSpace-${idx}`} className="grid gap-4">
+    <div key={`acousticSpace-${idx}`} className="grid gap-4 items-center justify-center ">
       <ChartComponent data={data} />
     </div>
   );
 }
 
-function renderGroupedAcousticChart(data, idx) {
-  const { chartComponent: ChartComponent } = chartConfig.acousticSpaceGrouped;
+function renderGroupedAcousticChart(data, idx, oneChart = false) {
+  if (oneChart) {
+    const { chartComponent: ChartComponent } = chartConfig.acousticSpaceGrouped;
+    return (
+      <div key={`acousticSpaceGrouped-${idx}`} className="grid gap-4">
+        <ChartComponent data={data} />
+      </div>
+    );
+  } else {
+    const { chartComponent: ChartComponent } = chartConfig.acousticSpaceCompared;
+    const entries = Object.entries(data);
+    console.log("data: ", data)
+    console.log("Entries: ", entries)
 
-  return (
-    <div key={`acousticSpaceGrouped-${idx}`} className="grid gap-4">
-      <ChartComponent data={data} />
-    </div>
-  );
+    // Group entries into pairs
+    const pairedEntries = [];
+    for (let i = 0; i < entries.length; i += 2) {
+      pairedEntries.push(entries.slice(i, i + 2));
+    }
+    console.log("paired: ",pairedEntries)
+
+    return (
+      <div key={`acousticSpaceGrouped-${idx}`} className="grid gap-6">
+        {pairedEntries.map((pair, pairIdx) => (
+          <div key={`chart-pair-${pairIdx}`} className="grid grid-cols-2 gap-4">
+            {pair.map(([date, dateData]) => (
+              <div key={`chart-${date}`} className="border p-4 rounded shadow">
+                <h3 className="text-lg font-semibold mb-2">{date}</h3>
+                <ChartComponent data={dateData} />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+}
+
+
+function renderBoxChart(data, idx, oneChart = false) {
+  const { chartComponent: ChartComponent } = chartConfig.Boxplot;
+
+  if (oneChart) {
+    return (
+      <div key={`BoxPlot-${idx}`} className="grid gap-4">
+        <ChartComponent data={data} />
+      </div>
+    );
+  } else {
+    // data is an array of { id, F0 }
+    const entries = data.map(d => [d.id, d.F0]);
+
+    // Group into pairs
+    const pairedEntries = [];
+    for (let i = 0; i < entries.length; i += 2) {
+      pairedEntries.push(entries.slice(i, i + 2));
+    }
+
+    return (
+      <div key={`BoxPlot-${idx}`} className="grid gap-6">
+        {pairedEntries.map((pair, pairIdx) => (
+          <div
+            key={`chart-pair-${pairIdx}`}
+            className={`grid grid-cols-${pair.length} gap-4`}
+          >
+            {pair.map(([label, f0Values]) => (
+              <div key={`chart-${label}`} className="border p-4 rounded shadow">
+                <h3 className="text-lg font-semibold mb-2">{label}</h3>
+                <ChartComponent data={f0Values} />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 }

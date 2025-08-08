@@ -380,7 +380,6 @@ export function groupF1F2DataToSpAcustic(data = []) {
       }
       if (key.toLowerCase().includes("avg") && (key.includes("F2") && !key.includes("D"))) {
         F2 = parseFloat(value);
-        console.log("F2: ", F2)
       }
       });
     });
@@ -400,6 +399,48 @@ export function groupF1F2DataToSpAcustic(data = []) {
 
 
 export function mergeF1F2DataToCompare(results = []) {
+  const acousticSpaceCompared = {};
+
+
+  results.forEach(item => {
+    const staticResult = item.static_result;
+    const label = item.date;
+
+    if (!staticResult) return;
+
+    let F1 = null, F2 = null;
+
+    Object.values(staticResult).forEach(v => {
+      Object.entries(v).forEach(([key, value]) => {
+        const lowerKey = key.toLowerCase();
+        if (lowerKey.includes("avg") && key.includes("F1") && !key.includes("D")) {
+          F1 = parseFloat(value);
+        }
+        if (lowerKey.includes("avg") && key.includes("F2") && !key.includes("D")) {
+          F2 = parseFloat(value);
+        }
+      });
+    });
+
+    if (F1 !== null && F2 !== null) {
+      if (!acousticSpaceCompared[label]) {
+        acousticSpaceCompared[label] = [];
+      }
+
+      acousticSpaceCompared[label].push({
+        id: `${item.step}`,
+        F1,
+        F2,
+      });
+    }
+  });
+  // console.log("Grouped: ", { acousticSpaceCompared } )
+  return { acousticSpaceCompared };
+}
+
+
+
+export function mergeF1F2DataToCompareUnifiedGraph(results = []) {
   const result = {
     acousticSpaceGrouped: []
   };
@@ -433,5 +474,42 @@ export function mergeF1F2DataToCompare(results = []) {
     }
   });
 
+  // console.log("Res: ",result)
   return result;
+}
+
+
+
+export function groupF0ToBoxplot(data = []) {
+  const result = {
+    Boxplot: []
+  };
+
+  data.forEach(item => {
+    const noStaticResult = item.no_static_result;
+    
+    if (!noStaticResult) return;
+    
+    let F0 = [];
+
+    Object.entries(noStaticResult).forEach(([k, v]) => {
+      
+      Object.entries(v).forEach(([key, value]) => {
+        // console.log("KEY: ",key, "Value: ", value)
+      if (key.toLowerCase() === "f0") {
+        F0 = value;
+      }
+      });
+    });
+
+    if (F0 !== null) {
+      result.Boxplot.push({
+        id: item.step || "",
+        F0,
+      });
+    }
+  });
+  console.log("Result: ",result)
+  return result;
+  
 }

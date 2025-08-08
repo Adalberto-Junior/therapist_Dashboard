@@ -872,3 +872,98 @@ export function AcousticSpaceD3V2({ data }) {
 
   return <svg ref={svgRef}></svg>;
 }
+
+
+
+export function Boxplot({ data, width = 400, height = 300 }) {
+  const svgRef = useRef();
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+
+    // Remove old SVG content
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Calculate boxplot stats
+    const sorted = data.sort(d3.ascending);
+    const q1 = d3.quantile(sorted, 0.25);
+    const median = d3.quantile(sorted, 0.5);
+    const q3 = d3.quantile(sorted, 0.75);
+    const min = d3.min(sorted);
+    const max = d3.max(sorted);
+
+    // Scales
+    const xScale = d3.scaleBand().domain(["F0"]).range([0, innerWidth]).padding(0.5);
+    const yScale = d3.scaleLinear().domain([min, max]).nice().range([innerHeight, 0]);
+
+    // Y axis
+    svg.append("g").call(d3.axisLeft(yScale));
+
+    // Box
+    svg
+      .append("rect")
+      .attr("x", xScale("F0"))
+      .attr("y", yScale(q3))
+      .attr("height", yScale(q1) - yScale(q3))
+      .attr("width", xScale.bandwidth())
+      .attr("stroke", "black")
+      .attr("fill", "#69b3a2");
+
+    // Median line
+    svg
+      .append("line")
+      .attr("x1", xScale("F0"))
+      .attr("x2", xScale("F0") + xScale.bandwidth())
+      .attr("y1", yScale(median))
+      .attr("y2", yScale(median))
+      .attr("stroke", "black");
+
+    // Whiskers
+    svg
+      .append("line")
+      .attr("x1", xScale("F0") + xScale.bandwidth() / 2)
+      .attr("x2", xScale("F0") + xScale.bandwidth() / 2)
+      .attr("y1", yScale(min))
+      .attr("y2", yScale(q1))
+      .attr("stroke", "black");
+
+    svg
+      .append("line")
+      .attr("x1", xScale("F0") + xScale.bandwidth() / 2)
+      .attr("x2", xScale("F0") + xScale.bandwidth() / 2)
+      .attr("y1", yScale(q3))
+      .attr("y2", yScale(max))
+      .attr("stroke", "black");
+
+    // Whisker caps
+    svg
+      .append("line")
+      .attr("x1", xScale("F0") + xScale.bandwidth() / 4)
+      .attr("x2", xScale("F0") + (3 * xScale.bandwidth()) / 4)
+      .attr("y1", yScale(min))
+      .attr("y2", yScale(min))
+      .attr("stroke", "black");
+
+    svg
+      .append("line")
+      .attr("x1", xScale("F0") + xScale.bandwidth() / 4)
+      .attr("x2", xScale("F0") + (3 * xScale.bandwidth()) / 4)
+      .attr("y1", yScale(max))
+      .attr("y2", yScale(max))
+      .attr("stroke", "black");
+
+  }, [data, width, height]);
+
+  return <svg ref={svgRef}></svg>;
+}
