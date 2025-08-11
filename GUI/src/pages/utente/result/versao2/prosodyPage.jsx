@@ -258,8 +258,10 @@ export default function ProsodyResultPage() {
             <div className="mb-4">
             {filtered.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 dark:text-white">BoxPlot</h2>
+                <h2 className="text-xl font-semibold mb-4 dark:text-white">F0</h2>
                 <DisplayChart groupedData={data} />
+                {/* <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
+                <DisplayChart groupedData={data} /> */}
 
             
                 <Accordion defaultActiveKey="x" className="mt-6">
