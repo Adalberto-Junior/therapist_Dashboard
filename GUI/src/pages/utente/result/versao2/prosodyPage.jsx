@@ -5,7 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
 import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
-import {groupF0ToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
+import {groupF0ToBoxplot, groupPauseToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
 import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
@@ -35,7 +35,10 @@ export default function ProsodyResultPage() {
     const uniqueDates = [...new Set(results.map((res) => res.date))];
     const filtered = results.filter((res) => res.date === selectedDate);
 
+    console.log(filtered)
+
     const data = groupF0ToBoxplot(filtered);
+    const pauseDurations = groupPauseToBoxplot(filtered);
 
 
     useEffect(() => {
@@ -260,8 +263,8 @@ export default function ProsodyResultPage() {
                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4 dark:text-white">F0</h2>
                 <DisplayChart groupedData={data} />
-                {/* <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
-                <DisplayChart groupedData={data} /> */}
+                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
+                <DisplayChart groupedData={pauseDurations} />
 
             
                 <Accordion defaultActiveKey="x" className="mt-6">

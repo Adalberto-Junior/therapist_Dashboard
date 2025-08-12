@@ -1,5 +1,5 @@
 // chartConfig.jsx
-import { RadarChart, BarChart, StaticBarChart, LineChart, AcousticSpaceD3, AcousticSpaceD3V2, Boxplot } from "../../../../component/chart.jsx";
+import { RadarChart, BarChart, StaticBarChart, LineChart, AcousticSpaceD3, AcousticSpaceD3V2, Boxplot, PauseBoxplot } from "../../../../component/chart.jsx";
 
 export const chartConfig = {
   radar: {
@@ -34,9 +34,15 @@ export const chartConfig = {
   },
 
   Boxplot: {
-    match: /^(.+)$/,
+    match: /^F0$/,
     labelPrefix: "",
     chartComponent: Boxplot,
   },
+
+  PauseDurationBoxplot: {
+    match: /^pauseDurations$/,
+    labelPrefix: "",
+    chartComponent: PauseBoxplot,
+  }
 
 };

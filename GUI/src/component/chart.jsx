@@ -970,6 +970,157 @@ export function AcousticSpaceD3V2({ data }) {
 
 export function Boxplot({ data, width = 500, height = 300 }) {
   const svgRef = useRef();
+  console.log("BoxF0: ", data)
+  useEffect(() => {
+    if (!data || Object.keys(data).length === 0) return;
+
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height);
+
+    const plotArea = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const categories = Object.keys(data);
+    const allValues = categories.flatMap(key => data[key]);
+    const min = d3.min(allValues);
+    const max = d3.max(allValues);
+
+    const xScale = d3.scaleBand()
+      .domain(categories)
+      .range([0, innerWidth])
+      .padding(0.4);
+
+    const yScale = d3.scaleLinear()
+      .domain([min, max])
+      .nice()
+      .range([innerHeight, 0]);
+
+    const colorScale = d3.scaleOrdinal()
+      .domain(categories)
+      .range(d3.schemeCategory10); // 10 distinct colors
+
+    // Grid lines
+    plotArea.append("g")
+      .call(d3.axisLeft(yScale)
+        .tickSize(-innerWidth)
+        .tickFormat(""))
+      .call(g => g.selectAll(".tick line").attr("stroke", "#e0e0e0"))
+      .call(g => g.select(".domain").remove());
+
+    // Y Axis
+    plotArea.append("g").call(d3.axisLeft(yScale));
+
+    // X Axis
+    plotArea.append("g")
+      .attr("transform", `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(xScale));
+
+    const boxWidth = 30;
+
+    // Tooltip div
+    const tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("padding", "6px 10px")
+      .style("background", "white")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none")
+      .style("font-size", "12px")
+      .style("visibility", "hidden");
+
+    categories.forEach(key => {
+      const values = data[key].slice().sort(d3.ascending);
+      const q1 = d3.quantile(values, 0.25);
+      const median = d3.quantile(values, 0.5);
+      const q3 = d3.quantile(values, 0.75);
+      const localMin = d3.min(values);
+      const localMax = d3.max(values);
+      const center = xScale(key) + xScale.bandwidth() / 2;
+      const color = colorScale(key);
+
+      // Box
+      plotArea.append("rect")
+        .attr("x", center - boxWidth / 2)
+        .attr("y", yScale(q3))
+        .attr("height", yScale(q1) - yScale(q3))
+        .attr("width", boxWidth)
+        .attr("stroke", "black")
+        .attr("fill", color)
+        .on("mouseover", () => {
+          tooltip.style("visibility", "visible")
+            .html(`
+              <strong>${key}</strong><br/>
+              Min: ${localMin}<br/>
+              Q1: ${q1}<br/>
+              Median: ${median}<br/>
+              Q3: ${q3}<br/>
+              Max: ${localMax}
+            `);
+        })
+        .on("mousemove", (event) => {
+          tooltip.style("top", `${event.pageY - 10}px`)
+                 .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mouseout", () => {
+          tooltip.style("visibility", "hidden");
+        });
+
+      // Median line
+      plotArea.append("line")
+        .attr("x1", center - boxWidth / 2)
+        .attr("x2", center + boxWidth / 2)
+        .attr("y1", yScale(median))
+        .attr("y2", yScale(median))
+        .attr("stroke", "black");
+
+      // Whiskers
+      plotArea.append("line")
+        .attr("x1", center)
+        .attr("x2", center)
+        .attr("y1", yScale(localMin))
+        .attr("y2", yScale(q1))
+        .attr("stroke", "black");
+
+      plotArea.append("line")
+        .attr("x1", center)
+        .attr("x2", center)
+        .attr("y1", yScale(q3))
+        .attr("y2", yScale(localMax))
+        .attr("stroke", "black");
+
+      // Whisker caps
+      plotArea.append("line")
+        .attr("x1", center - boxWidth / 4)
+        .attr("x2", center + boxWidth / 4)
+        .attr("y1", yScale(localMin))
+        .attr("y2", yScale(localMin))
+        .attr("stroke", "black");
+
+      plotArea.append("line")
+        .attr("x1", center - boxWidth / 4)
+        .attr("x2", center + boxWidth / 4)
+        .attr("y1", yScale(localMax))
+        .attr("y2", yScale(localMax))
+        .attr("stroke", "black");
+    });
+
+  }, [data, width, height]);
+
+  return <svg ref={svgRef}></svg>;
+}
+
+export function PauseBoxplot({ data, width = 500, height = 300 }) {
+  const svgRef = useRef();
 
   useEffect(() => {
     if (!data || Object.keys(data).length === 0) return;
@@ -1113,6 +1264,98 @@ export function Boxplot({ data, width = 500, height = 300 }) {
         .attr("y2", yScale(localMax))
         .attr("stroke", "black");
     });
+
+  }, [data, width, height]);
+
+  return <svg ref={svgRef}></svg>;
+}
+
+export function PauseBoxplot1({ data, width = 400, height = 300 }) {
+  const svgRef = useRef();
+
+  console.log("PauseBox: ",data)
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const sorted = data.slice().sort(d3.ascending);
+    const q1 = d3.quantile(sorted, 0.25);
+    const median = d3.quantile(sorted, 0.5);
+    const q3 = d3.quantile(sorted, 0.75);
+    const min = d3.min(sorted);
+    const max = d3.max(sorted);
+
+    const yScale = d3.scaleLinear().domain([min, max]).nice().range([innerHeight, 0]);
+    const xScale = d3.scaleBand().domain(["Pause"]).range([0, innerWidth]).padding(0.5);
+
+    // Grid
+    svg.append("g")
+      .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""))
+      .call(g => g.selectAll(".tick line").attr("stroke", "#e0e0e0"))
+      .call(g => g.select(".domain").remove());
+
+    // Y Axis
+    svg.append("g").call(d3.axisLeft(yScale));
+
+    // Box
+    svg.append("rect")
+      .attr("x", xScale("Pause"))
+      .attr("y", yScale(q3))
+      .attr("height", yScale(q1) - yScale(q3))
+      .attr("width", xScale.bandwidth())
+      .attr("stroke", "black")
+      .attr("fill", "#69b3a2");
+
+    // Median line
+    svg.append("line")
+      .attr("x1", xScale("Pause"))
+      .attr("x2", xScale("Pause") + xScale.bandwidth())
+      .attr("y1", yScale(median))
+      .attr("y2", yScale(median))
+      .attr("stroke", "black");
+
+    // Whiskers
+    svg.append("line")
+      .attr("x1", xScale("Pause") + xScale.bandwidth() / 2)
+      .attr("x2", xScale("Pause") + xScale.bandwidth() / 2)
+      .attr("y1", yScale(min))
+      .attr("y2", yScale(q1))
+      .attr("stroke", "black");
+
+    svg.append("line")
+      .attr("x1", xScale("Pause") + xScale.bandwidth() / 2)
+      .attr("x2", xScale("Pause") + xScale.bandwidth() / 2)
+      .attr("y1", yScale(q3))
+      .attr("y2", yScale(max))
+      .attr("stroke", "black");
+
+    // Whisker caps
+    svg.append("line")
+      .attr("x1", xScale("Pause") + xScale.bandwidth() / 4)
+      .attr("x2", xScale("Pause") + (3 * xScale.bandwidth()) / 4)
+      .attr("y1", yScale(min))
+      .attr("y2", yScale(min))
+      .attr("stroke", "black");
+
+    svg.append("line")
+      .attr("x1", xScale("Pause") + xScale.bandwidth() / 4)
+      .attr("x2", xScale("Pause") + (3 * xScale.bandwidth()) / 4)
+      .attr("y1", yScale(max))
+      .attr("y2", yScale(max))
+      .attr("stroke", "black");
 
   }, [data, width, height]);
 

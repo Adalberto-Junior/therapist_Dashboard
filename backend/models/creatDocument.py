@@ -339,12 +339,13 @@ class CreatDocumentToDB:
                     }
         return self.data
     
-    def resultDocument(self, static_result, no_static_result, date, recording,user,step,processing_type, pathToChart):
+    def resultDocument(self, static_result, no_static_result, date, recording,user,step,processing_type, pathToChart,hour):
         """
         Create a document for the result.
         :param static_result: The static result of the processing.
         :param no_static_result: The non-static result of the processing.
         :param date: The date the result was produced.
+        :param hour: The hour the result was produced.
         :param recording: The recording associated with the result.
         :param user: The user who produced the result.
         :param step: The step of the processing.
@@ -357,6 +358,7 @@ class CreatDocumentToDB:
                     "static_result": static_result,               # result is a list of dictionaries
                     "no_static_result": no_static_result,               # result is a list of dictionaries
                     "date": date,                   # date is the date produced the result
+                    "hour": hour,
                     "recording": self.ensure_objectid(recording),          # recording is the id of the recording
                     "user": self.ensure_objectid(user),                   # user is the id of the user
                     "step": step,

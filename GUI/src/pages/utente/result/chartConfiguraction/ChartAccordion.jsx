@@ -152,7 +152,9 @@ export function DisplayChart({
           case "acousticSpaceCompared":
             return renderGroupedAcousticChart(data, idx);
           case "Boxplot":
-            return renderBoxChart(data, idx,)
+            return renderBoxChart(data, idx,"Boxplot",false);
+          case "PauseDurationBoxplot":
+            return renderBoxChart(data, idx,"PauseDurationBoxplot",false);
           default:
             return null;
         }
@@ -294,13 +296,16 @@ function renderGroupedAcousticChart(data, idx, oneChart = false) {
 //   }
 // }
 
-function renderBoxChart(data, idx, oneChart = false) {
-  const { chartComponent: ChartComponent } = chartConfig.Boxplot;
+function renderBoxChart(data, idx, typeChart = "Boxplot", oneChart = false) {
+  const chartKey = typeChart === "PauseDurationBoxplot" ? "PauseDurationBoxplot" : "Boxplot";
+  const { chartComponent: ChartComponent } = chartConfig[chartKey];
+
+  const valueKey = typeChart === "PauseDurationBoxplot" ? "pauseDurations" : "F0";
 
   if (oneChart) {
-    // Transform array of { id, F0 } into { id: F0 }
+    // Transform array of { id, valueKey } into { id: values }
     const transformedData = data.reduce((acc, item) => {
-      acc[item.id] = item.F0;
+      acc[item.id] = item[valueKey];
       return acc;
     }, {});
 
@@ -310,8 +315,8 @@ function renderBoxChart(data, idx, oneChart = false) {
       </div>
     );
   } else {
-    // data is an array of { id, F0 }
-    const entries = data.map(d => [d.id, d.F0]);
+    // data is an array of { id, valueKey }
+    const entries = data.map(d => [d.id, d[valueKey]]);
 
     // Group into pairs
     const pairedEntries = [];
@@ -326,10 +331,10 @@ function renderBoxChart(data, idx, oneChart = false) {
             key={`chart-pair-${pairIdx}`}
             className={`grid grid-cols-${pair.length} gap-4`}
           >
-            {pair.map(([label, f0Values]) => (
+            {pair.map(([label, values]) => (
               <div key={`chart-${label}`} className="border p-4 rounded shadow">
                 <h3 className="text-lg font-semibold mb-2">{label}</h3>
-                <ChartComponent data={{ [label]: f0Values }} />
+                <ChartComponent data={{ [label]: values }} />
               </div>
             ))}
           </div>

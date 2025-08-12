@@ -509,7 +509,39 @@ export function groupF0ToBoxplot(data = []) {
       });
     }
   });
-  console.log("Result: ",result)
+  console.log("ResultF0: ",result)
   return result;
   
+}
+
+
+export function groupPauseToBoxplot(data = []) {
+  const result = {
+    PauseDurationBoxplot: []
+  };
+
+  data.forEach(item => {
+    const noStaticResult = item.no_static_result;
+    if (!noStaticResult) return;
+
+    let pauseDurations = [];
+
+    Object.entries(noStaticResult).forEach(([sectionKey, sectionValue]) => {
+      Object.entries(sectionValue).forEach(([featureKey, featureValue]) => {
+        if (featureKey.toLowerCase() === "pausedurations") {
+          // Extract only the duration (third value in each triplet)
+          pauseDurations = featureValue.map(triplet => triplet[2]);
+        }
+      });
+    });
+
+    if (pauseDurations.length > 0) {
+      result.PauseDurationBoxplot.push({
+        id: item.step || "",
+        pauseDurations
+      });
+    }
+  });
+  console.log("PauseDur: ", result)
+  return result;
 }

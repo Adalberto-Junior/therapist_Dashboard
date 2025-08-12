@@ -460,9 +460,10 @@ def create_result():
     step = data.get("step")
     processing_type = data.get("processing_type")
     pathToChart = data.get("pathToChart")
+    hour = data.get("hour")
 
     # Create a new result document
-    result_data = CreatDocumentToDB().resultDocument(static_result=static_result, no_static_result=no_static_result, date=date, recording=recording, user=user, step=step, processing_type=processing_type, pathToChart=pathToChart)
+    result_data = CreatDocumentToDB().resultDocument(static_result=static_result, no_static_result=no_static_result, date=date, recording=recording, user=user, step=step, processing_type=processing_type, pathToChart=pathToChart,hour=hour)
 
     # Save the result to the database
     result_id = result_model.create_result(result_data)
