@@ -482,7 +482,7 @@ export function mergeF1F2DataToCompareUnifiedGraph(results = []) {
 
 export function groupF0ToBoxplot(data = []) {
   const result = {
-    Boxplot: []
+    F0Boxplot: []
   };
 
   data.forEach(item => {
@@ -503,45 +503,152 @@ export function groupF0ToBoxplot(data = []) {
     });
 
     if (F0 !== null) {
-      result.Boxplot.push({
+      result.F0Boxplot.push({
         id: item.step || "",
         F0,
       });
     }
   });
-  console.log("ResultF0: ",result)
   return result;
   
 }
 
 
-export function groupPauseToBoxplot(data = []) {
-  const result = {
-    PauseDurationBoxplot: []
-  };
+// export function groupPauseToBoxplot(data = []) {
+//   const result = {
+//     PauseDurationBoxplot: []
+//   };
+
+//   data.forEach(item => {
+//     const noStaticResult = item.no_static_result;
+//     if (!noStaticResult) return;
+
+//     let pauseDurations = [];
+
+//     Object.entries(noStaticResult).forEach(([sectionKey, sectionValue]) => {
+//       Object.entries(sectionValue).forEach(([featureKey, featureValue]) => {
+//         if (featureKey.toLowerCase() === "pausedurations") {
+//           // Extract only the duration (third value in each triplet)
+//           pauseDurations = featureValue.map(triplet => triplet[2]);
+//         }
+//       });
+//     });
+
+//     if (pauseDurations.length > 0) {
+//       result.PauseDurationBoxplot.push({
+//         id: item.step || "",
+//         pauseDurations
+//       });
+//     }
+//   });
+//   return result;
+// }
+
+
+// export function groupJitterToBoxplot(data = []) {
+//   const result = {
+//     PauseDurationBoxplot: []
+//   };
+
+//   data.forEach(item => {
+//     const noStaticResult = item.no_static_result;
+    
+//     if (!noStaticResult) return;
+    
+//     let Jitter = [];
+
+//     Object.entries(noStaticResult).forEach(([k, v]) => {
+      
+//       Object.entries(v).forEach(([key, value]) => {
+//         // console.log("KEY: ",key, "Value: ", value)
+//       if (key.toLowerCase() === "jitter") {
+//         Jitter = value;
+//       }
+//       });
+//     });
+
+//     if (Jitter !== null) {
+//       result.PauseDurationBoxplot.push({
+//         id: item.step || "",
+//         Jitter,
+//       });
+//     }
+//   });
+//   return result;
+  
+// }
+
+
+// export function groupShimmerToBoxplot(data = []) {
+//   const result = {
+//     PauseDurationBoxplot: []
+//   };
+
+//   data.forEach(item => {
+//     const noStaticResult = item.no_static_result;
+    
+//     if (!noStaticResult) return;
+    
+//     let Shimmer = [];
+
+//     Object.entries(noStaticResult).forEach(([k, v]) => {
+      
+//       Object.entries(v).forEach(([key, value]) => {
+//         // console.log("KEY: ",key, "Value: ", value)
+//       if (key.toLowerCase() === "shimmer") {
+//         Shimmer = value;
+//       }
+//       });
+//     });
+
+//     if (Shimmer !== null) {
+//       result.PauseDurationBoxplot.push({
+//         id: item.step || "",
+//         Shimmer,
+//       });
+//     }
+//   });
+//   return result;
+  
+// }
+
+
+
+export function groupFeatureToBoxplot(data = [], featureKey = "F0") {
+  const normalizedKey = featureKey.toLowerCase();
+  const grouped = [];
 
   data.forEach(item => {
     const noStaticResult = item.no_static_result;
     if (!noStaticResult) return;
 
-    let pauseDurations = [];
+    let extractedValues = [];
 
     Object.entries(noStaticResult).forEach(([sectionKey, sectionValue]) => {
-      Object.entries(sectionValue).forEach(([featureKey, featureValue]) => {
-        if (featureKey.toLowerCase() === "pausedurations") {
-          // Extract only the duration (third value in each triplet)
-          pauseDurations = featureValue.map(triplet => triplet[2]);
+      Object.entries(sectionValue).forEach(([key, value]) => {
+        if (key.toLowerCase() === normalizedKey) {
+          if (normalizedKey === "pausedurations") {
+            // Extract only the duration (third value in each triplet)
+            extractedValues = value.map(triplet => triplet[2]);
+          } else {
+            extractedValues = value;
+          }
         }
       });
     });
 
-    if (pauseDurations.length > 0) {
-      result.PauseDurationBoxplot.push({
+    if (extractedValues.length > 0) {
+      grouped.push({
         id: item.step || "",
-        pauseDurations
+        [featureKey]: extractedValues
       });
     }
   });
-  console.log("PauseDur: ", result)
-  return result;
+  // console.log("ValueKey: ",featureKey, "data: ", grouped)
+  return {
+    Boxplot: {
+      valueKey: featureKey,
+      data: grouped
+    }
+  };
 }

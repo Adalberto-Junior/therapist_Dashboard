@@ -126,6 +126,44 @@ export function ChartAccordion({ groupedData }) {
 
 
 // DisplayChart.jsx
+// export function DisplayChart({
+//   groupedData,
+//   filterRadarOnly = false,
+//   labels = [],
+//   excludeRadarLabels = [],
+//   variant = "grid",
+// }) {
+//   if (!groupedData) return null;
+
+//   return (
+//     <div className="grid gap-6">
+//       {Object.entries(groupedData).map(([chartType, data], idx) => {
+//         if (!data || Object.keys(data).length === 0) return null;
+//         console.log("DataAntes: ",data)
+
+//         switch (chartType) {
+//           case "radar":
+//             return renderRadarCharts(data, idx);
+//           case "line":
+//             return renderLineCharts(data, idx);
+//           case "acousticSpace":
+//             return renderAcousticChart(data, idx);
+//           case "acousticSpaceGrouped":
+//             return renderGroupedAcousticChart(data, idx, true);
+//           case "acousticSpaceCompared":
+//             return renderGroupedAcousticChart(data, idx);
+//           case "Boxplot":
+//             return renderBoxChart(data, idx,"Boxplot",false);
+//           case "PauseDurationBoxplot":
+//             return renderBoxChart(data, idx,"PauseDurationBoxplot",false);
+//           default:
+//             return null;
+//         }
+//       })}
+//     </div>
+//   );
+// }
+
 export function DisplayChart({
   groupedData,
   filterRadarOnly = false,
@@ -135,26 +173,31 @@ export function DisplayChart({
 }) {
   if (!groupedData) return null;
 
+  
+
   return (
     <div className="grid gap-6">
-      {Object.entries(groupedData).map(([chartType, data], idx) => {
-        if (!data || Object.keys(data).length === 0) return null;
-
+      {Object.entries(groupedData).map(([chartType, chartPayload], idx) => {
+        if (!chartPayload || Object.keys(chartPayload).length === 0) return null;
         switch (chartType) {
           case "radar":
-            return renderRadarCharts(data, idx);
+            return renderRadarCharts(chartPayload, idx);
           case "line":
-            return renderLineCharts(data, idx);
+            return renderLineCharts(chartPayload, idx);
           case "acousticSpace":
-            return renderAcousticChart(data, idx);
+            return renderAcousticChart(chartPayload, idx);
           case "acousticSpaceGrouped":
-            return renderGroupedAcousticChart(data, idx, true);
+            return renderGroupedAcousticChart(chartPayload, idx, true);
           case "acousticSpaceCompared":
-            return renderGroupedAcousticChart(data, idx);
-          case "Boxplot":
-            return renderBoxChart(data, idx,"Boxplot",false);
-          case "PauseDurationBoxplot":
-            return renderBoxChart(data, idx,"PauseDurationBoxplot",false);
+            return renderGroupedAcousticChart(chartPayload, idx);
+          case "F0Boxplot":
+            return renderF0BoxChart(chartPayload, idx,"Boxplot",false);
+          case "Boxplot": {
+            const { data, valueKey } = chartPayload;
+            console.log("Data:",data)
+            console.log("valueskeeee: ",valueKey)
+            return renderBoxChart(data, idx, valueKey, false);
+          }
           default:
             return null;
         }
@@ -162,6 +205,7 @@ export function DisplayChart({
     </div>
   );
 }
+
 
 function renderRadarCharts(data, idx) {
   const { labelPrefix, chartComponent: ChartComp } = chartConfig.radar;
@@ -255,68 +299,18 @@ function renderGroupedAcousticChart(data, idx, oneChart = false) {
 }
 
 
-// function renderBoxChart(data, idx, oneChart = false) {
-//   const { chartComponent: ChartComponent } = chartConfig.Boxplot;
-
-//   console.log("DataBox: ",data)
-
-//   if (oneChart) {
-//     return (
-//       <div key={`BoxPlot-${idx}`} className="grid gap-4">
-//         <ChartComponent data={data} />
-//       </div>
-//     );
-//   } else {
-//     // data is an array of { id, F0 }
-//     const entries = data.map(d => [d.id, d.F0]);
-
-//     // Group into pairs
-//     const pairedEntries = [];
-//     for (let i = 0; i < entries.length; i += 2) {
-//       pairedEntries.push(entries.slice(i, i + 2));
-//     }
-
-//     return (
-//       <div key={`BoxPlot-${idx}`} className="grid gap-6">
-//         {pairedEntries.map((pair, pairIdx) => (
-//           <div
-//             key={`chart-pair-${pairIdx}`}
-//             className={`grid grid-cols-${pair.length} gap-4`}
-//           >
-//             {pair.map(([label, f0Values]) => (
-//               <div key={`chart-${label}`} className="border p-4 rounded shadow">
-//                 <h3 className="text-lg font-semibold mb-2">{label}</h3>
-//                 <ChartComponent data={f0Values} />
-//               </div>
-//             ))}
-//           </div>
-//         ))}
-//       </div>
-//     );
-//   }
-// }
-
-function renderBoxChart(data, idx, typeChart = "Boxplot", oneChart = false) {
-  const chartKey = typeChart === "PauseDurationBoxplot" ? "PauseDurationBoxplot" : "Boxplot";
-  const { chartComponent: ChartComponent } = chartConfig[chartKey];
-
-  const valueKey = typeChart === "PauseDurationBoxplot" ? "pauseDurations" : "F0";
-
+function renderF0BoxChart(data, idx, oneChart = false) {
+  const { chartComponent: ChartComponent } = chartConfig.F0Boxplot;
+  
   if (oneChart) {
-    // Transform array of { id, valueKey } into { id: values }
-    const transformedData = data.reduce((acc, item) => {
-      acc[item.id] = item[valueKey];
-      return acc;
-    }, {});
-
     return (
       <div key={`BoxPlot-${idx}`} className="grid gap-4">
-        <ChartComponent data={transformedData} />
+        <ChartComponent data={data} />
       </div>
     );
   } else {
-    // data is an array of { id, valueKey }
-    const entries = data.map(d => [d.id, d[valueKey]]);
+    // data is an array of { id, F0 }
+    const entries = data.map(d => [d.id, d.F0]);
 
     // Group into pairs
     const pairedEntries = [];
@@ -331,14 +325,110 @@ function renderBoxChart(data, idx, typeChart = "Boxplot", oneChart = false) {
             key={`chart-pair-${pairIdx}`}
             className={`grid grid-cols-${pair.length} gap-4`}
           >
-            {pair.map(([label, values]) => (
+            {pair.map(([label, f0Values]) => (
               <div key={`chart-${label}`} className="border p-4 rounded shadow">
                 <h3 className="text-lg font-semibold mb-2">{label}</h3>
-                <ChartComponent data={{ [label]: values }} />
+                <ChartComponent data={f0Values} />
               </div>
             ))}
           </div>
         ))}
+      </div>
+    );
+  }
+}
+
+// function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
+//   const { chartComponent: ChartComponent } = chartConfig.Boxplot;
+
+  
+
+//   if (oneChart) {
+//     const transformedData = data.reduce((acc, item) => {
+//       acc[item.id] = Array.isArray(item[valueKey]) ? item[valueKey] : [item[valueKey]];
+//       return acc;
+//     }, {});
+//     return (
+//       <div key={`BoxPlot-${idx}`} className="grid gap-4">
+//         <ChartComponent data={transformedData} />
+//       </div>
+//     );
+//   } else {
+//     const entries = data.map(d => [d.id, Array.isArray(d[valueKey]) ? d[valueKey] : [d[valueKey]]]);
+//     // const entries = data.map(d => [d.id, d[valueKey]]);
+//     const pairedEntries = [];
+//     for (let i = 0; i < entries.length; i += 2) {
+//       pairedEntries.push(entries.slice(i, i + 2));
+//     }
+//     console.log("ValueKey: ",pairedEntries)
+//     return (
+//       <div key={`BoxPlot-${idx}`} className="grid gap-6">
+//         {pairedEntries.map((pair, pairIdx) => (
+//           <div
+//             key={`chart-pair-${pairIdx}`}
+//             className={`grid grid-cols-${pair.length} gap-4`}
+//           >
+//             {pair.map(([label, values]) => (
+//               <div key={`chart-${label}`} className="border p-4 rounded shadow">
+//                 <h3 className="text-lg font-semibold mb-2">{label}</h3>
+//                 <ChartComponent data={{ [label]: values }} />
+//               </div>
+              
+//             ))}
+//           </div>
+//         ))}
+//       </div>
+//     );
+//   }
+// }
+
+
+function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
+  const { chartComponent: ChartComponent } = chartConfig.Boxplot;
+
+  const normalizeData = (arr) =>
+    arr.reduce((acc, item) => {
+      acc[item.id] = Array.isArray(item[valueKey])
+        ? item[valueKey]
+        : [item[valueKey]];
+      return acc;
+    }, {});
+
+  if (oneChart) {
+    const transformedData = normalizeData(data);
+    return (
+      <div key={`BoxPlot-${idx}`} className="grid gap-4">
+        <ChartComponent data={transformedData} />
+      </div>
+    );
+  } else {
+    // group into pairs but normalize each subgroup
+    const paired = [];
+    for (let i = 0; i < data.length; i += 2) {
+      paired.push(data.slice(i, i + 2));
+    }
+
+    return (
+      <div key={`BoxPlot-${idx}`} className="grid gap-6">
+        {paired.map((subset, pairIdx) => {
+          const transformed = normalizeData(subset);
+          return (
+            <div
+              key={`chart-pair-${pairIdx}`}
+              className={`grid grid-cols-${Object.keys(transformed).length} gap-4`}
+            >
+              {Object.entries(transformed).map(([label, values]) => (
+                <div
+                  key={`chart-${label}-${pairIdx}`}
+                  className="border p-4 rounded shadow"
+                >
+                  <h3 className="text-lg font-semibold mb-2">{label}</h3>
+                  <ChartComponent data={{ [label]: values }} />
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     );
   }

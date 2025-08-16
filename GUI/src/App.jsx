@@ -27,6 +27,7 @@ import ReportList from './pages/utente/utenteData/allReport.jsx'
 import EditReport from "./pages/utente/utenteData/editReport.jsx";
 import ArticulationResultPage from './pages/utente/result/versao2/articulationPage.jsx'
 import ProsodyResultPage from "./pages/utente/result/versao2/prosodyPage.jsx";  
+import PhonotionResultPage from "./pages/utente/result/versao2/phonationPage.jsx";
 
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
@@ -108,7 +109,8 @@ export default function App() {
               <Route path="editar" element={<EditUtente />} />
               <Route path="analise/articulacao" element={<ArticulationResultPage />} />
               {/* <Route path="analise/articulacao" element={<ArticulationResult />} /> */}
-              <Route path="analise/fonacao" element={<PhonotionResult />} />
+              <Route path="analise/fonacao" element={<PhonotionResultPage />} />
+              {/* <Route path="analise/fonacao" element={<PhonotionResult />} /> */}
               {/* <Route path="analise/prosodia" element={<ProsodyResult />} /> */}
               <Route path="analise/prosodia" element={<ProsodyResultPage />} />
               <Route path="analise/glota" element={<GlottalResult />} />

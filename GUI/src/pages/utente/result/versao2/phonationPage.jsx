@@ -5,13 +5,13 @@ import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
 import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
-import {groupF0ToBoxplot, groupFeatureToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
+import {groupFeatureToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
 import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
 const BACKEND_URL = "http://localhost:5000";
 
-export default function ProsodyResultPage() {
+export default function PhonotionResultPage() {
     const { id } = useParams();
     const [results, setResults] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -37,26 +37,28 @@ export default function ProsodyResultPage() {
 
     console.log(filtered)
 
-    const data = groupF0ToBoxplot(filtered);
-    const pauseDurations = groupFeatureToBoxplot(filtered,"pausedurations");
+    const JitterData = groupFeatureToBoxplot(filtered,"Jitter");
+    const ShimmerData = groupFeatureToBoxplot(filtered,"Shimmer");
 
+    console.log("DataNoProsodia: ",ShimmerData)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get(`/utente/${id}/analise/prosodia`);
+                const response = await api.get(`/utente/${id}/analise/fonacao`);
                 setResults(response.data);
                 if (response.data.length > 0) {
                 setSelectedDate(response.data[response.data.length - 1].date);
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
-            } finally {
+            }finally {
                 setLoading(false);
             }
         };
         fetchData();
     }, [id]);
+
 
     // const handleCompareUnifiedGraph = () => {
     //     const unified = mergeF1F2DataToCompareUnifiedGraph(filtered);
@@ -66,22 +68,22 @@ export default function ProsodyResultPage() {
     const handleDelete = async () => {
         const typeOfProcessing = filtered.find(item => item.date === selectedDate)?.processing_type;
         if (!typeOfProcessing) return;
-            const selectedDate_ = selectedDate;
+        const selectedDate_ = selectedDate;
         try {
-            if (!window.confirm(`Tem certeza que deseja eliminar todos os resultados desta data: ${selectedDate_}?`)) return;
-
-            await api.delete(`/utente/${id}/analise/${typeOfProcessing}/${selectedDate}`);
-            setResults((prevResults) => prevResults.filter((res) => res.date !== selectedDate));
-            if (filtered.length === 0) {
-                setSelectedDate(null);
-            }
-            alert(`Resultados da data ${selectedDate_} eliminado com sucesso!`);
-            window.location.reload();
+          if (!window.confirm(`Tem certeza que deseja eliminar todos os resultados desta data: ${selectedDate_}?`)) return;
+    
+          await api.delete(`/utente/${id}/analise/${typeOfProcessing}/${selectedDate}`);
+          setResults((prevResults) => prevResults.filter((res) => res.date !== selectedDate));
+          if (filtered.length === 0) {
+            setSelectedDate(null);
+          }
+          alert(`Resultados da data ${selectedDate_} eliminado com sucesso!`);
+          window.location.reload();
         } catch (error) {
-            console.error("Erro ao deletar dados:", error);
-            alert("Erro ao eliminar os resultados. Tente novamente.");
+          console.error("Erro ao deletar dados:", error);
+          alert("Erro ao eliminar os resultados. Tente novamente.");
         }
-    };
+      };
 
     const renderDateSelector = () => {
         // return compareMode ? (
@@ -261,10 +263,10 @@ export default function ProsodyResultPage() {
             <div className="mb-4">
             {filtered.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 dark:text-white">F0</h2>
-                <DisplayChart groupedData={data} />
-                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
-                <DisplayChart groupedData={pauseDurations} />
+                <h2 className="text-xl font-semibold mb-4 dark:text-white">Jitter</h2>
+                <DisplayChart groupedData={JitterData} />
+                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Shimmer</h2>
+                <DisplayChart groupedData={ShimmerData} />
 
             
                 <Accordion defaultActiveKey="x" className="mt-6">

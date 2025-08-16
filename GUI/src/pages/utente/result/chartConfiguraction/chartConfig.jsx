@@ -33,14 +33,14 @@ export const chartConfig = {
     chartComponent: AcousticSpaceD3,
   },
 
-  Boxplot: {
-    match: /^F0$/,
+  F0Boxplot: {
+    match: /^(F0)$/,
     labelPrefix: "",
     chartComponent: Boxplot,
   },
 
-  PauseDurationBoxplot: {
-    match: /^pauseDurations$/,
+  Boxplot: {
+    match: /^(pauseDurations|Jitter|Shimmer)$/,
     labelPrefix: "",
     chartComponent: PauseBoxplot,
   }
