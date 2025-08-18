@@ -1535,3 +1535,288 @@ export function PauseBoxplot1({ data, width = 400, height = 300 }) {
 
   return <svg ref={svgRef}></svg>;
 }
+
+
+export function IntensityChart ({ data,  width = 800, height = 300 }) {
+  const svgRef = useRef();
+  const containerRef = useRef();
+  const [tooltip, setTooltip] = useState(null);
+  const [hoverData, setHoverData] = useState(null);
+
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+
+    // const width = 800;
+    // const height = 300;
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+
+    svg.attr("width", width).attr("height", height);
+
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent(data, (d) => d.time))
+      .range([margin.left, width - margin.right]);
+
+    const y = d3
+      .scaleLinear()
+      .domain([d3.min(data, (d) => d.db) - 5, d3.max(data, (d) => d.db) + 5])
+      .range([height - margin.bottom, margin.top]);
+
+    const line = d3
+      .line()
+      .x((d) => x(d.time))
+      .y((d) => y(d.db));
+
+    const zoom = d3.zoom().scaleExtent([1, 10]).on("zoom", (event) => {
+      const transform = event.transform;
+      const newX = transform.rescaleX(x);
+      const newLine = d3
+        .line()
+        .x((d) => newX(d.time))
+        .y((d) => y(d.db));
+
+      svg.selectAll("path").attr("d", newLine(data));
+      svg.select(".x-axis").call(d3.axisBottom(newX));
+    });
+
+    svg.call(zoom);
+
+    svg
+      .append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "orange")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .attr("class", "x-axis")
+      .call(d3.axisBottom(x));
+
+    svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y));
+
+    // Hover interativo
+    svg
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "transparent")
+      .on("mousemove", function (event) {
+        const [mx] = d3.pointer(event);
+        const time = x.invert(mx);
+        const pontoMaisProximo = data.reduce((a, b) =>
+          Math.abs(b.time - time) < Math.abs(a.time - time) ? b : a
+        );
+        setHoverData(pontoMaisProximo);
+      })
+      .on("mouseleave", () => setHoverData(null));
+
+    // Estatísticas
+    const media = d3.mean(data, (d) => d.db).toFixed(2);
+    const max = d3.max(data, (d) => d.db).toFixed(2);
+    const min = d3.min(data, (d) => d.db).toFixed(2);
+
+    setTooltip({ media, max, min });
+  }, [data]);
+
+  const exportarImagem = () => {
+    html2canvas(containerRef.current).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = "grafico_intensidade.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
+  return (
+    <div ref={containerRef} style={{ position: "relative" }}>
+      <svg ref={svgRef}></svg>
+
+      {tooltip && (
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            background: "#fff8dc",
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            fontSize: "14px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+          }}
+        >
+          <strong>📊 Estatísticas:</strong><br />
+          Média: {tooltip.media} dB<br />
+          Máximo: {tooltip.max} dB<br />
+          Mínimo: {tooltip.min} dB
+        </div>
+      )}
+
+      {hoverData && (
+        <div
+          style={{
+            position: "absolute",
+            top: 50,
+            left: 10,
+            background: "#e0f7fa",
+            padding: "8px",
+            border: "1px solid #aaa",
+            borderRadius: "6px",
+            fontSize: "13px",
+          }}
+        >
+          <strong>🕒 {hoverData.time.toFixed(2)}s</strong><br />
+          Intensidade: {hoverData.db.toFixed(2)} dB
+        </div>
+      )}
+
+      {/* <button
+        onClick={exportarImagem}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          padding: "8px 12px",
+          background: "#ffa726",
+          border: "none",
+          borderRadius: "6px",
+          color: "#fff",
+          cursor: "pointer",
+        }}
+      >
+        📤 Exportar como PNG
+      </button> */}
+    </div>
+  );
+};
+
+export function ComparacaoIntensidade  ({ audioA, audioB, nomeA = "Áudio A", nomeB = "Áudio B", width = 800, height = 350 }) {
+  const svgRef = useRef();
+  const [tooltip, setTooltip] = useState(null);
+
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+
+    // const width = 800;
+    // const height = 350;
+    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+
+    svg.attr("width", width).attr("height", height);
+
+    const allData = [...audioA, ...audioB];
+
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent(allData, (d) => d.time))
+      .range([margin.left, width - margin.right]);
+
+    const y = d3
+      .scaleLinear()
+      .domain([d3.min(allData, (d) => d.db) - 5, d3.max(allData, (d) => d.db) + 5])
+      .range([height - margin.bottom, margin.top]);
+
+    const lineA = d3
+      .line()
+      .x((d) => x(d.time))
+      .y((d) => y(d.db));
+
+    const lineB = d3
+      .line()
+      .x((d) => x(d.time))
+      .y((d) => y(d.db));
+
+    svg
+      .append("path")
+      .datum(audioA)
+      .attr("fill", "none")
+      .attr("stroke", "#42a5f5")
+      .attr("stroke-width", 2)
+      .attr("d", lineA);
+
+    svg
+      .append("path")
+      .datum(audioB)
+      .attr("fill", "none")
+      .attr("stroke", "#ef5350")
+      .attr("stroke-width", 2)
+      .attr("d", lineB);
+
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x));
+
+    svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y));
+
+    // Estatísticas
+    const statsA = {
+      média: d3.mean(audioA, (d) => d.db).toFixed(2),
+      máximo: d3.max(audioA, (d) => d.db).toFixed(2),
+      mínimo: d3.min(audioA, (d) => d.db).toFixed(2),
+    };
+
+    const statsB = {
+      média: d3.mean(audioB, (d) => d.db).toFixed(2),
+      máximo: d3.max(audioB, (d) => d.db).toFixed(2),
+      mínimo: d3.min(audioB, (d) => d.db).toFixed(2),
+    };
+
+    setTooltip({ statsA, statsB });
+  }, [audioA, audioB]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      <svg ref={svgRef}></svg>
+
+      {tooltip && (
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            background: "#f9fbe7",
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            fontSize: "14px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+          }}
+        >
+          <strong>📊 Estatísticas:</strong><br />
+          <span style={{ color: "#42a5f5" }}>{nomeA}</span>: Média {tooltip.statsA.média} dB, Máx {tooltip.statsA.máximo}, Mín {tooltip.statsA.mínimo}<br />
+          <span style={{ color: "#ef5350" }}>{nomeB}</span>: Média {tooltip.statsB.média} dB, Máx {tooltip.statsB.máximo}, Mín {tooltip.statsB.mínimo}
+        </div>
+      )}
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: 10,
+          left: 10,
+          fontSize: "13px",
+          background: "#fff",
+          padding: "6px 10px",
+          borderRadius: "6px",
+          border: "1px solid #ddd",
+        }}
+      >
+        <strong>Legenda:</strong><br />
+        <span style={{ color: "#42a5f5" }}>● {nomeA}</span><br />
+        <span style={{ color: "#ef5350" }}>● {nomeB}</span>
+      </div>
+    </div>
+  );
+};
+
+
