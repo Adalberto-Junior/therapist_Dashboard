@@ -652,3 +652,37 @@ export function groupFeatureToBoxplot(data = [], featureKey = "F0") {
     }
   };
 }
+
+
+
+export function groupDataToIntensityplot(data = []) {
+  const result = {
+    Intensityplot: []
+  };
+
+  data.forEach(item => {
+    const noStaticResult = item.no_static_result;
+    
+    if (!noStaticResult) return;
+    
+    let Intensidade = [];
+
+    Object.entries(noStaticResult).forEach(([k, v]) => {
+      
+      Object.entries(v).forEach(([key, value]) => {
+        // console.log("KEY: ",key, "Value: ", value)
+      if (key.toLowerCase() === "intensidade") {
+        Intensidade = value;
+      }
+      });
+    });
+
+    if (Intensidade !== null) {
+      result.Intensityplot.push({
+        id: item.step || "",
+        Intensidade,
+      });
+    }
+  });
+  return result;
+}

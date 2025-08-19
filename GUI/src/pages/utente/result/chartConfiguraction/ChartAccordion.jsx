@@ -166,7 +166,7 @@ export function ChartAccordion({ groupedData }) {
 
 export function DisplayChart({
   groupedData,
-  filterRadarOnly = false,
+  comparedValue = false,
   labels = [],
   excludeRadarLabels = [],
   variant = "grid",
@@ -198,6 +198,8 @@ export function DisplayChart({
             console.log("valueskeeee: ",valueKey)
             return renderBoxChart(data, idx, valueKey, false);
           }
+          case "Intensityplot":
+            return IntensityChart(chartPayload,idx)
           default:
             return null;
         }
@@ -432,4 +434,22 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
       </div>
     );
   }
+}
+
+
+function IntensityChart(data, idx) {
+  const { chartComponent: ChartComponent } = chartConfig.Intensityplot;
+  if (data){
+      return (
+      <div key={`Intensityplot-${idx}`} className="grid gap-6">
+        <ChartComponent data={data} />
+      </div>
+    );
+  }
+  return (
+    <div key={`Intensityplot-${idx}`} className="grid gap-6">
+      <h2>Nenhum dados encontrado</h2>
+    </div>
+  );
+  
 }

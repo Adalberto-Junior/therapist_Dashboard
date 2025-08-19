@@ -5,7 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
 import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
-import {groupFeatureToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
+import {groupFeatureToBoxplot,groupDataToIntensityplot} from "../chartConfiguraction/groupChartData.jsx";
 import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
@@ -39,8 +39,11 @@ export default function PhonotionResultPage() {
 
     const JitterData = groupFeatureToBoxplot(filtered,"Jitter");
     const ShimmerData = groupFeatureToBoxplot(filtered,"Shimmer");
+    const intensityData = groupDataToIntensityplot(filtered);
+    // const intensityData = groupFeatureToBoxplot(filtered,"intensidade");
 
-    console.log("DataNoProsodia: ",ShimmerData)
+
+    console.log("DataNoProsodia: ",intensityData)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -263,29 +266,43 @@ export default function PhonotionResultPage() {
             <div className="mb-4">
             {filtered.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 dark:text-white">Jitter</h2>
-                <DisplayChart groupedData={JitterData} />
-                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Shimmer</h2>
-                <DisplayChart groupedData={ShimmerData} />
+                    <h2 className="text-xl font-semibold mb-4 dark:text-white">Jitter</h2>
+                    <DisplayChart groupedData={JitterData} />
+                    <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Shimmer</h2>
+                    <DisplayChart groupedData={ShimmerData} />
+                    <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Intensidade da fala</h2>
+                    <DisplayChart groupedData={intensityData} />
 
-            
-                <Accordion defaultActiveKey="x" className="mt-6">
-                <Accordion.Item eventKey="0">
-                    <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
-                    <Accordion.Body>{renderChartImages()}</Accordion.Body>
-                </Accordion.Item>
-                </Accordion>
-
-                <Accordion defaultActiveKey="x" className="mt-6">
-                <Accordion.Item eventKey="0">
-                    <Accordion.Header>Áudios dos exercícios</Accordion.Header>
-                    <Accordion.Body>{renderExerciseAudio()}</Accordion.Body>
-                </Accordion.Item>
-                </Accordion>
-                
-
-                {/* {!compareMode && (
-                    <>
+                     <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Tempo Maximo de Fonação</h2>
+                    <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th scope="col" className="py-2 px-4 border-b">Passo</th>
+                                <th scope="col" className="py-2 px-4 border-b">Valor</th>
+                                <th scope="col" className="py-2 px-4 border-b">Medida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {filtered.map((data) => (
+                              <tr key={`tmf-${data.step}`}>
+                                    <td className="py-2 px-4 border-b">{data.step}</td>
+                                    <td className="py-2 px-4 border-b">
+                                    {
+                                        data.static_result
+                                        ?.filter(item => item.TMF !== undefined)
+                                        .map((item, idx) => (
+                                            <div key={idx}>{item.TMF}</div>
+                                        ))
+                                    }
+                                    </td>
+                                    <td className="py-2 px-4 border-b">{"Segundos"}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        
+                    </table>
+                    
                     <Accordion defaultActiveKey="x" className="mt-6">
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
@@ -299,16 +316,33 @@ export default function PhonotionResultPage() {
                         <Accordion.Body>{renderExerciseAudio()}</Accordion.Body>
                     </Accordion.Item>
                     </Accordion>
-                    </>
-                )} */}
-                <div className="w-full mt-8 flex justify-center">
-                <button
-                    className="mb-4 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-700 dark:hover:bg-red-800"
-                    onClick={() => handleDelete()}
-                >
-                    Eliminar Todos os Resultados
-                </button>
-                </div>
+                    
+
+                    {/* {!compareMode && (
+                        <>
+                        <Accordion defaultActiveKey="x" className="mt-6">
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
+                            <Accordion.Body>{renderChartImages()}</Accordion.Body>
+                        </Accordion.Item>
+                        </Accordion>
+
+                        <Accordion defaultActiveKey="x" className="mt-6">
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Áudios dos exercícios</Accordion.Header>
+                            <Accordion.Body>{renderExerciseAudio()}</Accordion.Body>
+                        </Accordion.Item>
+                        </Accordion>
+                        </>
+                    )} */}
+                    <div className="w-full mt-8 flex justify-center">
+                        <button
+                            className="mb-4 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition-colors dark:bg-red-700 dark:hover:bg-red-800"
+                            onClick={() => handleDelete()}
+                        >
+                            Eliminar Todos os Resultados
+                        </button>
+                    </div>
                 </div>
                 
             ) : (

@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from "react";
 import * as d3 from 'd3';
-
 
 
 export function RadarChart({
@@ -1447,7 +1446,7 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
 export function PauseBoxplot1({ data, width = 400, height = 300 }) {
   const svgRef = useRef();
 
-  console.log("PauseBox: ",data)
+  // console.log("PauseBox: ",data)
 
   useEffect(() => {
     if (!data || data.length === 0) return;
@@ -1543,6 +1542,9 @@ export function IntensityChart ({ data,  width = 800, height = 300 }) {
   const [tooltip, setTooltip] = useState(null);
   const [hoverData, setHoverData] = useState(null);
 
+  if (!data || data.length === 0) return null;
+
+
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -1618,11 +1620,18 @@ export function IntensityChart ({ data,  width = 800, height = 300 }) {
       .on("mouseleave", () => setHoverData(null));
 
     // Estatísticas
-    const media = d3.mean(data, (d) => d.db).toFixed(2);
-    const max = d3.max(data, (d) => d.db).toFixed(2);
-    const min = d3.min(data, (d) => d.db).toFixed(2);
+    const valoresValidos = data.filter((d) => typeof d.db === "number" && !isNaN(d.db));
+
+    const mediaRaw = d3.mean(valoresValidos, (d) => d.db);
+    const maxRaw = d3.max(valoresValidos, (d) => d.db);
+    const minRaw = d3.min(valoresValidos, (d) => d.db);
+
+    const media = mediaRaw !== undefined ? mediaRaw.toFixed(2) : "N/A";
+    const max = maxRaw !== undefined ? maxRaw.toFixed(2) : "N/A";
+    const min = minRaw !== undefined ? minRaw.toFixed(2) : "N/A";
 
     setTooltip({ media, max, min });
+
   }, [data]);
 
   const exportarImagem = () => {
@@ -1672,8 +1681,13 @@ export function IntensityChart ({ data,  width = 800, height = 300 }) {
             fontSize: "13px",
           }}
         >
-          <strong>🕒 {hoverData.time.toFixed(2)}s</strong><br />
-          Intensidade: {hoverData.db.toFixed(2)} dB
+          {hoverData && typeof hoverData.db === "number" && typeof hoverData.time === "number" && (
+            <div style={{ /* estilos */ }}>
+              <strong>🕒 {hoverData.time.toFixed(2)}s</strong><br />
+              Intensidade: {hoverData.db.toFixed(2)} dB
+            </div>
+          )}
+
         </div>
       )}
 
