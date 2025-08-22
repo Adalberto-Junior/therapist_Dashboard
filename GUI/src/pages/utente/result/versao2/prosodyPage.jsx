@@ -40,7 +40,8 @@ export default function ProsodyResultPage() {
     const data = groupF0ToBoxplot(filtered);
     const pauseDurations = groupFeatureToBoxplot(filtered,"pausedurations");
 
-
+    console.log("Filtered: ", filtered);
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -265,6 +266,86 @@ export default function ProsodyResultPage() {
                 <DisplayChart groupedData={data} />
                 <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
                 <DisplayChart groupedData={pauseDurations} />
+<h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">
+  Métricas de Velocidade e Fluência da Fala
+</h2>
+
+<table className="min-w-9/12 mx-auto border-collapse border border-gray-400 dark:border-zinc-500 shadow-md rounded-lg overflow-hidden">
+  <thead>
+    <tr className="bg-green-300 dark:bg-gray-600 sticky top-0 z-10">
+      {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Passo</th> */}
+      {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Categoria</th> */}
+      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Métrica</th>
+      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Valor</th>
+      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Unidade</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {filtered.map((data) => {
+      const speechRateResults = data.no_static_result?.filter(item => item.SpeechRate) || [];
+
+      if (speechRateResults.length === 0) return null; // nenhum SpeechRate neste passo
+
+      return (
+        <React.Fragment key={data.step}>
+          {/* Linha de cabeçalho do passo */}
+          <tr className="bg-green-200 dark:bg-green-600 font-semibold">
+            <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2" colSpan={5}>
+              Passo: {data.step.replace(/_/g, " ")}
+            </td>
+          </tr>
+
+          {speechRateResults.map((result, rIdx) => {
+            const metrics = result.SpeechRate;
+
+            return Object.entries(metrics)
+              .filter(([_, value]) => !Array.isArray(value)) // remove listas
+              .map(([metric, value], idx) => {
+                const unitMatch = metric.match(/\((.*?)\)/);
+                const unit = unitMatch ? unitMatch[1] : "";
+
+                const toTitleCase = (str) => {
+                    return str
+                        .toLowerCase()
+                        .replace(/\b\p{L}/gu, (l) => l.toUpperCase())
+                        .trim();
+                };
+
+                const cleanedName = toTitleCase(metric.replace(/\(.*?\)/g, "").replace(/_/g, " "));
+
+                // let category = "";
+                // if (["Duração Total", "Tempo Falado", "Nº Pausas", "Duração Média Pausa", "Pausa Min"].includes(cleanedName)) {
+                //   category = "Duração";
+                // } else if (["Sps Total", "Sps Articulação"].includes(cleanedName)) {
+                //   category = "Ritmo / Fluência";
+                // } else if (["Sílabas"].includes(cleanedName)) {
+                //   category = "Sílabas";
+                // } else if (["Intensidade Min", "Pitch Min"].includes(cleanedName)) {
+                //   category = "Intensidade / Pitch";
+                // } else {
+                //   category = "Outros";
+                // }
+
+                return (
+                  <tr key={`${data.step}-${rIdx}-${idx}`} className="odd:bg-gray-100 odd:dark:bg-gray-500">
+                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2"></td> */}
+                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{category}</td> */}
+                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2">{cleanedName}</td>
+                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{value}</td>
+                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{unit}</td>
+                  </tr>
+                );
+              });
+          })}
+        </React.Fragment>
+      );
+    })}
+  </tbody>
+</table>
+
+
+
 
             
                 <Accordion defaultActiveKey="x" className="mt-6">

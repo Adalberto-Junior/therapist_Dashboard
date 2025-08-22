@@ -199,7 +199,7 @@ export function DisplayChart({
             return renderBoxChart(data, idx, valueKey, false);
           }
           case "Intensityplot":
-            return IntensityChart(chartPayload,idx)
+            return IntensityChartWrapper( chartPayload,idx);
           default:
             return null;
         }
@@ -437,19 +437,26 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
 }
 
 
-function IntensityChart(data, idx) {
+function IntensityChartWrapper(data, idx) {
   const { chartComponent: ChartComponent } = chartConfig.Intensityplot;
-  if (data){
-      return (
-      <div key={`Intensityplot-${idx}`} className="grid gap-6">
-        <ChartComponent data={data} />
+  console.log("IntensityChartWrapper: ", data);
+  if (!data || data.length === 0) {
+    return (
+      <div key={`IntensityChartWrapper-${idx}`} className="grid gap-6">
+        <h2>Nenhum dado encontrado</h2>
       </div>
     );
   }
+
   return (
-    <div key={`Intensityplot-${idx}`} className="grid gap-6">
-      <h2>Nenhum dados encontrado</h2>
+    <div className="grid gap-6">
+      {data.map((d, idx) => (
+        <div key={`Intensityplot-${d.id || idx}`} className="grid gap-4">
+          <h3 className="text-lg font-semibold">Gráfico de Intensidade – {d.id}</h3>
+          <ChartComponent data={d.Intensidade} width={800} height={300} />
+        </div>
+      ))}
     </div>
   );
-  
 }
+

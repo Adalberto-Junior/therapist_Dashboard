@@ -1536,21 +1536,17 @@ export function PauseBoxplot1({ data, width = 400, height = 300 }) {
 }
 
 
-export function IntensityChart ({ data,  width = 800, height = 300 }) {
+export function IntensityChart({ data, width = 800, height = 300 }) {
   const svgRef = useRef();
-  const containerRef = useRef();
   const [tooltip, setTooltip] = useState(null);
   const [hoverData, setHoverData] = useState(null);
 
   if (!data || data.length === 0) return null;
 
-
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // const width = 800;
-    // const height = 300;
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
     svg.attr("width", width).attr("height", height);
@@ -1631,85 +1627,71 @@ export function IntensityChart ({ data,  width = 800, height = 300 }) {
     const min = minRaw !== undefined ? minRaw.toFixed(2) : "N/A";
 
     setTooltip({ media, max, min });
-
   }, [data]);
 
-  const exportarImagem = () => {
-    html2canvas(containerRef.current).then((canvas) => {
-      const link = document.createElement("a");
-      link.download = "grafico_intensidade.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  };
-
   return (
-    <div ref={containerRef} style={{ position: "relative" }}>
-      <svg ref={svgRef}></svg>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "16px",
+      }}
+    >
+      {/* Container do gráfico + hover */}
+      <div style={{ position: "relative" }}>
+        <svg ref={svgRef}></svg>
 
+        {hoverData && (
+          <div
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              background: "#e0f7fa",
+              padding: "8px",
+              border: "1px solid #aaa",
+              borderRadius: "6px",
+              fontSize: "13px",
+            }}
+          >
+            {typeof hoverData.db === "number" && typeof hoverData.time === "number" && (
+              <div>
+                <strong>🕒 {hoverData.time.toFixed(2)}s</strong>
+                <br />
+                Intensidade: {hoverData.db.toFixed(2)} dB
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Sidebar fixa à direita */}
       {tooltip && (
         <div
           style={{
-            position: "absolute",
-            top: 10,
-            left: 10,
             background: "#fff8dc",
-            padding: "10px",
+            padding: "12px",
             border: "1px solid #ccc",
             borderRadius: "8px",
             fontSize: "14px",
             boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            minWidth: "160px",
+            height: 150, // mesma altura do gráfico
           }}
         >
-          <strong>📊 Estatísticas:</strong><br />
-          Média: {tooltip.media} dB<br />
-          Máximo: {tooltip.max} dB<br />
+          <strong>📊 Estatísticas:</strong>
+          <br />
+          Média: {tooltip.media} dB
+          <br />
+          Máximo: {tooltip.max} dB
+          <br />
           Mínimo: {tooltip.min} dB
         </div>
       )}
-
-      {hoverData && (
-        <div
-          style={{
-            position: "absolute",
-            top: 50,
-            left: 10,
-            background: "#e0f7fa",
-            padding: "8px",
-            border: "1px solid #aaa",
-            borderRadius: "6px",
-            fontSize: "13px",
-          }}
-        >
-          {hoverData && typeof hoverData.db === "number" && typeof hoverData.time === "number" && (
-            <div style={{ /* estilos */ }}>
-              <strong>🕒 {hoverData.time.toFixed(2)}s</strong><br />
-              Intensidade: {hoverData.db.toFixed(2)} dB
-            </div>
-          )}
-
-        </div>
-      )}
-
-      {/* <button
-        onClick={exportarImagem}
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          padding: "8px 12px",
-          background: "#ffa726",
-          border: "none",
-          borderRadius: "6px",
-          color: "#fff",
-          cursor: "pointer",
-        }}
-      >
-        📤 Exportar como PNG
-      </button> */}
     </div>
   );
-};
+}
+
 
 export function ComparacaoIntensidade  ({ audioA, audioB, nomeA = "Áudio A", nomeB = "Áudio B", width = 800, height = 350 }) {
   const svgRef = useRef();

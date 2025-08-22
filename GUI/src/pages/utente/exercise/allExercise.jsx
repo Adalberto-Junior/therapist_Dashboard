@@ -86,6 +86,12 @@ export default function AllExercise() {
             { label: 'Fonológico', value: 'phonological'}
         ];
 
+    const LabelObrigatorio = ({ htmlFor, children }) => (
+        <label htmlFor={htmlFor}>
+            {children} <span style={{ color: 'red' }}>*</span>
+        </label>
+    );
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -209,246 +215,251 @@ export default function AllExercise() {
     if (exercises.length >= 0) {
         return (
                 <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                                <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-                                {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
-                                    <h2 className="text-2xl font-bold text-center mb-5">Lista dos Exercícios</h2>
-                                    <table className="min-w-full bg-white border border-gray-300">
-                                        <thead>
-                                            <tr className="bg-gray-200">
-                                                <th className="py-2 px-4 border-b">ID</th>
-                                                <th className="py-2 px-4 border-b">Tipo</th>
-                                                <th className="py-2 px-4 border-b">Nome</th>
-                                                <th className="py-2 px-4 border-b">Descrição</th>
-                                                <th className="py-2 px-4 border-b">Ação</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {exercises.map((exercise) => (
-                                                <tr key={exercise._id.$oid || exercise._id}>
-                                                    <td className="py-2 px-4 border-b">{exercise._id.$oid || exercise._id.toString()}</td>
-                                                    <td className="py-2 px-4 border-b">{exercise.type}</td>
-                                                    <td className="py-2 px-4 border-b">{exercise.name}</td>
-                                                    <td className="py-2 px-4 border-b">{exercise.description}</td>
-                                                    <td className="py-2 px-4 border-b">
-                                                        <button onClick={() => handleOpen(exercise._id.$oid || exercise._id.toString())}
-                                                          className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">
-                                                            Abrir
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody> 
-                                    </table>
-                                    {/* <button
-                                        onClick={() => setShowForm(true)}
-                                        className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
-                                        style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
-                                    >
-                                         Adicionar Exercícios
-                                    </button>
-                                    {showForm && <FloatingForm onClose={() => setShowForm(false)} />} */}
-                                    <button
-                                                            onClick={() => setMostrarFormulario(true)}
-                                                            className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
-                                                            style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
-                                                        >
-                                                                Adicionar Exercícios
-                                                        </button>
-                                                        {mostrarFormulario && (
-                                                        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
-                                                            <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-                                                                <h2 className="text-9xl font-semibold text-center text-black dark:text-white mb-4">Adicionar Exercício Génerico</h2>
-                                                                
-                                                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"> 
-                                                                    <div className="max-h-[70vh] overflow-y-auto pr-2">
-                                                                        {/* Tipo de Exercício */}
-                                                                        <div>
-                                                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
-                                                                        <select
-                                                                            {...register('tipo', { required: "Selecione um tipo." })}
-                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                                                        >
-                                                                            <option value="">Selecione...</option>
-                                                                            <option value="palavras">Repetição de Palavras</option>
-                                                                            <option value="frases">Repetição de Frases</option>
-                                                                            <option value="leitura">Atividades de Leitura</option>
-                                                                            <option value="discurso">Discurso Espontâneo</option>
-                                                                            <option value="diadococinesia">Diadococinésia</option>
-                                                                            <option value="novo">Novo</option>
-                                                                        </select>
-                                                                        <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                                                        </div>
-                                                            
-                                                                        {/* Tipo (invisível) */}
-                                                                        
-                                                                        {type === 'novo'? (
-                                                                        <div>
-                                                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+                    <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+                    {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
+                        <h2 className="text-2xl font-bold text-center mb-5">Lista dos Exercícios</h2>
+                        <table className="min-w-full bg-white border border-gray-300">
+                            <thead>
+                                <tr className="bg-gray-200">
+                                    <th className="py-2 px-4 border-b">ID</th>
+                                    <th className="py-2 px-4 border-b">Tipo</th>
+                                    <th className="py-2 px-4 border-b">Nome</th>
+                                    <th className="py-2 px-4 border-b">Descrição</th>
+                                    <th className="py-2 px-4 border-b">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {exercises.map((exercise) => (
+                                    <tr key={exercise._id.$oid || exercise._id}>
+                                        <td className="py-2 px-4 border-b">{exercise._id.$oid || exercise._id.toString()}</td>
+                                        <td className="py-2 px-4 border-b">{exercise.type}</td>
+                                        <td className="py-2 px-4 border-b">{exercise.name}</td>
+                                        <td className="py-2 px-4 border-b">{exercise.description}</td>
+                                        <td className="py-2 px-4 border-b">
+                                            <button onClick={() => handleOpen(exercise._id.$oid || exercise._id.toString())}
+                                                className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">
+                                                Abrir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody> 
+                        </table>
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
+                            style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
+                        >
+                                Adicionar Exercícios
+                        </button>
+                        {showForm && <FloatingForm onClose={() => setShowForm(false)} />}
+
+                        {/* <button
+                            onClick={() => setMostrarFormulario(true)}
+                            className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
+                            style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
+                        >
+                                Adicionar Exercícios
+                        </button>
+                        {mostrarFormulario && (
+                            <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
+                                <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+                                <h2 className="text-9xl font-semibold text-center text-black dark:text-white mb-4">Adicionar Exercício Génerico</h2>
+                                
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"> 
+                                    <div className="max-h-[70vh] overflow-y-auto pr-2">
+                                        {/* Tipo de Exercício *}
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
+                                        <select
+                                            {...register('tipo', { required: "Selecione um tipo." })}
+                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                        >
+                                            <option value="">Selecione...</option>
+                                            <option value="palavras">Repetição de Palavras</option>
+                                            <option value="frases">Repetição de Frases</option>
+                                            <option value="leitura">Atividades de Leitura</option>
+                                            <option value="discurso">Discurso Espontâneo</option>
+                                            <option value="diadococinesia">Diadococinésia</option>
+                                            <option value="novo">Novo</option>
+                                        </select>
+                                        <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                        </div>
+                            
+                                        {/* Tipo (invisível) *}
+                                        
+                                        {type === 'novo'? (
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
+                                        <input
+                                            type="text"
+                                            {...register("type", { required: "Tipo do exercício é obrigatório." })}
+                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                        />
+                                        <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                        </div>
+                                        ):(
+                                        <input type="hidden" {...register("type")} />
+                                        )}
+                                        {/* Nome *}
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício <span style={{ color: 'red' }}>*</span></label>
+                                        <input
+                                            type="text"
+                                            {...register("name", { required: "Nome do exercício é obrigatório." })}
+                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                        />
+                                        <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                        </div>
+                                        {/* Descrição *}
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
+                                        <input
+                                            type="text"
+                                            {...register("description", )}
+                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                        />
+                                        <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                        </div>
+                                        {/* Tipo de Processamento *}
+                                        <div>
+                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento <span style={{ color: 'red' }}>*</span></label>
+                                        <Controller
+                                            name="typeOfProcessing"
+                                            control={control}
+                                            rules={{
+                                            required: "Selecione pelo menos um tipo de Processamento.",
+                                            validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
+                                            }}
+                                            render={({ field }) => (
+                                            <MultiSelect
+                                                {...field}
+                                                options={options}
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                filter 
+                                                placeholder="Selecione os tipos de processamento"
+                                                display="chip"
+                                                className="w-full md:w-20rem "
+                                                
+                                            />
+                                            )}
+                                        />
+                                        <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                        </div>
+                                        
+                                        {/* Passos dinâmicos *}
+                                        <div className="mb-4 p-2 rounded">
+                                        {type !== null && (
+                                            <>
+                                            {fields.length > 0 && (
+                                                <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                                                    <h3 className="text-lg font-semibold mb-2">Passos <span style={{ color: 'red' }}>*</span></h3>
+                                                    {fields.map((field, index) => (
+                                                        <div key={field.id} className="mb-4 border p-2 rounded">
+                                                            {type === 'novo' ? (
+                                                                <>
+                                                                    <div className="mb-2">
+                                                                        <label className="block text-sm">Instrução: <span style={{ color: 'red' }}>*</span></label>
                                                                         <input
-                                                                            type="text"
-                                                                            {...register("type", { required: "Tipo do exercício é obrigatório." })}
-                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                                                            {...register(`steps.${index}.description`, { required: true })}
+                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                         />
-                                                                        <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                                                        </div>
-                                                                        ):(
-                                                                        <input type="hidden" {...register("type")} />
-                                                                        )}
-                                                                        {/* Nome */}
-                                                                        <div>
-                                                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
+                                                                    </div>
+                                                                    <div className="mb-2">
+                                                                        <label className="block text-sm">Label: <span style={{ color: 'red' }}>*</span></label>
                                                                         <input
-                                                                            type="text"
-                                                                            {...register("name", { required: "Nome do exercício é obrigatório." })}
-                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                                                            {...register(`steps.${index}.label`, { required: true })}
+                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                         />
-                                                                        <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                                                        </div>
-                                                                        {/* Descrição */}
-                                                                        <div>
-                                                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
+                                                                    </div>
+                                                                    <div className="mb-2">
+                                                                        <label className="block text-sm">Valor: <span style={{ color: 'red' }}>*</span></label>
                                                                         <input
-                                                                            type="text"
-                                                                            {...register("description", { required: "Descrição é obrigatória." })}
-                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                                                            {...register(`steps.${index}.value`, { required: true })}
+                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                         />
-                                                                        <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                                                        </div>
-                                                                        {/* Tipo de Processamento */}
-                                                                        <div>
-                                                                        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                                                                        <Controller
-                                                                            name="typeOfProcessing"
-                                                                            control={control}
-                                                                            rules={{
-                                                                            required: "Selecione pelo menos um tipo de Processamento.",
-                                                                            validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
-                                                                            }}
-                                                                            render={({ field }) => (
-                                                                            <MultiSelect
-                                                                                {...field}
-                                                                                options={options}
-                                                                                optionLabel="label"
-                                                                                optionValue="value"
-                                                                                filter 
-                                                                                placeholder="Selecione os tipos de processamento"
-                                                                                display="chip"
-                                                                                className="w-full md:w-20rem "
-                                                                                
+                                                                    </div>
+                                                                    <div className="mb-2">
+                                                                        <label className="block text-sm">ID: <span style={{ color: 'red' }}>*</span></label>
+                                                                        <input
+                                                                            {...register(`steps.${index}.id`, { required: true })}
+                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
+                                                                        />
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                (camposPorTipo[type] || []).map((campo, campoIdx) => {
+                                                                    const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
+                            
+                                                                    return (
+                                                                        <div className="mb-2" key={campo}>
+                                                                        <label className="block text-sm capitalize">{campo}: <span style={{ color: 'red' }}>*</span></label>
+                                                                        {campo === 'Texto' ? (
+                                                                            <textarea
+                                                                            {...register(`steps.${index}.${fieldName}`, { required: true })}
+                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                                                                            ></textarea>
+                                                                        ) : (
+                                                                            <input
+                                                                            {...register(`steps.${index}.${fieldName}`, { required: true })}
+                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                             />
-                                                                            )}
-                                                                        />
-                                                                        <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                                                        </div>
-                                                                        
-                                                                        {/* Passos dinâmicos */}
-                                                                        <div className="mb-4">
-                                                                        {type !== null && (
-                                                                            <>
-                                                                            {fields.length > 0 && (
-                                                                                <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                                                                                    <h3 className="text-lg font-semibold mb-2">Passos</h3>
-                                                                                    {fields.map((field, index) => (
-                                                                                        <div key={field.id} className="mb-4 border p-2 rounded">
-                                                                                            {type === 'novo' ? (
-                                                                                                <>
-                                                                                                    <div className="mb-2">
-                                                                                                        <label className="block text-sm">Descrição:</label>
-                                                                                                        <input
-                                                                                                            {...register(`steps.${index}.description`, { required: true })}
-                                                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                    <div className="mb-2">
-                                                                                                        <label className="block text-sm">Label:</label>
-                                                                                                        <input
-                                                                                                            {...register(`steps.${index}.label`, { required: true })}
-                                                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                    <div className="mb-2">
-                                                                                                        <label className="block text-sm">Valor:</label>
-                                                                                                        <input
-                                                                                                            {...register(`steps.${index}.value`, { required: true })}
-                                                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                    <div className="mb-2">
-                                                                                                        <label className="block text-sm">ID:</label>
-                                                                                                        <input
-                                                                                                            {...register(`steps.${index}.id`, { required: true })}
-                                                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                </>
-                                                                                            ) : (
-                                                                                                (camposPorTipo[type] || []).map((campo, campoIdx) => {
-                                                                                                    const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
-                                                            
-                                                                                                    return (
-                                                                                                        <div className="mb-2" key={campo}>
-                                                                                                        <label className="block text-sm capitalize">{campo}:</label>
-                                                                                                        {campo === 'Texto' ? (
-                                                                                                            <textarea
-                                                                                                            {...register(`steps.${index}.${fieldName}`, { required: true })}
-                                                                                                            className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                                                                                            ></textarea>
-                                                                                                        ) : (
-                                                                                                            <input
-                                                                                                            {...register(`steps.${index}.${fieldName}`, { required: true })}
-                                                                                                            className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                                                            />
-                                                                                                        )}
-                                                                                                        </div>
-                                                                                                    );
-                                                                                                    })
-                                                                                            )}
-                                                                                            <button
-                                                                                                type="button"
-                                                                                                onClick={() => remove(index)}
-                                                                                                className="mt-2 text-red-600 hover:underline rounded"
-                                                                                            >
-                                                                                                Remover
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    ))}
-                                                                                    <button
-                                                                                        type="button"
-                                                                                        onClick={appendStep}
-                                                                                        className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                                                                                    >
-                                                                                        Adicionar mais passos
-                                                                                    </button>
-                                                                                </div>
-                                                                            
-                                                                            )}
-                                                                            </>
                                                                         )}
                                                                         </div>
-                                                                    </div>
-                                                        
-                                                                    {/* Botões */}
-                                                                    <div className="flex justify-between mt-4">
-                                                                        <button
-                                                                            type="submit"
-                                                                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                                                                        >
-                                                                            Adicionar
-                                                                        </button>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => setMostrarFormulario(false)}
-                                                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-                                                                        >
-                                                                            Cancelar
-                                                                        </button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
+                                                                    );
+                                                                    })
+                                                            )}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => remove(index)}
+                                                                className="mt-2 text-red-600 hover:underline rounded"
+                                                            >
+                                                                Remover
+                                                            </button>
                                                         </div>
-                                                        )}
-                                </div>
+                                                    ))}
+                                                    <button
+                                                        type="button"
+                                                        onClick={appendStep}
+                                                        className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                                    >
+                                                        Adicionar mais passos
+                                                    </button>
+                                                </div>
+                                            
+                                            )}
+                                            </>
+                                        )}
+                                        </div>
+                                    </div>
+                                    <div className="border-t my-4"></div>
+                                    <div className="text-sm text-gray-600 dark:text-black">Campos com <span style={{ color: 'red' }}>*</span> são obrigatórios.</div>
+                                    <div className="text-sm text-gray-600 dark:text-red-500">Todos os campos com exceção de "ID dos passos" serão transmitidos ao utente pelo Assistente.</div>
+                                    <div className="border-t my-4"></div>
+                        
+                                    {/* Botões *}
+                                    <div className="flex justify-between mt-4">
+                                        <button
+                                            type="submit"
+                                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                                        >
+                                            Adicionar
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setMostrarFormulario(false)}
+                                            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-        );
+                        </div>
+                        )} */}
+            </div>
+        </div>
+        ); 
     }
 }

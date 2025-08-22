@@ -773,7 +773,7 @@ def add_exercicio(user_id):
     print(data)
     name = data.get('name')
     type = data.get('type')
-    description = data.get('description')
+    description = data.get('description') if data.get('description') else None
     typeOfProcessing = data.get('typeOfProcessing')
     # video_url = data.get('video_url')
     steps = data.get('steps')
@@ -810,7 +810,7 @@ def add_generic_exercicio():
     data = request.get_json()
     name = data.get('name')
     type = data.get('type')
-    description = data.get('description')
+    description = data.get('description') if data.get('description') else None
     typeOfProcessing = data.get('typeOfProcessing')
     steps = data.get('steps')
 

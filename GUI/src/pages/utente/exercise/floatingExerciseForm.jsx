@@ -62,17 +62,55 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
             )}
           />
         ) : (
-          <Controller
+        //   <Controller
+        //     name="typeOfProcessing"
+        //     control={control}
+        //     rules={{
+        //       required: "Selecione pelo menos um tipo de Processamento.",
+        //       validate: (value) => value?.length > 0 || "Selecione pelo menos um tipo."
+        //     }}
+        //     render={({ field }) => (
+        //       <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem bg-gray-800" />
+        //     )}
+        //   />
+        // <Controller
+        //     name="typeOfProcessing"
+        //     control={control}
+        //     rules={{ required: "Selecione pelo menos um tipo." }}
+        //     render={({ field }) => (
+        //         <MultiSelect
+        //         {...field}
+        //         options={options}
+        //         optionLabel="label"
+        //         optionValue="value"
+        //         display="chip"
+        //         disabled={modoEdicao === "default"}
+        //         className={`w-full md:w-20rem ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`}
+        //         />
+        //     )}
+        // />
+        <Controller
             name="typeOfProcessing"
             control={control}
-            rules={{
-              required: "Selecione pelo menos um tipo de Processamento.",
-              validate: (value) => value?.length > 0 || "Selecione pelo menos um tipo."
-            }}
+            rules={{ required: "Selecione pelo menos um tipo." }}
             render={({ field }) => (
-              <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem bg-gray-800" />
+                <MultiSelect
+                {...field}
+                value={field.value || []}  // ✅ agora controlado pelo RHF
+                onChange={(e) => field.onChange(e.value)} // ✅ garante atualização
+                options={options}
+                optionLabel="label"
+                optionValue="value"
+                filter
+                placeholder="Selecione os tipos de processamento"
+                display="chip"
+                disabled={modoEdicao === "default"}
+                className={`w-full md:w-20rem ${
+                    modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"
+                }`}
+                />
             )}
-          />
+        />
         )}
         <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => (<p className="text-red-500 text-sm">{message}</p>)} />
       </div>
@@ -94,71 +132,71 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
   );
 }
 
-// export default function FloatingForm({ onClose }) {
-//   const { id } = useParams();
-//   const [type, setType] = useState('');
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([]);
-//   const [exercicioSelecionadoId, setExercicioSelecionadoId] = useState('');
-//   const [dadosExercicioSelecionado, setDadosExercicioSelecionado] = useState(null);
-//   const [modoEdicao, setModoEdicao] = useState('default');
+export default function FloatingForm({ onClose }) {
+  const { id } = useParams();
+  const [type, setType] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([]);
+  const [exercicioSelecionadoId, setExercicioSelecionadoId] = useState('');
+  const [dadosExercicioSelecionado, setDadosExercicioSelecionado] = useState(null);
+  const [modoEdicao, setModoEdicao] = useState('default');
 
-//   const exercicioSelecionado = useMemo(() => exerciciosDisponiveis.find(ex => ex._id.toString() === exercicioSelecionadoId), [exerciciosDisponiveis, exercicioSelecionadoId]);
+  const exercicioSelecionado = useMemo(() => exerciciosDisponiveis.find(ex => ex._id.toString() === exercicioSelecionadoId), [exerciciosDisponiveis, exercicioSelecionadoId]);
 
-//   const {
-//     register, handleSubmit, watch, setValue, control, reset, formState: { errors }
-//   } = useForm({
-//     defaultValues: {
-//       userId: id,
-//       tipo: '',
-//       steps: dadosExercicioSelecionado?.steps || [],
-//     }
-//   });
+  const {
+    register, handleSubmit, watch, setValue, control, reset, formState: { errors }
+  } = useForm({
+    defaultValues: {
+      userId: id,
+      tipo: '',
+      steps: dadosExercicioSelecionado?.steps || [],
+    }
+  });
 
-//   const { fields, append, remove } = useFieldArray({
-//     control,
-//     name: 'steps'
-//   });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'steps'
+  });
 
-//   const tipoSelecionado = watch('tipo');
+  const tipoSelecionado = watch('tipo');
 
-//   const camposPorTipo = useMemo(() => ({
-//     palavras: ['Palavras', 'Descrição', 'ID'],
-//     frases: ['Frase', 'Descrição', 'ID'],
-//     leitura: ['Título', 'Texto', 'Descrição', 'ID'],
-//     discurso: ['Questão', 'Descrição', 'ID'],
-//     diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição', 'ID'],
-//     novo: ['descrição', 'label', 'valor', 'ID']
-//   }), []);
+  const camposPorTipo = useMemo(() => ({
+    palavras: ['Palavras', 'Descrição', 'ID'],
+    frases: ['Frase', 'Descrição', 'ID'],
+    leitura: ['Título', 'Texto', 'Descrição', 'ID'],
+    discurso: ['Questão', 'Descrição', 'ID'],
+    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição', 'ID'],
+    novo: ['descrição', 'label', 'valor', 'ID']
+  }), []);
 
-//   const camposPorTipoEn = useMemo(() => ({
-//     palavras: ['word', 'description', 'ID'],
-//     frases: ['sentence', 'description', 'ID'],
-//     leitura: ['title', 'text', 'description', 'ID'],
-//     discurso: ['question', 'description', 'ID'],
-//     diadococinesia: ['typeOfConsonant', 'syllables', 'description', 'ID'],
-//     novo: ['description', 'label', 'value', 'ID']
-//   }), []);
+  const camposPorTipoEn = useMemo(() => ({
+    palavras: ['word', 'description', 'ID'],
+    frases: ['sentence', 'description', 'ID'],
+    leitura: ['title', 'text', 'description', 'ID'],
+    discurso: ['question', 'description', 'ID'],
+    diadococinesia: ['typeOfConsonant', 'syllables', 'description', 'ID'],
+    novo: ['description', 'label', 'value', 'ID']
+  }), []);
 
-//   const mapTipo = useCallback((tipo) => {
-//     return {
-//       palavras: 'Repetição de Palavras',
-//       frases: 'Repetição de Frases',
-//       leitura: 'Atividades de Leitura',
-//       discurso: 'Discurso Espontâneo',
-//       diadococinesia: 'Diadococinésia'
-//     }[tipo] || tipo;
-//   }, []);
+  const mapTipo = useCallback((tipo) => {
+    return {
+      palavras: 'Repetição de Palavras',
+      frases: 'Repetição de Frases',
+      leitura: 'Atividades de Leitura',
+      discurso: 'Discurso Espontâneo',
+      diadococinesia: 'Diadococinésia'
+    }[tipo] || tipo;
+  }, []);
 
-//   const options = useMemo(() => [
-//     { label: 'Articulação', value: 'articulation' },
-//     { label: 'Fonação', value: 'phonation' },
-//     { label: 'Glota', value: 'glotta' },
-//     { label: 'Prosódia', value: 'prosody' },
-//     { label: 'Reaprendizagem', value: 'replearning' },
-//     { label: 'Fonological', value: 'phonological' },
-//   ], []);
+  const options = useMemo(() => [
+    { label: 'Articulação', value: 'articulation' },
+    { label: 'Fonação', value: 'phonation' },
+    { label: 'Glota', value: 'glotta' },
+    { label: 'Prosódia', value: 'prosody' },
+    { label: 'Reaprendizagem', value: 'replearning' },
+    { label: 'Fonological', value: 'phonological' },
+  ], []);
 
 //   const appendStep = useCallback(() => {
 //     if (type === 'novo') {
@@ -174,7 +212,298 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
 //     }
 //   }, [type, append, camposPorTipo]);
 
-//   const onSubmit = async (data) => {
+const appendStep = useCallback(() => {
+  if (type === "novo") {
+    // 🔹 Caso especial: type "novo"
+    append({
+      description: "",
+      label: "",
+      value: "",
+      id: ""
+    });
+  } else {
+    // 🔹 Usa as chaves em inglês (camposPorTipoEn) que o StepFields está a registar
+    const campos = camposPorTipoEn[type] || [];
+    const novoStep = Object.fromEntries(campos.map((key) => [key, ""]));
+    append(novoStep);
+  }
+}, [type, append, camposPorTipoEn]);
+
+
+  const onSubmit = async (data) => {
+    console.log("Dados do formulário:", data);
+    try {
+        // if (modoEdicao === 'personalizar' && exercicioSelecionado) {
+        //     if (data.type !== 'novo') {
+        //         data.type = mapTipo(data.type);
+        //     }
+        //     if (typeof data.typeOfProcessing === "string") {
+        //         data.typeOfProcessing = [data.typeOfProcessing];
+        //     }
+        //     await api.post(`/utente/${id}/exercicio/`, data);
+        // }
+        if (modoEdicao === 'default' && exercicioSelecionado) {
+            const updatedData = {
+                userId: id,
+                id: exercicioSelecionado._id
+            };
+            await api.put(`/utente/${id}/exercicio/${exercicioSelecionado._id}`, updatedData);
+        }
+        else {
+            if (data.type !== 'novo') {
+                data.type = mapTipo(data.type);
+            }
+            if (typeof data.typeOfProcessing === "string") {
+                data.typeOfProcessing = [data.typeOfProcessing];
+            }
+            await api.post(`/utente/${id}/exercicio/`, data);
+        }
+
+
+      alert("Exercício adicionado com sucesso!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Erro ao adicionar exercício:", error);
+      alert("Erro ao adicionar exercício. Tente novamente.");
+    }
+  };
+
+  useEffect(() => {
+    if (tipoSelecionado) {
+      setType(tipoSelecionado);
+      reset({
+        ...watch(),
+        type: tipoSelecionado,
+        steps: dadosExercicioSelecionado?.steps || []
+      });
+      appendStep();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tipoSelecionado]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (tipoSelecionado) {
+          const tipo = mapTipo(tipoSelecionado);
+          const response = await api.get(`/utente/exercicios/tipo/${tipo}/`);
+          setExerciciosDisponiveis(response.data);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tipoSelecionado]);
+
+  useEffect(() => {
+    if (exercicioSelecionadoId) {
+      const selecionado = exerciciosDisponiveis.find(
+        (ex) => ex._id.toString() === exercicioSelecionadoId
+      );
+      setDadosExercicioSelecionado(selecionado || null);
+    } else {
+      setDadosExercicioSelecionado(null);
+    }
+  }, [exercicioSelecionadoId, exerciciosDisponiveis]);
+
+
+  return (
+    <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Adicionar Exercício para Utente</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <input type="text" {...register("userId", { required: "Id do utilizador é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" readOnly hidden />
+          <ErrorMessage errors={errors} name="userId" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+            <select {...register('tipo', { required: "Selecione um tipo." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+              <option value="">Selecione...</option>
+              <option value="palavras">Repetição de Palavras</option>
+              <option value="frases">Repetição de Frases</option>
+              <option value="leitura">Atividades de Leitura</option>
+              <option value="discurso">Discurso Espontâneo</option>
+              <option value="diadococinesia">Diadococinésia</option>
+              <option value="novo">Novo</option>
+            </select>
+            <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+          </div>
+
+          {tipoSelecionado && (
+            <>
+              {Array.isArray(exerciciosDisponiveis) && exerciciosDisponiveis.length > 0 && (
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Selecionar Exercício Existente</label>
+                  <select value={exercicioSelecionadoId} onChange={(e) => setExercicioSelecionadoId(e.target.value)} className="w-full p-2 border rounded-md dark:bg-zinc-700 dark:text-white">
+                    <option value=" ">-- Escolha um exercício --</option>
+                    {exerciciosDisponiveis.map((ex) => (
+                      <option key={ex._id} value={ex._id.toString()}>{ex.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {dadosExercicioSelecionado && (
+                <div className="mt-2">
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Modo de Uso</label>
+                  <select value={modoEdicao} onChange={(e) => setModoEdicao(e.target.value)} className="w-full p-2 border rounded-md dark:bg-zinc-700 dark:text-white">
+                    <option value="default">Usar exercício como está</option>
+                    <option value="personalizar">Personalizar exercício</option>
+                  </select>
+                </div>
+              )}
+
+              {type === 'novo' ? (
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+                  <input type="text" {...register("type", { required: "Tipo do exercício é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
+                  <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                </div>
+              ) : (
+                <input type="hidden" {...register("type")} />
+              )}
+
+              {!dadosExercicioSelecionado && (
+                <>
+                  <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
+                  <ExerciseSteps
+                    type={type}
+                    fields={fields}
+                    camposPorTipo={camposPorTipo}
+                    camposPorTipoEn={camposPorTipoEn}
+                    editable={true}
+                    register={register}
+                    remove={remove}
+                    appendStep={appendStep}
+                  />
+                </>
+              )}
+
+              {dadosExercicioSelecionado && (
+                <ExerciseSelectedDetails
+                  dadosExercicioSelecionado={dadosExercicioSelecionado}
+                  modoEdicao={modoEdicao}
+                  setDadosExercicioSelecionado={setDadosExercicioSelecionado}
+                  control={control}
+                  options={options}
+                  errors={errors}
+                  type={type}
+                  camposPorTipo={camposPorTipo}
+                  camposPorTipoEn={camposPorTipoEn}
+                  register={register}
+                  remove={remove}
+                  appendStep={appendStep}
+                />
+              )}
+
+              <div className="flex flex-col gap-2 mt-4">
+                <button type="submit" className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4">Adicionar Exercício</button>
+              </div>
+            </>
+          )}
+
+          <div className="flex flex-col gap-2 mt-4">
+            <button onClick={onClose} type="button" className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">Fechar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+// export default function FloatingForm({ onClose }) {
+//     const [exercises, setExercises] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [showForm, setShowForm] = useState(false);
+//     const [error, setError] = useState(null);
+//     const navigate = useNavigate();
+//     const { id } = useParams(); // Obter o ID do URL
+//     const [exercise, setExercise] = useState();
+//     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+//     const [type, setType] = useState('');
+//     const {
+//         register, handleSubmit, watch, control, reset, formState: { errors }
+//         } = useForm({
+//         defaultValues: {
+//             tipo: '',
+//             steps: []
+//         }
+//     });
+
+//      // EXERCIÍO:::::::::::::::::::::::::::::::::::::
+//     const { fields, append, remove } = useFieldArray({
+//         control,
+//         name: 'steps'
+//       });
+    
+//     const tipoSelecionado = watch('tipo');
+    
+//     const camposPorTipo = {
+//         palavras: ['Palavras', 'Descrição','ID'],
+//         frases: ['Frase', 'Descrição','ID'],
+//         leitura: ['Título', 'Texto', 'Descrição', 'ID'],
+//         discurso: ['Questão', 'Descrição','ID'],
+//         diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
+//         novo: ["descrição",'label', 'valor','ID']
+//     };
+    
+//     const camposPorTipoEn = {
+//         palavras: ['word', 'description','ID'],
+//         frases: ['sentence', 'description','ID'],
+//         leitura: ['title', 'text', 'description','ID'],
+//         discurso: ['question', 'description','ID'],
+//         diadococinesia: ['typeOfConsonant', 'syllables', 'description','ID'],
+//         novo: ['description','label', 'value','ID']
+//     };
+    
+//     const mapTipo = (tipo) => {
+//         return {
+//           palavras: 'Repetição de Palavras',
+//           frases: 'Repetição de Frases',
+//           leitura: 'Atividades de Leitura',
+//           discurso: 'Discurso Espontâneo',
+//           diadococinesia: 'Diadococinésia',
+//         }[tipo] || tipo;
+//     };
+    
+//     const appendStep = () => {
+//         if (type === 'novo') {
+//           append({
+//             description: '',
+//             id: '',
+//             pairs: [{ label: '', value: '' }] // novo array dinâmico
+//           });
+//         } else {
+//           const campos = camposPorTipo[type] || [];
+//           const novoStep = Object.fromEntries(campos.map(key => [key, '']));
+//           append(novoStep);
+//         }
+//     };
+    
+//     const options = [
+//         { label: 'Articulação', value: 'articulation' },
+//         { label: 'Fonação', value: 'phonation' },
+//         { label: 'Glota', value: 'glotta' },
+//         { label: 'Prosódia', value: 'prosody' },
+//         { label: 'Reaprendizagem', value: 'replearning' },
+//         { label: 'Fonológico', value: 'phonological'}
+//     ];
+
+//     const onSubmit = async (data) => {
 //     try {
 //       if (data.type !== 'novo') {
 //         data.type = mapTipo(data.type);
@@ -190,531 +519,287 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
 //       alert("Erro ao adicionar exercício. Tente novamente.");
 //     }
 //   };
-
-//   useEffect(() => {
-//     if (tipoSelecionado) {
-//       setType(tipoSelecionado);
-//       reset({
-//         ...watch(),
-//         type: tipoSelecionado,
-//         steps: dadosExercicioSelecionado?.steps || []
-//       });
-//       appendStep();
-//     }
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [tipoSelecionado]);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
+//     useEffect(() => {
 //         if (tipoSelecionado) {
-//           const tipo = mapTipo(tipoSelecionado);
-//           const response = await api.get(`/utente/exercicios/tipo/${tipo}/`);
-//           setExerciciosDisponiveis(response.data);
+//             setType(tipoSelecionado);
+//             reset({
+//             ...watch(),
+//             type: tipoSelecionado,
+//             steps: []
+//             });
+//             appendStep(); // Adiciona um passo automaticamente
 //         }
-//       } catch (error) {
-//         setError(error);
-//       } finally {
-//         setLoading(false);
-//       }
+//     }, [tipoSelecionado]);
+
+
+//     useEffect(() => {
+//         const fetchData = async () => {
+//             try {
+//                 const response = await api.get(`/utente/exercicio/`);
+//                 setExercises(response.data);
+//             } catch (error) {
+//                 setError(error);
+//             } finally {
+//                 setLoading(false);
+//             }
+//         };
+//         fetchData();
+//     }, []);
+
+//     const handleOpen = async (id_) => {
+//         navigate(`/utente/exercicio/${id_}`);
 //     };
-//     fetchData();
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [tipoSelecionado]);
 
-//   useEffect(() => {
-//     if (exercicioSelecionadoId) {
-//       const selecionado = exerciciosDisponiveis.find(
-//         (ex) => ex._id.toString() === exercicioSelecionadoId
-//       );
-//       setDadosExercicioSelecionado(selecionado || null);
-//     } else {
-//       setDadosExercicioSelecionado(null);
+    
+//     if (loading){
+//         return(
+//          <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//             <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+//         </div>
+//         );
 //     }
-//   }, [exercicioSelecionadoId, exerciciosDisponiveis]);
-
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-//       <div className="w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-//         <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Adicionar Exercício para Utente</h2>
-//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-//           <input type="text" {...register("userId", { required: "Id do utilizador é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" readOnly hidden />
-//           <ErrorMessage errors={errors} name="userId" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-
-//           <div>
-//             <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
-//             <select {...register('tipo', { required: "Selecione um tipo." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-//               <option value="">Selecione...</option>
-//               <option value="palavras">Repetição de Palavras</option>
-//               <option value="frases">Repetição de Frases</option>
-//               <option value="leitura">Atividades de Leitura</option>
-//               <option value="discurso">Discurso Espontâneo</option>
-//               <option value="diadococinesia">Diadococinésia</option>
-//               <option value="novo">Novo</option>
-//             </select>
-//             <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-//           </div>
-
-//           {tipoSelecionado && (
-//             <>
-//               {Array.isArray(exerciciosDisponiveis) && exerciciosDisponiveis.length > 0 && (
-//                 <div>
-//                   <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Selecionar Exercício Existente</label>
-//                   <select value={exercicioSelecionadoId} onChange={(e) => setExercicioSelecionadoId(e.target.value)} className="w-full p-2 border rounded-md dark:bg-zinc-700 dark:text-white">
-//                     <option value=" ">-- Escolha um exercício --</option>
-//                     {exerciciosDisponiveis.map((ex) => (
-//                       <option key={ex._id} value={ex._id.toString()}>{ex.name}</option>
-//                     ))}
-//                   </select>
-//                 </div>
-//               )}
-
-//               {dadosExercicioSelecionado && (
-//                 <div className="mt-2">
-//                   <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Modo de Uso</label>
-//                   <select value={modoEdicao} onChange={(e) => setModoEdicao(e.target.value)} className="w-full p-2 border rounded-md dark:bg-zinc-700 dark:text-white">
-//                     <option value="default">Usar exercício como está</option>
-//                     <option value="personalizar">Personalizar exercício</option>
-//                   </select>
-//                 </div>
-//               )}
-
-//               {type === 'novo' ? (
-//                 <div>
-//                   <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
-//                   <input type="text" {...register("type", { required: "Tipo do exercício é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
-//                   <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-//                 </div>
-//               ) : (
-//                 <input type="hidden" {...register("type")} />
-//               )}
-
-//               {!dadosExercicioSelecionado && (
-//                 <>
-//                   <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
-//                   <ExerciseSteps
-//                     type={type}
-//                     fields={fields}
-//                     camposPorTipo={camposPorTipo}
-//                     camposPorTipoEn={camposPorTipoEn}
-//                     editable={true}
-//                     register={register}
-//                     remove={remove}
-//                     appendStep={appendStep}
-//                   />
-//                 </>
-//               )}
-
-//               {dadosExercicioSelecionado && (
-//                 <ExerciseSelectedDetails
-//                   dadosExercicioSelecionado={dadosExercicioSelecionado}
-//                   modoEdicao={modoEdicao}
-//                   setDadosExercicioSelecionado={setDadosExercicioSelecionado}
-//                   control={control}
-//                   options={options}
-//                   errors={errors}
-//                   type={type}
-//                   camposPorTipo={camposPorTipo}
-//                   camposPorTipoEn={camposPorTipoEn}
-//                   register={register}
-//                   remove={remove}
-//                   appendStep={appendStep}
-//                 />
-//               )}
-
-//               <div className="flex flex-col gap-2 mt-4">
-//                 <button type="submit" className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4">Adicionar Exercício</button>
-//               </div>
-//             </>
-//           )}
-
-//           <div className="flex flex-col gap-2 mt-4">
-//             <button onClick={onClose} type="button" className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">Fechar</button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-export default function FloatingForm({ onClose }) {
-    const [exercises, setExercises] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [showForm, setShowForm] = useState(false);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
-    const { id } = useParams(); // Obter o ID do URL
-    const [exercise, setExercise] = useState();
-    const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [type, setType] = useState('');
-    const {
-        register, handleSubmit, watch, control, reset, formState: { errors }
-        } = useForm({
-        defaultValues: {
-            tipo: '',
-            steps: []
-        }
-    });
-
-     // EXERCIÍO:::::::::::::::::::::::::::::::::::::
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'steps'
-      });
-    
-    const tipoSelecionado = watch('tipo');
-    
-    const camposPorTipo = {
-        palavras: ['Palavras', 'Descrição','ID'],
-        frases: ['Frase', 'Descrição','ID'],
-        leitura: ['Título', 'Texto', 'Descrição', 'ID'],
-        discurso: ['Questão', 'Descrição','ID'],
-        diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
-        novo: ["descrição",'label', 'valor','ID']
-    };
-    
-    const camposPorTipoEn = {
-        palavras: ['word', 'description','ID'],
-        frases: ['sentence', 'description','ID'],
-        leitura: ['title', 'text', 'description','ID'],
-        discurso: ['question', 'description','ID'],
-        diadococinesia: ['typeOfConsonant', 'syllables', 'description','ID'],
-        novo: ['description','label', 'value','ID']
-    };
-    
-    const mapTipo = (tipo) => {
-        return {
-          palavras: 'Repetição de Palavras',
-          frases: 'Repetição de Frases',
-          leitura: 'Atividades de Leitura',
-          discurso: 'Discurso Espontâneo',
-          diadococinesia: 'Diadococinésia',
-        }[tipo] || tipo;
-    };
-    
-    const appendStep = () => {
-        if (type === 'novo') {
-          append({
-            description: '',
-            id: '',
-            pairs: [{ label: '', value: '' }] // novo array dinâmico
-          });
-        } else {
-          const campos = camposPorTipo[type] || [];
-          const novoStep = Object.fromEntries(campos.map(key => [key, '']));
-          append(novoStep);
-        }
-    };
-    
-    const options = [
-        { label: 'Articulação', value: 'articulation' },
-        { label: 'Fonação', value: 'phonation' },
-        { label: 'Glota', value: 'glotta' },
-        { label: 'Prosódia', value: 'prosody' },
-        { label: 'Reaprendizagem', value: 'replearning' },
-        { label: 'Fonológico', value: 'phonological'}
-    ];
-
-    const onSubmit = async (data) => {
-    try {
-      if (data.type !== 'novo') {
-        data.type = mapTipo(data.type);
-      }
-      if (typeof data.typeOfProcessing === "string") {
-        data.typeOfProcessing = [data.typeOfProcessing];
-      }
-      await api.post(`/utente/${id}/exercicio/`, data);
-      alert("Exercício adicionado com sucesso!");
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao adicionar exercício:", error);
-      alert("Erro ao adicionar exercício. Tente novamente.");
-    }
-  };
-    useEffect(() => {
-        if (tipoSelecionado) {
-            setType(tipoSelecionado);
-            reset({
-            ...watch(),
-            type: tipoSelecionado,
-            steps: []
-            });
-            appendStep(); // Adiciona um passo automaticamente
-        }
-    }, [tipoSelecionado]);
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get(`/utente/exercicio/`);
-                setExercises(response.data);
-            } catch (error) {
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
-
-    const handleOpen = async (id_) => {
-        navigate(`/utente/exercicio/${id_}`);
-    };
-
-    
-    if (loading){
-        return(
-         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
-        </div>
-        );
-    }
-    if (error) {
-         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
-            </div>
-         ) 
-    }     
-    if (exercises.length > 0) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-                {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
-                    <h2 className="text-2xl font-bold text-center mb-5">Lista dos Exercícios</h2>
-                    <table className="min-w-full bg-white border border-gray-300">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="py-2 px-4 border-b">ID</th>
-                                <th className="py-2 px-4 border-b">Tipo</th>
-                                <th className="py-2 px-4 border-b">Nome</th>
-                                <th className="py-2 px-4 border-b">Descrição</th>
-                                <th className="py-2 px-4 border-b">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {exercises.map((exercise) => (
-                                <tr key={exercise._id.$oid || exercise._id}>
-                                    <td className="py-2 px-4 border-b">{exercise._id.$oid || exercise._id.toString()}</td>
-                                    <td className="py-2 px-4 border-b">{exercise.type}</td>
-                                    <td className="py-2 px-4 border-b">{exercise.name}</td>
-                                    <td className="py-2 px-4 border-b">{exercise.description}</td>
-                                    <td className="py-2 px-4 border-b">
-                                        <button onClick={() => handleOpen(exercise._id.$oid || exercise._id.toString())}
-                                            className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">
-                                            Abrir
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody> 
-                    </table>
-                    <button
-                        onClick={() => setMostrarFormulario(true)}
-                        className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
-                        style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
-                    >
-                            Adicionar Exercícios
-                    </button>
-                    {mostrarFormulario && (
-                    <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
-                        <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-                            <h2 className="text-9xl font-semibold text-center text-black dark:text-white mb-4">Adicionar Exercício Génerico</h2>
+//     if (error) {
+//          return (
+//             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//                 <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
+//             </div>
+//          ) 
+//     }     
+//     if (exercises.length > 0) {
+//         return (
+//             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//                 <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+//                 {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
+//                     <h2 className="text-2xl font-bold text-center mb-5">Lista dos Exercícios</h2>
+//                     <table className="min-w-full bg-white border border-gray-300">
+//                         <thead>
+//                             <tr className="bg-gray-200">
+//                                 <th className="py-2 px-4 border-b">ID</th>
+//                                 <th className="py-2 px-4 border-b">Tipo</th>
+//                                 <th className="py-2 px-4 border-b">Nome</th>
+//                                 <th className="py-2 px-4 border-b">Descrição</th>
+//                                 <th className="py-2 px-4 border-b">Ação</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
+//                             {exercises.map((exercise) => (
+//                                 <tr key={exercise._id.$oid || exercise._id}>
+//                                     <td className="py-2 px-4 border-b">{exercise._id.$oid || exercise._id.toString()}</td>
+//                                     <td className="py-2 px-4 border-b">{exercise.type}</td>
+//                                     <td className="py-2 px-4 border-b">{exercise.name}</td>
+//                                     <td className="py-2 px-4 border-b">{exercise.description}</td>
+//                                     <td className="py-2 px-4 border-b">
+//                                         <button onClick={() => handleOpen(exercise._id.$oid || exercise._id.toString())}
+//                                             className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">
+//                                             Abrir
+//                                         </button>
+//                                     </td>
+//                                 </tr>
+//                             ))}
+//                         </tbody> 
+//                     </table>
+//                     <button
+//                         onClick={() => setMostrarFormulario(true)}
+//                         className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4"
+//                         style={{ width: '200px', height: '50px', fontSize: '16px', margin:'15px' }}
+//                     >
+//                             Adicionar Exercícios
+//                     </button>
+//                     {mostrarFormulario && (
+//                     <div className="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center">
+//                         <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+//                             <h2 className="text-9xl font-semibold text-center text-black dark:text-white mb-4">Adicionar Exercício Génerico</h2>
                             
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"> 
-                                <div className="max-h-[70vh] overflow-y-auto pr-2">
-                                    {/* Tipo de Exercício */}
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
-                                    <select
-                                        {...register('tipo', { required: "Selecione um tipo." })}
-                                        className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                    >
-                                        <option value="">Selecione...</option>
-                                        <option value="palavras">Repetição de Palavras</option>
-                                        <option value="frases">Repetição de Frases</option>
-                                        <option value="leitura">Atividades de Leitura</option>
-                                        <option value="discurso">Discurso Espontâneo</option>
-                                        <option value="diadococinesia">Diadococinésia</option>
-                                        <option value="novo">Novo</option>
-                                    </select>
-                                    <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                    </div>
+//                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"> 
+//                                 <div className="max-h-[70vh] overflow-y-auto pr-2">
+//                                     {/* Tipo de Exercício */}
+//                                     <div>
+//                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+//                                     <select
+//                                         {...register('tipo', { required: "Selecione um tipo." })}
+//                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+//                                     >
+//                                         <option value="">Selecione...</option>
+//                                         <option value="palavras">Repetição de Palavras</option>
+//                                         <option value="frases">Repetição de Frases</option>
+//                                         <option value="leitura">Atividades de Leitura</option>
+//                                         <option value="discurso">Discurso Espontâneo</option>
+//                                         <option value="diadococinesia">Diadococinésia</option>
+//                                         <option value="novo">Novo</option>
+//                                     </select>
+//                                     <ErrorMessage errors={errors} name="tipo" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+//                                     </div>
                         
-                                    {/* Tipo (invisível) */}
+//                                     {/* Tipo (invisível) */}
                                     
-                                    {type === 'novo'? (
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
-                                    <input
-                                        type="text"
-                                        {...register("type", { required: "Tipo do exercício é obrigatório." })}
-                                        className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                    />
-                                    <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                    </div>
-                                    ):(
-                                    <input type="hidden" {...register("type")} />
-                                    )}
-                                    {/* Nome */}
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
-                                    <input
-                                        type="text"
-                                        {...register("name", { required: "Nome do exercício é obrigatório." })}
-                                        className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                    />
-                                    <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                    </div>
-                                    {/* Descrição */}
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
-                                    <input
-                                        type="text"
-                                        {...register("description", { required: "Descrição é obrigatória." })}
-                                        className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                    />
-                                    <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                    </div>
-                                    {/* Tipo de Processamento */}
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
-                                    <Controller
-                                        name="typeOfProcessing"
-                                        control={control}
-                                        rules={{
-                                        required: "Selecione pelo menos um tipo de Processamento.",
-                                        validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
-                                        }}
-                                        render={({ field }) => (
-                                        <MultiSelect
-                                            {...field}
-                                            options={options}
-                                            optionLabel="label"
-                                            optionValue="value"
-                                            filter 
-                                            placeholder="Selecione os tipos de processamento"
-                                            display="chip"
-                                            className="w-full md:w-20rem "
+//                                     {type === 'novo'? (
+//                                     <div>
+//                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+//                                     <input
+//                                         type="text"
+//                                         {...register("type", { required: "Tipo do exercício é obrigatório." })}
+//                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+//                                     />
+//                                     <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+//                                     </div>
+//                                     ):(
+//                                     <input type="hidden" {...register("type")} />
+//                                     )}
+//                                     {/* Nome */}
+//                                     <div>
+//                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
+//                                     <input
+//                                         type="text"
+//                                         {...register("name", { required: "Nome do exercício é obrigatório." })}
+//                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+//                                     />
+//                                     <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+//                                     </div>
+//                                     {/* Descrição */}
+//                                     <div>
+//                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
+//                                     <input
+//                                         type="text"
+//                                         {...register("description", { required: "Descrição é obrigatória." })}
+//                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+//                                     />
+//                                     <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+//                                     </div>
+//                                     {/* Tipo de Processamento */}
+//                                     <div>
+//                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
+//                                     <Controller
+//                                         name="typeOfProcessing"
+//                                         control={control}
+//                                         rules={{
+//                                         required: "Selecione pelo menos um tipo de Processamento.",
+//                                         validate: value => value?.length > 0 || "Selecione pelo menos um tipo."
+//                                         }}
+//                                         render={({ field }) => (
+//                                         <MultiSelect
+//                                             {...field}
+//                                             options={options}
+//                                             optionLabel="label"
+//                                             optionValue="value"
+//                                             filter 
+//                                             placeholder="Selecione os tipos de processamento"
+//                                             display="chip"
+//                                             className="w-full md:w-20rem "
                                             
-                                        />
-                                        )}
-                                    />
-                                    <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
-                                    </div>
+//                                         />
+//                                         )}
+//                                     />
+//                                     <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+//                                     </div>
                                     
-                                    {/* Passos dinâmicos */}
-                                    <div className="mb-4">
-                                    {type !== null && (
-                                        <>
-                                        {fields.length > 0 && (
-                                            <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                                                <h3 className="text-lg font-semibold mb-2">Passos</h3>
-                                                {fields.map((field, index) => (
-                                                    <div key={field.id} className="mb-4 border p-2 rounded">
-                                                        {type === 'novo' ? (
-                                                            <>
-                                                                <div className="mb-2">
-                                                                    <label className="block text-sm">Descrição:</label>
-                                                                    <input
-                                                                        {...register(`steps.${index}.description`, { required: true })}
-                                                                        className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                    />
-                                                                </div>
-                                                                <div className="mb-2">
-                                                                    <label className="block text-sm">Label:</label>
-                                                                    <input
-                                                                        {...register(`steps.${index}.label`, { required: true })}
-                                                                        className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                    />
-                                                                </div>
-                                                                <div className="mb-2">
-                                                                    <label className="block text-sm">Valor:</label>
-                                                                    <input
-                                                                        {...register(`steps.${index}.value`, { required: true })}
-                                                                        className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                    />
-                                                                </div>
-                                                                <div className="mb-2">
-                                                                    <label className="block text-sm">ID:</label>
-                                                                    <input
-                                                                        {...register(`steps.${index}.id`, { required: true })}
-                                                                        className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                    />
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            (camposPorTipo[type] || []).map((campo, campoIdx) => {
-                                                                const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
+//                                     {/* Passos dinâmicos */}
+//                                     <div className="mb-4">
+//                                     {type !== null && (
+//                                         <>
+//                                         {fields.length > 0 && (
+//                                             <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+//                                                 <h3 className="text-lg font-semibold mb-2">Passos</h3>
+//                                                 {fields.map((field, index) => (
+//                                                     <div key={field.id} className="mb-4 border p-2 rounded">
+//                                                         {type === 'novo' ? (
+//                                                             <>
+//                                                                 <div className="mb-2">
+//                                                                     <label className="block text-sm">Descrição:</label>
+//                                                                     <input
+//                                                                         {...register(`steps.${index}.description`, { required: true })}
+//                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
+//                                                                     />
+//                                                                 </div>
+//                                                                 <div className="mb-2">
+//                                                                     <label className="block text-sm">Label:</label>
+//                                                                     <input
+//                                                                         {...register(`steps.${index}.label`, { required: true })}
+//                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
+//                                                                     />
+//                                                                 </div>
+//                                                                 <div className="mb-2">
+//                                                                     <label className="block text-sm">Valor:</label>
+//                                                                     <input
+//                                                                         {...register(`steps.${index}.value`, { required: true })}
+//                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
+//                                                                     />
+//                                                                 </div>
+//                                                                 <div className="mb-2">
+//                                                                     <label className="block text-sm">ID:</label>
+//                                                                     <input
+//                                                                         {...register(`steps.${index}.id`, { required: true })}
+//                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
+//                                                                     />
+//                                                                 </div>
+//                                                             </>
+//                                                         ) : (
+//                                                             (camposPorTipo[type] || []).map((campo, campoIdx) => {
+//                                                                 const fieldName = camposPorTipoEn[type]?.[campoIdx]; // nome interno (ex: 'word', 'description')
                         
-                                                                return (
-                                                                    <div className="mb-2" key={campo}>
-                                                                    <label className="block text-sm capitalize">{campo}:</label>
-                                                                    {campo === 'Texto' ? (
-                                                                        <textarea
-                                                                        {...register(`steps.${index}.${fieldName}`, { required: true })}
-                                                                        className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                                                                        ></textarea>
-                                                                    ) : (
-                                                                        <input
-                                                                        {...register(`steps.${index}.${fieldName}`, { required: true })}
-                                                                        className="w-full p-2 border rounded dark:bg-zinc-600"
-                                                                        />
-                                                                    )}
-                                                                    </div>
-                                                                );
-                                                                })
-                                                        )}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => remove(index)}
-                                                            className="mt-2 text-red-600 hover:underline rounded"
-                                                        >
-                                                            Remover
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                                <button
-                                                    type="button"
-                                                    onClick={appendStep}
-                                                    className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                                                >
-                                                    Adicionar mais passos
-                                                </button>
-                                            </div>
+//                                                                 return (
+//                                                                     <div className="mb-2" key={campo}>
+//                                                                     <label className="block text-sm capitalize">{campo}:</label>
+//                                                                     {campo === 'Texto' ? (
+//                                                                         <textarea
+//                                                                         {...register(`steps.${index}.${fieldName}`, { required: true })}
+//                                                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+//                                                                         ></textarea>
+//                                                                     ) : (
+//                                                                         <input
+//                                                                         {...register(`steps.${index}.${fieldName}`, { required: true })}
+//                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
+//                                                                         />
+//                                                                     )}
+//                                                                     </div>
+//                                                                 );
+//                                                                 })
+//                                                         )}
+//                                                         <button
+//                                                             type="button"
+//                                                             onClick={() => remove(index)}
+//                                                             className="mt-2 text-red-600 hover:underline rounded"
+//                                                         >
+//                                                             Remover
+//                                                         </button>
+//                                                     </div>
+//                                                 ))}
+//                                                 <button
+//                                                     type="button"
+//                                                     onClick={appendStep}
+//                                                     className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+//                                                 >
+//                                                     Adicionar mais passos
+//                                                 </button>
+//                                             </div>
                                         
-                                        )}
-                                        </>
-                                    )}
-                                    </div>
-                                </div>
+//                                         )}
+//                                         </>
+//                                     )}
+//                                     </div>
+//                                 </div>
                     
-                                {/* Botões */}
-                                <div className="flex justify-between mt-4">
-                                    <button
-                                        type="submit"
-                                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                                    >
-                                        Adicionar
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setMostrarFormulario(false)}
-                                        className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    )}
-                </div>
-            </div>
-        );
-    }
-}
+//                                 {/* Botões */}
+//                                 <div className="flex justify-between mt-4">
+//                                     <button
+//                                         type="submit"
+//                                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+//                                     >
+//                                         Adicionar
+//                                     </button>
+//                                     <button
+//                                         type="button"
+//                                         onClick={() => setMostrarFormulario(false)}
+//                                         className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+//                                     >
+//                                         Cancelar
+//                                     </button>
+//                                 </div>
+//                             </form>
+//                         </div>
+//                     </div>
+//                     )}
+//                 </div>
+//             </div>
+//         );
+//     }
+// }

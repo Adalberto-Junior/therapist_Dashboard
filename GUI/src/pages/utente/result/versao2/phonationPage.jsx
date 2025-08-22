@@ -274,20 +274,22 @@ export default function PhonotionResultPage() {
                     <DisplayChart groupedData={intensityData} />
 
                      <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Tempo Maximo de Fonação</h2>
-                    <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+                    {/* <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600"> */}
+                        <table className="min-w-9/12 mx-auto border-collapse border border-gray-400 dark:border-zinc-500">
+
                         <thead>
-                            <tr className="bg-gray-200">
-                                <th scope="col" className="py-2 px-4 border-b">Passo</th>
-                                <th scope="col" className="py-2 px-4 border-b">Valor</th>
-                                <th scope="col" className="py-2 px-4 border-b">Medida</th>
+                             <tr className="bg-green-300 dark:bg-gray-500 sticky top-0 z-10">
+                                <th scope="col" className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Passo</th>
+                                <th scope="col" className="border border-gray-400 dark:border-zinc-500 py-2 px-4">Valor</th>
+                                <th scope="col" className="border border-gray-400 dark:border-zinc-500 py-2 px-4">Medida</th>
                             </tr>
                         </thead>
                         <tbody>
                             
                             {filtered.map((data) => (
-                              <tr key={`tmf-${data.step}`}>
-                                    <td className="py-2 px-4 border-b">{data.step}</td>
-                                    <td className="py-2 px-4 border-b">
+                              <tr key={`tmf-${data.step}`} className="odd:bg-gray-100 odd:dark:bg-gray-300">
+                                    <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{data.step}</td>
+                                    <td className="border border-gray-400 dark:border-zinc-500 py-2 px-4">
                                     {
                                         data.static_result
                                         ?.filter(item => item.TMF !== undefined)
@@ -296,7 +298,7 @@ export default function PhonotionResultPage() {
                                         ))
                                     }
                                     </td>
-                                    <td className="py-2 px-4 border-b">{"Segundos"}</td>
+                                    <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{"Segundos"}</td>
                                 </tr>
                             ))}
                         </tbody>
