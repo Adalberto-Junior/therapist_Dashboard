@@ -3,21 +3,21 @@ import { ErrorMessage } from "@hookform/error-message";
 import { Controller } from "react-hook-form";
 import { MultiSelect } from 'primereact/multiselect';
 
-export function ExerciseMetaFields({ register, errors, control, options }) {
+export function ExerciseMetaFields({ register, errors, control, options, appendStep }) {
   return (
     <>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício <span style={{ color: 'red' }}>*</span></label>
         <input type="text" {...register("name", { required: "Nome do exercício é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
         <ErrorMessage errors={errors} name="name" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
       </div>
       <div>
         <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
-        <input type="text" {...register("description", { required: "Descrição é obrigatória." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
+        <input type="text" {...register("description", )} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
         <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
       </div>
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento <span style={{ color: 'red' }}>*</span></label>
         <Controller
           name="typeOfProcessing"
           control={control}
@@ -30,6 +30,9 @@ export function ExerciseMetaFields({ register, errors, control, options }) {
           )}
         />
         <ErrorMessage errors={errors} name="typeOfProcessing" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+      </div>
+      <div>
+        <button type="button" onClick={appendStep} className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Adicionar passos</button>
       </div>
     </>
   );

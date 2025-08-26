@@ -15,10 +15,10 @@ import { ExerciseMetaFields } from './ExerciseMetaFields';
 function ExerciseSteps({ type, fields, camposPorTipo, camposPorTipoEn, editable, register, remove, appendStep }) {
   if (!fields || fields.length === 0) return null;
   return (
-    <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-      <h3 className="text-lg font-semibold mb-2">Passos</h3>
+    <div className="w-full p-5 px-3 py-2 mb-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+      <h3 className="text-lg font-semibold mb-2">Passos <span style={{ color: 'red' }}>*</span></h3>
       {fields.map((field, index) => (
-        <div key={field.id || index} className="mb-4 border p-2 rounded">
+        <div key={field.id || index}  className="mb-4">
           <StepFields
             index={index}
             type={type}
@@ -38,20 +38,20 @@ function ExerciseSteps({ type, fields, camposPorTipo, camposPorTipoEn, editable,
   );
 }
 
-function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDadosExercicioSelecionado, control, options, errors, type, camposPorTipo, camposPorTipoEn, register, remove, appendStep }) {
+function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDadosExercicioSelecionado, control, options, errors, type, camposPorTipo, camposPorTipoEn, register, remove, appendStep, fields }) {
   if (!dadosExercicioSelecionado) return null;
   return (
     <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-600 dark:border-zinc-600 dark:text-white">
       <div>
-        <label className="font-bold">Nome:</label>
-        <input type="text" value={dadosExercicioSelecionado.name} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, name: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
+        <label className="font-bold">Nome<span style={{ color: 'red' }}>*</span></label>
+        <input type="text" {...register("name")} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, name: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
       </div>
       <div>
-        <label className="font-bold">Descrição:</label>
-        <textarea value={dadosExercicioSelecionado.description} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, description: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
+        <label className="font-bold">Descrição </label>
+        <textarea {...register("description")} readOnly={modoEdicao === "default"} onChange={(e) => modoEdicao === "personalizar" && setDadosExercicioSelecionado({ ...dadosExercicioSelecionado, description: e.target.value })} className={`border p-2 w-full rounded ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`} />
       </div>
-      <div>
-        <label className="font-bold">Tipo de Processamento</label>
+      <div className="mb-4">
+        <label className="font-bold">Tipo de Processamento <span style={{ color: 'red' }}>*</span></label>
         {modoEdicao === "default" ? (
           <Controller
             name="typeOfProcessing"
@@ -62,33 +62,6 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
             )}
           />
         ) : (
-        //   <Controller
-        //     name="typeOfProcessing"
-        //     control={control}
-        //     rules={{
-        //       required: "Selecione pelo menos um tipo de Processamento.",
-        //       validate: (value) => value?.length > 0 || "Selecione pelo menos um tipo."
-        //     }}
-        //     render={({ field }) => (
-        //       <MultiSelect {...field} value={Array.isArray(dadosExercicioSelecionado.typeOfProcessing) ? dadosExercicioSelecionado.typeOfProcessing : [dadosExercicioSelecionado.typeOfProcessing]} options={options} optionLabel="label" optionValue="value" filter placeholder="Selecione os tipos de processamento" display="chip" className="w-full md:w-20rem bg-gray-800" />
-        //     )}
-        //   />
-        // <Controller
-        //     name="typeOfProcessing"
-        //     control={control}
-        //     rules={{ required: "Selecione pelo menos um tipo." }}
-        //     render={({ field }) => (
-        //         <MultiSelect
-        //         {...field}
-        //         options={options}
-        //         optionLabel="label"
-        //         optionValue="value"
-        //         display="chip"
-        //         disabled={modoEdicao === "default"}
-        //         className={`w-full md:w-20rem ${modoEdicao === "default" ? "bg-gray-400" : "bg-gray-800"}`}
-        //         />
-        //     )}
-        // />
         <Controller
             name="typeOfProcessing"
             control={control}
@@ -118,7 +91,8 @@ function ExerciseSelectedDetails({ dadosExercicioSelecionado, modoEdicao, setDad
         {type !== null && dadosExercicioSelecionado.steps.length > 0 && (
           <ExerciseSteps
             type={type}
-            fields={dadosExercicioSelecionado.steps}
+            // fields={dadosExercicioSelecionado.steps}
+            fields={fields}
             camposPorTipo={camposPorTipo}
             camposPorTipoEn={camposPorTipoEn}
             editable={modoEdicao === "personalizar"}
@@ -162,12 +136,12 @@ export default function FloatingForm({ onClose }) {
   const tipoSelecionado = watch('tipo');
 
   const camposPorTipo = useMemo(() => ({
-    palavras: ['Palavras', 'Descrição', 'ID'],
-    frases: ['Frase', 'Descrição', 'ID'],
-    leitura: ['Título', 'Texto', 'Descrição', 'ID'],
-    discurso: ['Questão', 'Descrição', 'ID'],
-    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição', 'ID'],
-    novo: ['descrição', 'label', 'valor', 'ID']
+    palavras: ['Palavras', 'Instrução', 'ID'],
+    frases: ['Frase', 'Instrução', 'ID'],
+    leitura: ['Título', 'Texto', 'Instrução', 'ID'],
+    discurso: ['Questão', 'Instrução', 'ID'],
+    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Instrução', 'ID'],
+    novo: ['Instrução', 'label', 'valor', 'ID']
   }), []);
 
   const camposPorTipoEn = useMemo(() => ({
@@ -219,7 +193,7 @@ const appendStep = useCallback(() => {
       description: "",
       label: "",
       value: "",
-      id: ""
+      ID: ""
     });
   } else {
     // 🔹 Usa as chaves em inglês (camposPorTipoEn) que o StepFields está a registar
@@ -231,23 +205,14 @@ const appendStep = useCallback(() => {
 
 
   const onSubmit = async (data) => {
-    console.log("Dados do formulário:", data);
     try {
-        // if (modoEdicao === 'personalizar' && exercicioSelecionado) {
-        //     if (data.type !== 'novo') {
-        //         data.type = mapTipo(data.type);
-        //     }
-        //     if (typeof data.typeOfProcessing === "string") {
-        //         data.typeOfProcessing = [data.typeOfProcessing];
-        //     }
-        //     await api.post(`/utente/${id}/exercicio/`, data);
-        // }
         if (modoEdicao === 'default' && exercicioSelecionado) {
             const updatedData = {
                 userId: id,
-                id: exercicioSelecionado._id
+                id: exercicioSelecionado._id,
+                edit: "default"
             };
-            await api.put(`/utente/${id}/exercicio/${exercicioSelecionado._id}`, updatedData);
+            response = await api.post(`/utente/${id}/exercicio/`, updatedData);
         }
         else {
             if (data.type !== 'novo') {
@@ -256,7 +221,7 @@ const appendStep = useCallback(() => {
             if (typeof data.typeOfProcessing === "string") {
                 data.typeOfProcessing = [data.typeOfProcessing];
             }
-            await api.post(`/utente/${id}/exercicio/`, data);
+            response = await api.post(`/utente/${id}/exercicio/`, data);
         }
 
 
@@ -264,22 +229,44 @@ const appendStep = useCallback(() => {
       window.location.reload();
     } catch (error) {
       console.error("Erro ao adicionar exercício:", error);
-      alert("Erro ao adicionar exercício. Tente novamente.");
+      alert(`Erro ao adicionar exercício: ${error.response?.data?.error || ''} Tente novamente.`);
     }
   };
 
-  useEffect(() => {
-    if (tipoSelecionado) {
-      setType(tipoSelecionado);
-      reset({
-        ...watch(),
-        type: tipoSelecionado,
-        steps: dadosExercicioSelecionado?.steps || []
-      });
-      appendStep();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tipoSelecionado]);
+  // useEffect(() => {
+  //   if (tipoSelecionado) {
+  //     setType(tipoSelecionado);
+  //     reset({
+  //       ...watch(),
+  //       type: tipoSelecionado,
+  //       steps: dadosExercicioSelecionado?.steps || []
+  //     });
+  //     if (!dadosExercicioSelecionado) {
+  //       appendStep();
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tipoSelecionado]);
+
+  // useEffect(() => {
+  //   if (tipoSelecionado) {
+  //     setType(tipoSelecionado);
+
+  //     if (!dadosExercicioSelecionado) {
+  //       reset({
+  //         ...watch(),
+  //         type: tipoSelecionado,
+  //         steps: []
+  //       });
+  //     } else {
+  //       reset({
+  //         ...dadosExercicioSelecionado,
+  //         type: tipoSelecionado,
+  //       });
+  //     }
+  //   }
+  // }, [tipoSelecionado, dadosExercicioSelecionado, reset, watch]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -299,16 +286,124 @@ const appendStep = useCallback(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tipoSelecionado]);
 
+  // useEffect(() => {
+  //   if (exercicioSelecionadoId) {
+  //     const selecionado = exerciciosDisponiveis.find(
+  //       (ex) => ex._id.toString() === exercicioSelecionadoId
+  //     );
+  //     setDadosExercicioSelecionado(selecionado || null);
+  //   } else {
+  //     setDadosExercicioSelecionado(null);
+  //   }
+  // }, [exercicioSelecionadoId, exerciciosDisponiveis]);
+
+  // useEffect(() => {
+  //   if (exercicioSelecionadoId) {
+  //     const selecionado = exerciciosDisponiveis.find(
+  //       (ex) => ex._id.toString() === exercicioSelecionadoId
+  //     );
+  //     setDadosExercicioSelecionado(selecionado || null);
+
+  //     if (selecionado) {
+  //       reset({
+  //         ...selecionado,
+  //         type: tipoSelecionado,
+  //         steps: selecionado.steps || []
+  //       });
+  //     }
+  //   } else {
+  //     setDadosExercicioSelecionado(null);
+  //   }
+  // }, [exercicioSelecionadoId, exerciciosDisponiveis, reset, tipoSelecionado]);
+
+  // useEffect(() => {
+  //   if (exercicioSelecionadoId) {
+  //     // 🚨 Selecionou um exercício existente
+  //     const selecionado = exerciciosDisponiveis.find(
+  //       (ex) => ex._id.toString() === exercicioSelecionadoId
+  //     );
+
+  //     if (selecionado) {
+  //       setDadosExercicioSelecionado(selecionado);
+
+  //       reset({
+  //         ...selecionado,
+  //         userId: id,
+  //         type: tipoSelecionado,              // mantém o tipo escolhido
+  //         steps: selecionado.steps || [],     // popula os steps no useFieldArray
+  //       });
+  //     }
+  //   } else if (tipoSelecionado) {
+  //     // 🚨 Criar novo exercício do tipo selecionado
+  //     setDadosExercicioSelecionado(null);
+
+  //     reset({
+  //       userId: id,
+  //       type: tipoSelecionado,
+  //       steps: [], // começa vazio
+  //     });
+
+  //     if (tipoSelecionado === "novo") {
+  //       appendStep(); // só adiciona automaticamente no tipo "novo"
+  //     }
+  //   }
+  // }, [exercicioSelecionadoId, tipoSelecionado, exerciciosDisponiveis, reset, id, appendStep]);
+
   useEffect(() => {
+    // mantém em sync o estado local usado no appendStep / StepFields
+    if (tipoSelecionado) setType(tipoSelecionado);
+
     if (exercicioSelecionadoId) {
       const selecionado = exerciciosDisponiveis.find(
         (ex) => ex._id.toString() === exercicioSelecionadoId
       );
-      setDadosExercicioSelecionado(selecionado || null);
-    } else {
+
+      if (selecionado) {
+        setDadosExercicioSelecionado(selecionado);
+
+        reset({
+          // inclui todos os campos do exercício
+          ...selecionado,
+          userId: id,
+          // MUITO IMPORTANTE: preserva o select do tipo
+          tipo: tipoSelecionado,
+          // garante que steps entram no RHF/useFieldArray
+          steps: selecionado.steps || [],
+          // se precisares, normaliza este campo:
+          // typeOfProcessing: Array.isArray(selecionado.typeOfProcessing)
+          //   ? selecionado.typeOfProcessing
+          //   : [selecionado.typeOfProcessing].filter(Boolean),
+          // mantém "type" técnico que usas para mapear labels
+          type: tipoSelecionado,
+        });
+      }
+    }  else if (tipoSelecionado) {
       setDadosExercicioSelecionado(null);
+
+      reset({
+        userId: id,
+        tipo: tipoSelecionado,
+        type: tipoSelecionado,
+        steps: [], // começa sempre vazio
+      });
+
+      // Só adiciona um step automático se o tipo for "novo"
+      if (tipoSelecionado === "novo") {
+        appendStep();
+      }
     }
-  }, [exercicioSelecionadoId, exerciciosDisponiveis]);
+
+  }, [
+    exercicioSelecionadoId,
+    tipoSelecionado,
+    exerciciosDisponiveis,
+    reset,
+    id,
+    appendStep,
+    setType,
+  ]);
+
+
 
 
   return (
@@ -320,7 +415,7 @@ const appendStep = useCallback(() => {
           <ErrorMessage errors={errors} name="userId" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
 
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span> </label>
             <select {...register('tipo', { required: "Selecione um tipo." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
               <option value="">Selecione...</option>
               <option value="palavras">Repetição de Palavras</option>
@@ -339,7 +434,7 @@ const appendStep = useCallback(() => {
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Selecionar Exercício Existente</label>
                   <select value={exercicioSelecionadoId} onChange={(e) => setExercicioSelecionadoId(e.target.value)} className="w-full p-2 border rounded-md dark:bg-zinc-700 dark:text-white">
-                    <option value=" ">-- Escolha um exercício --</option>
+                    <option value="">-- Escolha um exercício --</option>
                     {exerciciosDisponiveis.map((ex) => (
                       <option key={ex._id} value={ex._id.toString()}>{ex.name}</option>
                     ))}
@@ -359,7 +454,7 @@ const appendStep = useCallback(() => {
 
               {type === 'novo' ? (
                 <div>
-                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
                   <input type="text" {...register("type", { required: "Tipo do exercício é obrigatório." })} className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white" />
                   <ErrorMessage errors={errors} name="type" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
                 </div>
@@ -369,7 +464,7 @@ const appendStep = useCallback(() => {
 
               {!dadosExercicioSelecionado && (
                 <>
-                  <ExerciseMetaFields register={register} errors={errors} control={control} options={options} />
+                  <ExerciseMetaFields register={register} errors={errors} control={control} options={options} appendStep={appendStep} />
                   <ExerciseSteps
                     type={type}
                     fields={fields}
@@ -397,14 +492,21 @@ const appendStep = useCallback(() => {
                   register={register}
                   remove={remove}
                   appendStep={appendStep}
+                  fields={fields}
                 />
               )}
+
+              <div className="border-t my-4"></div>
+                <div className="text-sm text-gray-600 dark:text-black">Campos com <span style={{ color: 'red' }}>*</span> são obrigatórios.</div>
+                <div className="text-sm text-gray-600 dark:text-red-500">Todos os campos com exceção de "ID dos passos" serão transmitidos ao utente pelo Assistente.</div>
+              <div className="border-t my-4"></div>
 
               <div className="flex flex-col gap-2 mt-4">
                 <button type="submit" className="bg-green-400 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded mr-2 mt-4">Adicionar Exercício</button>
               </div>
             </>
           )}
+
 
           <div className="flex flex-col gap-2 mt-4">
             <button onClick={onClose} type="button" className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">Fechar</button>

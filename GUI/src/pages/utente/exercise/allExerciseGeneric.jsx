@@ -35,12 +35,12 @@ export default function AllGenericExercise() {
     const tipoSelecionado = watch('tipo');
     
     const camposPorTipo = {
-        palavras: ['Palavras', 'Descrição','ID'],
-        frases: ['Frase', 'Descrição','ID'],
-        leitura: ['Título', 'Texto', 'Descrição', 'ID'],
-        discurso: ['Questão', 'Descrição','ID'],
-        diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
-        novo: ["descrição",'label', 'valor','ID']
+        palavras: ['Palavras', 'Instrução','ID'],
+        frases: ['Frase', 'Instrução','ID'],
+        leitura: ['Título', 'Texto', 'Instrução', 'ID'],
+        discurso: ['Questão', 'Instrução','ID'],
+        diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Instrução','ID'],
+        novo: ["Instrução",'label', 'valor','ID']
     };
     
     const camposPorTipoEn = {
@@ -140,18 +140,22 @@ export default function AllGenericExercise() {
         </div>
         );
     }
-    if (error) {
-         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-                <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
-            </div>
-         ) 
-    }     
-    if (exercises.length > 0) {
+    // if (error) {
+    //      return (
+    //         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+    //             <p className="text-2xl font-semibold text-center dark:text-white mb-6">Error: {error.message}</p>
+    //         </div>
+    //      ) 
+    // }     
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
                 <div className=" container w-full max-w-md bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-                {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
+                    {error && (
+                        <div className="mb-4">
+                            <span className="text-red-500">Erro: {error.message}</span>
+                        </div>
+                    )}
+                    {/* <div className="container mx-auto max-w-4xl mt-10 p-5 bg-gray-100"> */}
                     <h2 className="text-2xl font-bold text-center mb-5">Lista dos Exercícios</h2>
                     <table className="min-w-full bg-white border border-gray-300">
                         <thead>
@@ -196,7 +200,7 @@ export default function AllGenericExercise() {
                                 <div className="max-h-[70vh] overflow-y-auto pr-2">
                                     {/* Tipo de Exercício */}
                                     <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
                                     <select
                                         {...register('tipo', { required: "Selecione um tipo." })}
                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
@@ -216,7 +220,7 @@ export default function AllGenericExercise() {
                                     
                                     {type === 'novo'? (
                                     <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício</label>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
                                     <input
                                         type="text"
                                         {...register("type", { required: "Tipo do exercício é obrigatório." })}
@@ -229,7 +233,7 @@ export default function AllGenericExercise() {
                                     )}
                                     {/* Nome */}
                                     <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício</label>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Nome do Exercício <span style={{ color: 'red' }}>*</span></label>
                                     <input
                                         type="text"
                                         {...register("name", { required: "Nome do exercício é obrigatório." })}
@@ -242,14 +246,14 @@ export default function AllGenericExercise() {
                                     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Descrição</label>
                                     <input
                                         type="text"
-                                        {...register("description", { required: "Descrição é obrigatória." })}
+                                        {...register("description",)}
                                         className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                                     />
-                                    <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} />
+                                    {/* <ErrorMessage errors={errors} name="description" render={({ message }) => <p className="text-red-500 text-sm">{message}</p>} /> */}
                                     </div>
                                     {/* Tipo de Processamento */}
-                                    <div>
-                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento</label>
+                                    <div mb-4>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Processamento <span style={{ color: 'red' }}>*</span></label>
                                     <Controller
                                         name="typeOfProcessing"
                                         control={control}
@@ -280,34 +284,34 @@ export default function AllGenericExercise() {
                                         <>
                                         {fields.length > 0 && (
                                             <div className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                                                <h3 className="text-lg font-semibold mb-2">Passos</h3>
+                                                <h3 className="text-lg font-semibold mb-2">Passos <span style={{ color: 'red' }}>*</span></h3>
                                                 {fields.map((field, index) => (
                                                     <div key={field.id} className="mb-4 border p-2 rounded">
                                                         {type === 'novo' ? (
                                                             <>
                                                                 <div className="mb-2">
-                                                                    <label className="block text-sm">Descrição:</label>
+                                                                    <label className="block text-sm">Instrução <span style={{ color: 'red' }}>*</span></label>
                                                                     <input
                                                                         {...register(`steps.${index}.description`, { required: true })}
                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                     />
                                                                 </div>
                                                                 <div className="mb-2">
-                                                                    <label className="block text-sm">Label:</label>
+                                                                    <label className="block text-sm">Label <span style={{ color: 'red' }}>*</span></label>
                                                                     <input
                                                                         {...register(`steps.${index}.label`, { required: true })}
                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                     />
                                                                 </div>
                                                                 <div className="mb-2">
-                                                                    <label className="block text-sm">Valor:</label>
+                                                                    <label className="block text-sm">Valor <span style={{ color: 'red' }}>*</span></label>
                                                                     <input
                                                                         {...register(`steps.${index}.value`, { required: true })}
                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
                                                                     />
                                                                 </div>
                                                                 <div className="mb-2">
-                                                                    <label className="block text-sm">ID:</label>
+                                                                    <label className="block text-sm">ID <span style={{ color: 'red' }}>*</span></label>
                                                                     <input
                                                                         {...register(`steps.${index}.id`, { required: true })}
                                                                         className="w-full p-2 border rounded dark:bg-zinc-600"
@@ -320,7 +324,7 @@ export default function AllGenericExercise() {
                         
                                                                 return (
                                                                     <div className="mb-2" key={campo}>
-                                                                    <label className="block text-sm capitalize">{campo}:</label>
+                                                                    <label className="block text-sm capitalize">{campo} <span style={{ color: 'red' }}>*</span></label>
                                                                     {campo === 'Texto' ? (
                                                                         <textarea
                                                                         {...register(`steps.${index}.${fieldName}`, { required: true })}
@@ -359,7 +363,9 @@ export default function AllGenericExercise() {
                                     )}
                                     </div>
                                 </div>
-                    
+
+                                <div className="mb-4"><span style={{ color: 'red' }}>*</span> Campos obrigatórios</div>
+
                                 {/* Botões */}
                                 <div className="flex justify-between mt-4">
                                     <button
@@ -383,5 +389,4 @@ export default function AllGenericExercise() {
                 </div>
             </div>
         );
-    }
 }

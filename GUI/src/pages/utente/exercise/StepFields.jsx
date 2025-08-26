@@ -101,7 +101,7 @@ export function StepFields({
     return (
       <div className="border rounded p-3 mb-3">
         <div className="mb-2">
-          <label className="block text-sm">Descrição:</label>
+          <label className="block text-sm">Instrução <span style={{ color: 'red' }}>*</span></label>
           <input
             {...register(`steps.${index}.description`, { required: true })}
             defaultValue={field?.description || ""}
@@ -113,7 +113,7 @@ export function StepFields({
         </div>
 
         <div className="mb-2">
-          <label className="block text-sm">Label:</label>
+          <label className="block text-sm">Label <span style={{ color: 'red' }}>*</span></label>
           <input
             {...register(`steps.${index}.label`, { required: true })}
             defaultValue={field?.label || ""}
@@ -125,7 +125,7 @@ export function StepFields({
         </div>
 
         <div className="mb-2">
-          <label className="block text-sm">Valor:</label>
+          <label className="block text-sm">Valor <span style={{ color: 'red' }}>*</span></label>
           <input
             {...register(`steps.${index}.value`, { required: true })}
             defaultValue={field?.value || ""}
@@ -137,7 +137,7 @@ export function StepFields({
         </div>
 
         <div className="mb-2">
-          <label className="block text-sm">ID:</label>
+          <label className="block text-sm">ID <span style={{ color: 'red' }}>*</span></label>
           <input
             {...register(`steps.${index}.id`, { required: true })}
             defaultValue={field?.id || ""}
@@ -168,7 +168,7 @@ export function StepFields({
         const fieldName = camposPorTipoEn[type]?.[campoIdx];
         return (
           <div className="mb-2" key={campo}>
-            <label className="block text-sm capitalize">{campo}:</label>
+            <label className="block text-sm capitalize">{campo}<span style={{ color: 'red' }}>*</span></label>
 
             {campo === "Texto" ? (
               <textarea

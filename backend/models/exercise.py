@@ -62,6 +62,21 @@ def get_exercise(therapistId):
     # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"therapist": ObjectId(therapistId)})
 
+def get_exerciseGeneric(therapistId):
+    """
+    Get all exercises by therapist Id without user.
+    :param therapistId: The ID of the therapist.
+    :return: The list of exercise data.
+    """
+
+    return mongo.db.exercise.find({
+        "therapist": ObjectId(therapistId),
+        "$or": [
+            {"user": {"$exists": False}},
+            {"user": None}
+        ]
+    })
+
 def get_exercise_by_id(exercise_id):
     """
     Get an exercise by its ID.
@@ -87,7 +102,6 @@ def get_exercise_by_type(type):
     :param type: The type of the exercise.
     :return: The exercise data as a dictionary.
     """
-    print("oiiiiii")
     # mongo = app.extensions['pymongo']
     return mongo.db.exercise.find({"type": type})
 

@@ -135,6 +135,24 @@ class CreatDocumentToDB:
                 }
         return self.data
     
+    def exerciseDocumentWithExerciseId(self,exercise, userId, userName,therapist):
+        """
+        Create a document for the exercise with exercise ID.
+        :param exercise: The exercise ID.
+        :param userId: The user ID.
+        :param userName: The user name.
+        :param therapist: The therapist ID.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+                    "exerciseId": self.ensure_objectid(exercise),
+                    "userName": userName,
+                    "user": self.ensure_objectid(userId),
+                    "therapist": self.ensure_objectid(therapist),
+                }
+        return self.data
+
     def genericExerciseDocument(self, type, name, description, steps,typeOfProcessing,therapist):
         """
         Create a document for the exercise.

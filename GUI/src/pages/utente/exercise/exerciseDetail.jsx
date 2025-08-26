@@ -38,7 +38,7 @@ export default function ExerciseDetail() {
     const stepInPT = {
         text: "Texto",
         title: "Título",
-        description: "Descrição",
+        description: "Instrução",
         word: "Palavra",
         sentence: "Frase",
         step: "Passo",

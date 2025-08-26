@@ -640,6 +640,18 @@ def get_exercicios(user_id):
     
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
+    
+    if exercises:
+        for exercise in exercises:
+            if exercise.get('exerciseId'):
+                new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+                if new_exercise:
+                    del new_exercise['_id']  # <- remove o campo _id do dict
+                    exercise.update(new_exercise)  # <- modifica o dict da lista
+                    del exercise['exerciseId']  # <- remove o campo exerciseId do dict
+
+
+                
 
     return jsonify(exercises), 200
 
@@ -671,6 +683,13 @@ def get_exercicio(exercise_id):
     # if isinstance(exercises, Cursor):
     #     exercises = list(exercises)
 
+    if exercise.get('exerciseId'):
+        new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+        if new_exercise:
+            del new_exercise['_id']  # <- remove o campo _id do dict
+            exercise.update(new_exercise) 
+            del exercise['exerciseId']  
+
     return jsonify(exercise), 200
 
 @utente_bp.route('/exercicio/', methods=['GET'])
@@ -692,7 +711,7 @@ def get_all_exercicio():
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    exercises = exercise_model.get_exercise(therapistId)
+    exercises = exercise_model.get_exerciseGeneric(therapistId)
 
     if not exercises:
         return jsonify({"error": "Exercícios não encontrados"}), 404
@@ -771,20 +790,29 @@ def add_exercicio(user_id):
 
     data = request.get_json()
     print(data)
-    name = data.get('name')
-    type = data.get('type')
-    description = data.get('description') if data.get('description') else None
-    typeOfProcessing = data.get('typeOfProcessing')
-    # video_url = data.get('video_url')
-    steps = data.get('steps')
+    if data.get('edit'):
+        exercise_id = data.get('id')
+        userId = data.get('userId')
+        if not exercise_model.get_exercise_by_id(exercise_id):
+            return jsonify({"error": "Exercício não encontrado"}), 404
+        documento = CreatDocumentToDB()
+        doc = documento.exerciseDocumentWithExerciseId(exercise=exercise_id, userId=casa_viva_user['_id'], userName=casa_viva_user['name'], therapist=therapistId)
+        exercise_id = exercise_model.create_exercise(doc)
+    else:
+        name = data.get('name')
+        type = data.get('type')
+        description = data.get('description') if data.get('description') else None
+        typeOfProcessing = data.get('typeOfProcessing')
+        # video_url = data.get('video_url')
+        steps = data.get('steps')
 
-    if exercise_model.get_exercise_by_name(name):
-        return jsonify({"error": "Já há exercício com este nome registrado"}), 400
+        if exercise_model.get_exercise_by_name(name):
+            return jsonify({"error": "Já há exercício com este nome registrado"}), 400
 
-    docuemnto = CreatDocumentToDB()
-    doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps,typeOfProcessing=typeOfProcessing, therapist=therapistId)
-    
-    exercise_id = exercise_model.create_exercise(doc)
+        docuemnto = CreatDocumentToDB()
+        doc = docuemnto.exerciseDocument(name=name, type=type, description=description, userName=casa_viva_user['name'], user=casa_viva_user['_id'], steps=steps,typeOfProcessing=typeOfProcessing, therapist=therapistId)
+        
+        exercise_id = exercise_model.create_exercise(doc)
 
     return jsonify({"message": "Exercício adicionado com sucesso", "id": str(exercise_id)}), 201
 
