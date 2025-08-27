@@ -130,7 +130,7 @@ class CreatDocumentToDB:
                     "typeOfProcessing":typeOfProcessing,
                     "steps": steps,                      # steps is a list of dictionaries
                     "userName": userName,                # userName is the name of the user
-                    "user": self.ensure_objectid(user),                        # user is the id of the user
+                    "user": self.ensure_objectid(user) if user else None,                       # user is the id of the user
                     "therapist": self.ensure_objectid(therapist),          # therapist is the id of the therapist
                 }
         return self.data

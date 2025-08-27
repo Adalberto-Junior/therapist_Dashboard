@@ -28,7 +28,8 @@ import EditReport from "./pages/utente/utenteData/editReport.jsx";
 import ArticulationResultPage from './pages/utente/result/versao2/articulationPage.jsx'
 import ProsodyResultPage from "./pages/utente/result/versao2/prosodyPage.jsx";  
 import PhonotionResultPage from "./pages/utente/result/versao2/phonationPage.jsx";
-
+import GenericExerciseDetail from "./pages/utente/exercise/GenericExerciseDetail.jsx";
+import EditarGenericExercicioForm from "./pages/utente/exercise/editGenericExercise.jsx";
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 
 // export default function App() {
@@ -99,6 +100,8 @@ export default function App() {
             <Route path="/" element={<AllUtente />} />
             {/* <Route path="utentes" element={<AllUtente />} /> */}
             <Route path="exercicios/genericos" element={<AllGenericExercise />} />
+              <Route path="exercicios/genericos/detail/:id" element={<GenericExerciseDetail />} />
+              <Route path="exercicios/genericos/detail/editar/:id" element={<EditarGenericExercicioForm />} />
 
             <Route path="me" element={<Profile />} />
 

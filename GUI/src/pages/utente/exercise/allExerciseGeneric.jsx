@@ -128,8 +128,8 @@ export default function AllGenericExercise() {
         fetchData();
     }, []);
 
-    const handleOpen = async (id_) => {
-        navigate(`/utente/exercicio/${id_}`);
+    const handleOpen = async (id) => {
+        navigate(`detail/${id}`);
     };
 
     
@@ -173,7 +173,7 @@ export default function AllGenericExercise() {
                                     <td className="py-2 px-4 border-b">{exercise._id.$oid || exercise._id.toString()}</td>
                                     <td className="py-2 px-4 border-b">{exercise.type}</td>
                                     <td className="py-2 px-4 border-b">{exercise.name}</td>
-                                    <td className="py-2 px-4 border-b">{exercise.description}</td>
+                                    <td className="py-2 px-4 border-b">{exercise.description || 'NA'}</td>
                                     <td className="py-2 px-4 border-b">
                                         <button onClick={() => handleOpen(exercise._id.$oid || exercise._id.toString())}
                                             className="bg-blue-400 dark:bg-blue-800 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">

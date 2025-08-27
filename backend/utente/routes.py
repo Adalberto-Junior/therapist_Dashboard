@@ -859,6 +859,7 @@ def update_exercicio(exercise_id):
     :param exercise_id: The ID of the exercise to be updated.
     :return: JSON response with a success message.
     """
+    
     token = request.headers.get('Authorization')
     if not token or not token.startswith("Bearer "):
         return jsonify({"error": "Token ausente"}), 401
@@ -871,20 +872,29 @@ def update_exercicio(exercise_id):
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
+    
+    
+    
+    if not exercise_id:
+        return jsonify({"error": "ID do exercício não fornecido"}), 400
+
+    if not exercise_model.get_exercise_by_id(exercise_id):
+        return jsonify({"error": "Exercício não encontrado"}), 404
 
     data = request.get_json()
+    print(data)
     name = data.get('name')
     type = data.get('type')
-    description = data.get('description')
-    user = data.get('user')
+    description = data.get('description') if data.get('description') else None
+    userID = data.get('user') if data.get('user') else ""
     typeOfProcessing = data.get('typeOfProcessing')
     therapist = therapistId
-    userName = data.get('userName')
+    userName = data.get('userName') if data.get('userName') else None
 
     steps = data.get('steps')
 
     documento = CreatDocumentToDB()
-    doc = documento.exerciseDocument(name=name, type=type, description=description, userName=userName, user=user, steps=steps, therapist=therapist, typeOfProcessing=typeOfProcessing)
+    doc = documento.exerciseDocument(name=name, type=type, description=description, userName=userName, user=userID, steps=steps, therapist=therapist, typeOfProcessing=typeOfProcessing)
     exercise = exercise_model.update_exercise(exercise_id, doc)
 
     if not exercise:

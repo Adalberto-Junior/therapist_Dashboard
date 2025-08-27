@@ -142,30 +142,24 @@ export default function AllExercise() {
 
      const onSubmit = async (data) => {
         try {
-        if (data.type !== 'novo') {
-            data.type = mapTipo(data.type);
-        }
-        if (typeof data.typeOfProcessing === "string") {
-            data.typeOfProcessing = [data.typeOfProcessing];
-        }
-        await api.post(`/utente/${id}/exercicio/`, data);
-        alert("Exercício adicionado com sucesso!");
-        setMostrarFormulario(false);
-        window.location.reload();
+            if (data.type !== 'novo') {
+                data.type = mapTipo(data.type);
+            }
+            if (typeof data.typeOfProcessing === "string") {
+                data.typeOfProcessing = [data.typeOfProcessing];
+            }
+            await api.post(`/utente/${id}/exercicio/`, data);
+            alert("Exercício adicionado com sucesso!");
+            setMostrarFormulario(false);
+            window.location.reload();
         } catch (error) {
-        console.error("Erro ao adicionar exercício:", error);
-        alert("Erro ao adicionar exercício. Tente novamente.");
+            console.error("Erro ao adicionar exercício:", error);
+            alert("Erro ao adicionar exercício. Tente novamente.");
         }
     };
 
     const handleOpen = async (id_) => {
         navigate(`/utente/${id}/exercicio/${id_}`);
-        // try {
-        //     await api.delete(`/exercises/${id}`); // Adjust the endpoint as needed
-        //     setexercises(exercises.filter((exercise) => exercise.id !== id)); // Remove the deleted exercise from the state
-        // } catch (error) {
-        //     console.error("Error deleting exercise:", error);
-        // }
     };
 
     useEffect(() => {

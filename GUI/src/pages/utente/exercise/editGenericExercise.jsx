@@ -1,330 +1,16 @@
-
-// import { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import api from "../../api";
-// import 'react-phone-number-input/style.css';
-// import PhoneInput from 'react-phone-number-input';
-
-// export default function EditExercise() {
-//   const { id, id_exercise } = useParams(); // Pega o ID da URL
-//   const navigate = useNavigate();
-//   const [exercise, setExercise] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     async function fetchExercise() {
-//       try {
-//         const res = await api.get(`/utente/exercicio/${id_exercise}`);
-//         console.log(res.data);
-//         setExercise(res.data);
-//       } catch (err) {
-//         setError("Erro ao carregar os dados do exercício.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-
-//     fetchExercise();
-//   }, [id_exercise]);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setExercise((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       await api.put(`/utente/exercicio/${id_exercise}`, exercise);
-//       alert("Exercício atualizado com sucesso!");
-//        navigate(`/utente/${id}/exercicio/${id_exercise}`);
-//     } catch (err) {
-//       console.error(err);
-//       alert("Erro ao atualizar o exercício.");
-//     }
-//   };
-
-//   if (loading) return <p>Carregando...</p>;
-//   if (error) return <p>{error}</p>;
-
-//   return (
-//     <div className="p-6 max-w-xl mx-auto bg-white dark:bg-zinc-800 rounded shadow">
-//       <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">Editar Exercício</h2>
-//       <form onSubmit={handleSubmit} className="space-y-4">
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Nome:</label>
-//           <input
-//             type="text"
-//             name="name"
-//             value={utente.name || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Email:</label>
-//           <input
-//             type="email"
-//             name="email"
-//             value={utente.email || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Adiciona mais campos conforme necessário, como profissão, data de nascimento etc. */}
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Número de Utente:</label>
-//           <input
-//             type="number"
-//             name="health_user_number"
-//             value={utente.health_user_number || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Morada:</label>
-//           <input
-//             type="text"
-//             name="address"
-//             value={utente.address || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Condição de Saúde:</label>
-//           <input
-//             type="text"
-//             name="medical_condition"
-//             value={utente.medical_condition || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Telemóvel:</label>
-//           <PhoneInput
-//             defaultCountry="PT"
-//             international
-//             name="cellphone"
-//             value={utente.cellphone || ""}
-//             onChange={(value) => setUtente((prev) => ({ ...prev, cellphone: value }))}
-//             className="w-full p-5 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-//           />
-//         </div>
-
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Observação:</label>
-//           <textarea
-//             name="observation"
-//             value={utente.observation || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//             rows="3"
-//           ></textarea>
-//         </div>
-
-
-//         <div>
-//           <label className="block text-sm font-medium  text-black dark:text-white">Data de Nascimento:</label>
-//           <input
-//             type="date"
-//             name="date_of_birth"
-//             value={utente.date_of_birth?.slice(0, 10) || ""}
-//             onChange={handleChange}
-//             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
-//           />
-//         </div>
-//         <div className="flex items-center">
-//           <button
-//           type="submit"
-//           className="bg-green-500 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
-//         >
-//           Salvar Alterações
-//         </button>
-//         </div>
-        
-//         <button
-//           type="button"
-//           onClick={() => navigate(`/utente/${id}/informacao`)}
-//           className="bg-amber-500 dark:bg-amber-800 hover:bg-amber-600 dark:hover:bg-amber-700 text-white px-4 py-2 rounded ml-2"
-//         >
-//           Cancelar
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// import React, { useEffect, useState } from 'react';
-// import { useForm, useFieldArray } from 'react-hook-form';
-// import { Plus, Trash2 } from 'lucide-react';
-// import api from "../../../api";
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { ErrorMessage } from "@hookform/error-message";
-
-// const mapTipo = () => ({
-//   articulacao: 'articulation',
-//   prosodia: 'prosody',
-//   fonacao: 'phonation',
-//   glota: 'glottal',
-//   reaprendizado: 'relearning',
-//   novo: ''
-// });
-
-// export default function EditarExercicioForm() {
-//   const { id, exercicioId } = useParams();
-//   const navigate = useNavigate();
-//   const [type, setType] = useState('articulacao');
-
-//   const {
-//     register,
-//     control,
-//     handleSubmit,
-//     reset,
-//     watch,
-//     setValue,
-//     formState: { errors }
-//   } = useForm({
-//     defaultValues: {
-//       userId: id,
-//       tipo: 'articulacao',
-//       type: 'articulation',
-//       name: '',
-//       description: '',
-//       typeOfProcessing: '',
-//       steps: []
-//     }
-//   });
-
-//   const { fields, append, remove } = useFieldArray({ control, name: 'steps' });
-//   const selectedTipo = watch('tipo');
-
-//   useEffect(() => {
-//     const fetchExercicio = async () => {
-//       try {
-//         const res = await api.get(`/utente/exercicio/${exercicioId}/`);
-//         const exercicio = res.data;
-
-//         const tipoKey = Object.entries(mapTipo()).find(([k, v]) => v === exercicio.type)?.[0] || 'novo';
-//         setType(tipoKey);
-
-//         reset({
-//           userId: exercicio.userId,
-//           tipo: tipoKey,
-//           type: exercicio.type,
-//           name: exercicio.name,
-//           description: exercicio.description,
-//           typeOfProcessing: exercicio.typeOfProcessing,
-//           steps: exercicio.steps || []
-//         });
-//       } catch (err) {
-//         console.error('Erro ao carregar exercício:', err);
-//       }
-//     };
-
-//     fetchExercicio();
-//   }, [id, exercicioId, reset]);
-
-//   const onSubmit = async (data) => {
-//     try {
-//       await api.put(`/utente/exercicio/${exercicioId}`, data);
-//       navigate(`/utente/${id}/exercicio/${exercicioId}`);
-//     } catch (err) {
-//       console.error('Erro ao editar exercício:', err);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-//       <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-//         <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Editar Exercício</h2>
-//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-//         <div>
-//             <label>Tipo</label>
-//             <select {...register('tipo', { required: true })} className="w-full p-2 rounded dark:bg-zinc-700 dark:text-white">
-//             <option value="articulacao">Articulação</option>
-//             </select>
-//         </div>
-
-//         {type === 'novo' && (
-//             <div>
-//             <label>Novo tipo</label>
-//             <input {...register('type', { required: true })} placeholder="Digite o novo tipo" />
-//             {errors.type && <p className="text-red-500">Campo obrigatório</p>}
-//             </div>
-//         )}
-
-//         <div>
-//             <label>Nome</label>
-//             <input {...register('name', { required: true })} />
-//             {errors.name && <p className="text-red-500">Campo obrigatório</p>}
-//         </div>
-
-//         <div>
-//             <label>Descrição</label>
-//             <textarea {...register('description')} />
-//         </div>
-
-//         <div>
-//             <label>Tipo de Processamento</label>
-//             <input {...register('typeOfProcessing')} />
-//         </div>
-
-//         <div>
-//             <label>Passos</label>
-//             {fields.map((field, index) => (
-//             <div key={field.id} className="border rounded p-4 space-y-2 relative">
-//                 <input {...register(`steps.${index}.title`, { required: true })} placeholder="Título do passo" />
-//                 <textarea {...register(`steps.${index}.description`)} placeholder="Descrição do passo" />
-//                 <button type="button" variant="destructive" size="sm" onClick={() => remove(index)} className="absolute top-2 right-2">
-//                 <Trash2 size={16} />
-//                 </button>
-//             </div>
-//             ))}
-//             <button type="button" variant="outline" onClick={() => append({ title: '', description: '' })}>
-//             <Plus className="mr-2" size={16} /> Adicionar passo
-//             </button>
-//         </div>
-
-//         <button type="submit">Guardar alterações</button>
-//         </form>
-//         <button onClick={() => navigate(`/utente/${id}/exercicio/${exercicioId}`)} className="mt-4 bg-gray-500 text-white px-4 py-2 rounded">
-//           Cancelar
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import api from '../../../api';
 import { ErrorMessage } from '@hookform/error-message';
 import { useNavigate } from 'react-router-dom';
-
 import { MultiSelect } from 'primereact/multiselect';
 import 'primereact/resources/themes/lara-light-blue/theme.css'; // ou outro tema
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-export default function EditarExercicioForm () {
-    const { id, id_ } = useParams();
+export default function EditarGenericExercicioForm () {
+    const { id } = useParams();
     const [type, setType] = useState('');
     const [exercicio, setExercise] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -340,8 +26,6 @@ export default function EditarExercicioForm () {
         formState: { errors }
     } = useForm({
         defaultValues: {
-            user: id,
-            userName: "",
             tipo: "",
             type: "",
             name: "",
@@ -367,20 +51,18 @@ export default function EditarExercicioForm () {
       try {
         setLoading(true);
         setError(null);
-        console.log('Fetching exercise with ID:', id_);
-        if (!id_) {
+        console.log('Fetching exercise with ID:', id);
+        if (!id) {
           throw new Error('ID do exercício não fornecido');
         }
 
-        const response = await api.get(`/utente/exercicio/${id_}/`);
+        const response = await api.get(`/utente/exercicio/${id}/`);
         const data = response.data;
 
         setExercise(data);
 
         // ⚠️ Atualiza o formulário com os dados recebidos
         reset({
-          user: data.user || "",
-          userName: data.userName || "",
           tipo: tipoPorLabel[data.type] ? tipoPorLabel[data.type] : "novo",
           type: data.type || "",
           name: data.name || "",
@@ -401,15 +83,15 @@ export default function EditarExercicioForm () {
     };
 
     fetchExercise();
-  }, [id_, reset]);
+  }, [id, reset]);
 
     
     const camposPorTipo = {
-    palavras: ['Palavras', 'Descrição','ID'],
-    frases: ['Frase', 'Descrição','ID'],
-    leitura: ['Título', 'Texto', 'Descrição', 'ID'],
-    discurso: ['Questão', 'Descrição','ID'],
-    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Descrição','ID'],
+    palavras: ['Palavras', 'Instrução','ID'],
+    frases: ['Frase', 'Instrução','ID'],
+    leitura: ['Título', 'Texto', 'Instrução', 'ID'],
+    discurso: ['Questão', 'Instrução','ID'],
+    diadococinesia: ['Tipo de Consoante', 'Sílabas', 'Instrução','ID'],
     novo: ['label', 'valor','ID']
   };
 
@@ -449,8 +131,6 @@ export default function EditarExercicioForm () {
     }, [watch]);
 
     
-    // const tipoInicial = tipoPorLabel[exercicio.type] || 'novo';
-
 
     const tipoSelecionado = watch('tipo');
 
@@ -470,18 +150,18 @@ export default function EditarExercicioForm () {
             if (!Array.isArray(data.typeOfProcessing)) {
                 data.typeOfProcessing = [data.typeOfProcessing];
             }
-            await api.put(`/utente/exercicio/${id_}/`, data);
+            if (data.user !== undefined && data.user === "" && data.user !== null) {
+                delete data.user;
+            }
+            await api.put(`/utente/exercicio/${id}/`, data);
             alert('Exercício editado com sucesso!');
             window.history.back();
         } catch (error) {
             console.error('Erro ao editar exercício:', error);
-            alert('Erro ao editar exercício.');
+            alert(`Erro ao editar exercício:  ${error.response?.data?.error || ''}`);
         }
     };
 
-    // useEffect(() => {
-    //     setType(tipoSelecionado);
-    // }, [tipoSelecionado]);
 
     if (loading){
         return(
@@ -516,9 +196,7 @@ export default function EditarExercicioForm () {
 
             <h2 className="text-2xl font-semibold text-center text-black dark:text-white mb-6">Editar Exercício</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <input type="hidden" {...register('user')} />
             <input type="hidden" {...register('therapist')} />
-            <input type="hidden" {...register('userName')} />
 
             <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-black">Tipo de Exercício <span style={{ color: 'red' }}>*</span></label>
@@ -613,7 +291,7 @@ export default function EditarExercicioForm () {
                 Adicionar passo
                 </button>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">* Campos obrigatórios</div>
+            <div className="text-sm text-gray-800 dark:text-gray-900"><span style={{ color: 'red' }}>*</span> Campos obrigatórios</div>
 
             <div className="flex justify-between mt-4">
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Guardar</button>

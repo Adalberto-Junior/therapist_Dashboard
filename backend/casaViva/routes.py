@@ -165,7 +165,14 @@ def get_all_exercise():
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
     
-    print(exercises)
+    if exercises:
+        for exercise in exercises:
+            if exercise.get('exerciseId'):
+                new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+                if new_exercise:
+                    del new_exercise['_id']  # <- remove o campo _id do dict
+                    exercise.update(new_exercise)  # <- modifica o dict da lista
+                    del exercise['exerciseId']  # <- remove o campo exerciseId do dict
 
     return jsonify(exercises), 200
 
@@ -195,6 +202,14 @@ def get_exercise_by_id(exercise_id):
 
     if not exercise:
         return jsonify({"error": "Exercício não encontrado"}), 404
+    
+    if exercise.get('exerciseId'):
+        new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+        if new_exercise:
+            del new_exercise['_id']  # <- remove o campo _id do dict
+            exercise.update(new_exercise) 
+            del exercise['exerciseId']  
+
     
     return jsonify(exercise), 200
 
@@ -227,6 +242,15 @@ def get_exercise_by_type(exercise_type):
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
     
+    if exercises:
+        for exercise in exercises:
+            if exercise.get('exerciseId'):
+                new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+                if new_exercise:
+                    del new_exercise['_id']  # <- remove o campo _id do dict
+                    exercise.update(new_exercise)  # <- modifica o dict da lista
+                    del exercise['exerciseId']  # <- remove o campo exerciseId do dict
+    
     return jsonify(exercises), 200
 
 @casaViva_bp.route("/exercise/processing/<processing_type>", methods=["GET"])
@@ -257,6 +281,15 @@ def get_exercise_by_processing_type(processing_type):
     
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
+    
+    if exercises:
+        for exercise in exercises:
+            if exercise.get('exerciseId'):
+                new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+                if new_exercise:
+                    del new_exercise['_id']  # <- remove o campo _id do dict
+                    exercise.update(new_exercise)  # <- modifica o dict da lista
+                    del exercise['exerciseId']  # <- remove o campo exerciseId do dict
     
     return jsonify(exercises), 200
 
