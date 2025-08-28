@@ -62,7 +62,8 @@ export default function EditUtente() {
     
 
   return (
-    <div className="p-6 m-8 max-w-xl mx-auto bg-white dark:bg-zinc-800 rounded shadow">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+    <div className="w-full max-w-2xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">Editar Utente</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -153,23 +154,26 @@ export default function EditUtente() {
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:text-white"
           />
         </div>
-        <div className="flex items-center">
+        <div className="flex justify-between mt-4">
           <button
-          type="submit"
-          className="bg-green-500 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
-        >
-          Salvar Alterações
-        </button>
+            type="submit"
+            className="bg-green-500 dark:bg-green-800 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
+          >
+            Salvar Alterações
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate(`/utente/${id}/informacao`)}
+            className="bg-amber-500 dark:bg-amber-800 hover:bg-amber-600 dark:hover:bg-amber-700 text-white px-4 py-2 rounded ml-2"
+          >
+            Cancelar
+          </button>
         </div>
         
-        <button
-          type="button"
-          onClick={() => navigate(`/utente/${id}/informacao`)}
-          className="bg-amber-500 dark:bg-amber-800 hover:bg-amber-600 dark:hover:bg-amber-700 text-white px-4 py-2 rounded ml-2"
-        >
-          Cancelar
-        </button>
+       
       </form>
+    </div>
     </div>
   );
 }

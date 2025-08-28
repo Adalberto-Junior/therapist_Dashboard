@@ -212,7 +212,7 @@ const appendStep = useCallback(() => {
                 id: exercicioSelecionado._id,
                 edit: "default"
             };
-            response = await api.post(`/utente/${id}/exercicio/`, updatedData);
+            const response = await api.post(`/utente/${id}/exercicio/`, updatedData);
         }
         else {
             if (data.type !== 'novo') {
@@ -221,7 +221,7 @@ const appendStep = useCallback(() => {
             if (typeof data.typeOfProcessing === "string") {
                 data.typeOfProcessing = [data.typeOfProcessing];
             }
-            response = await api.post(`/utente/${id}/exercicio/`, data);
+            const response = await api.post(`/utente/${id}/exercicio/`, data);
         }
 
 

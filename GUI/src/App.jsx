@@ -31,6 +31,7 @@ import PhonotionResultPage from "./pages/utente/result/versao2/phonationPage.jsx
 import GenericExerciseDetail from "./pages/utente/exercise/GenericExerciseDetail.jsx";
 import EditarGenericExercicioForm from "./pages/utente/exercise/editGenericExercise.jsx";
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
+import ExerciseForm from "./pages/utente/reabilitation/exerciseForm.jsx";
 
 // export default function App() {
 //   // const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
@@ -118,7 +119,7 @@ export default function App() {
               <Route path="analise/prosodia" element={<ProsodyResultPage />} />
               <Route path="analise/glota" element={<GlottalResult />} />
               <Route path="analise/fonologica" element={<PhonologicalResult />} />
-              <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
+              <Route path="analise/reaprendizagem" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />

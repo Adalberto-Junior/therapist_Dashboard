@@ -1204,3 +1204,102 @@ def delete_relatorio(reportId):
     
     return jsonify({"message": "Relatório deletado com sucesso."}), 200
 
+
+
+############################################
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# from pymongo import MongoClient
+# import os
+# from werkzeug.utils import secure_filename
+
+# app = Flask(__name__)
+# CORS(app)  # Permite requests do frontend React
+
+# # Configurações
+# UPLOAD_FOLDER = "uploads"
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# # Conecta ao MongoDB
+# client = MongoClient("mongodb://localhost:27017/")
+# db = client["speech_therapy"]
+# exercises_collection = db["exercises"]
+
+# # Rota para criar exercício
+# @app.route("/api/exercises", methods=["POST"])
+# def create_exercise():
+#     try:
+#         # Campos de texto
+#         title = request.form.get("title")
+#         category = request.form.get("category")
+#         objective = request.form.get("objective")
+#         description = request.form.get("description")
+#         duration = request.form.get("duration")
+#         repetitions = request.form.get("repetitions")
+#         difficulty = request.form.get("difficulty")
+#         feedback = request.form.get("feedback")
+#         notes = request.form.get("notes")
+        
+#         # Passos (JSON)
+#         steps = request.form.get("steps")
+#         if steps:
+#             import json
+#             steps = json.loads(steps)
+#         else:
+#             steps = []
+
+#         # Ficheiros
+#         def save_files(files, subfolder):
+#             paths = []
+#             folder_path = os.path.join(app.config["UPLOAD_FOLDER"], subfolder)
+#             os.makedirs(folder_path, exist_ok=True)
+#             for file in files:
+#                 filename = secure_filename(file.filename)
+#                 file_path = os.path.join(folder_path, filename)
+#                 file.save(file_path)
+#                 paths.append(file_path)
+#             return paths
+
+#         images = save_files(request.files.getlist("images"), "images")
+#         videos = save_files(request.files.getlist("videos"), "videos")
+#         audios = save_files(request.files.getlist("audios"), "audios")
+
+#         # Cria documento
+#         exercise = {
+#             "title": title,
+#             "category": category,
+#             "objective": objective,
+#             "description": description,
+#             "duration": duration,
+#             "repetitions": repetitions,
+#             "difficulty": difficulty,
+#             "feedback": feedback,
+#             "notes": notes,
+#             "steps": steps,
+#             "images": images,
+#             "videos": videos,
+#             "audios": audios,
+#         }
+
+#         # Insere no MongoDB
+#         result = exercises_collection.insert_one(exercise)
+#         exercise["_id"] = str(result.inserted_id)
+
+#         return jsonify({"success": True, "exercise": exercise}), 201
+
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"success": False, "error": str(e)}), 500
+
+# # Rota para listar exercícios
+# @app.route("/api/exercises", methods=["GET"])
+# def list_exercises():
+#     try:
+#         exercises = list(exercises_collection.find())
+#         for e in exercises:
+#             e["_id"] = str(e["_id"])
+#         return jsonify(exercises), 200
+#     except Exception as e:
+#         return jsonify({"success": False, "error": str(e)}), 500
+

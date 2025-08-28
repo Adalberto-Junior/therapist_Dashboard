@@ -183,7 +183,7 @@ export default function ExerciseDetail() {
                                 <Accordion.Body>
                                 {Object.entries(step).map(([k, v], i) => (
                                     <div key={i} className="mb-2">
-                                        {v !== null && (
+                                        {v !== null && v !== undefined && v !== "" && (
                                             <>
                                                 <span className="font-semibold">{translateKey(k)}:</span>{" "}
                                                 <span>{typeof v === 'string' ? v : JSON.stringify(v)}</span>

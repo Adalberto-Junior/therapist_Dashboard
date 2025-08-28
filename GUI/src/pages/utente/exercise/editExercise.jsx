@@ -606,7 +606,7 @@ export default function EditarExercicioForm () {
                         </div>
                     );
                     })}
-                    <button type="button" onClick={() => remove(index)} className="text-red-600 hover:underline">Remover</button>
+                    <button type="button" onClick={() => remove(index)} className="text-red-600 rounded hover:underline">Remover</button>
                 </div>
                 ))}
                 <button type="button" onClick={appendStep} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
