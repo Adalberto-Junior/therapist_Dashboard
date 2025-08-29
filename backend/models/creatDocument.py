@@ -384,3 +384,45 @@ class CreatDocumentToDB:
                     "pathToChart": pathToChart,
                     }
         return self.data
+    
+    def rehabilitationExerciseDocument (self, title, category, objective, description, duration, repetitions, difficulty, feedback, notes, steps, images, videos, audios, user, userName, therapist ):
+        """
+        Create a document for the rehabilitation exercise.
+        :param title: The title of the exercise.
+        :param category: The category of the exercise.
+        :param objective: The objective of the exercise.
+        :param description: The description of the exercise.
+        :param duration: The duration of the exercise.
+        :param repetitions: The number of repetitions for the exercise.
+        :param difficulty: The difficulty level of the exercise.
+        :param feedback: The feedback for the exercise.
+        :param notes: The notes for the exercise.
+        :param steps: The steps for the exercise.
+        :param images: The images for the exercise.
+        :param videos: The videos for the exercise.
+        :param audios: The audios for the exercise.
+        :param user: The user associated with the exercise.
+        :param userName: The name of the user associated with the exercise.
+        :param therapist: The therapist associated with the exercise.
+        :return: JSON string of the document.
+        """
+        self.data.clear()
+        self.data = {
+            "title": title,
+            "category": category,
+            "objective": objective,
+            "description": description,
+            "duration": duration,
+            "repetitions": repetitions,
+            "difficulty": difficulty,
+            "feedback": feedback,
+            "notes": notes,
+            "steps": steps,
+            "images": images,
+            "videos": videos,
+            "audios": audios,
+            "user": self.ensure_objectid(user),
+            "userName": userName,
+            "therapist": self.ensure_objectid(therapist)
+        }
+        return self.data

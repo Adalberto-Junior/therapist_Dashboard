@@ -159,6 +159,7 @@ import { useNavigate } from 'react-router-dom';
 // import { Accordion, AccordionItem } from '@headlessui/react'; // ou use outro lib/component
 import Accordion from "react-bootstrap/Accordion";
 import api from '../../api';// ajusta se necessário
+import { ModeToggle } from "../../components/mode-toggle"
 
 export default function Profile() {
   const [perfil, setPerfil] = useState(null);
@@ -285,16 +286,19 @@ export default function Profile() {
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 text-black dark:text-white p-6">
       <div className="container mx-auto max-w-4xl mt-10 p-5 bg-white dark:bg-zinc-800 rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">Perfil</h2>
+          {/* <h2 className="text-3xl font-bold">Perfil</h2> */}
+          <ModeToggle />
           <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
             Logout
           </button>
         </div>
-        <button onClick="toggleTheme()" id="theme-toggle" class="flex items-center gap-2 px-4 py-2 rounded shadow-md bg-gray-200 dark:bg-zinc-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
+        {/* <button onClick="toggleTheme()" id="theme-toggle" class="flex items-center gap-2 px-4 py-2 rounded shadow-md bg-gray-200 dark:bg-zinc-700 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
           <span id="theme-icon">🌞</span>
           <span className="text-sm">Alternar Modo</span>
-        </button>
-
+        </button> */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold mb-4">Informações do Perfil</h2>
+        </div>
 
         {perfil && (
           <div className="grid grid-cols-2 gap-4 mb-8">

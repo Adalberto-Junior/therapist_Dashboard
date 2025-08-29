@@ -17,6 +17,9 @@ from bson.objectid import ObjectId
 import bcrypt
 import jwt
 import datetime
+import os
+from werkzeug.utils import secure_filename
+
 from . import utente_bp
 # from models import users as user_model
 # from models import therapist as therapist_model
@@ -1207,11 +1210,8 @@ def delete_relatorio(reportId):
 
 
 ############################################
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# from pymongo import MongoClient
-# import os
-# from werkzeug.utils import secure_filename
+
+
 
 # app = Flask(__name__)
 # CORS(app)  # Permite requests do frontend React
@@ -1227,73 +1227,120 @@ def delete_relatorio(reportId):
 # exercises_collection = db["exercises"]
 
 # # Rota para criar exercício
-# @app.route("/api/exercises", methods=["POST"])
-# def create_exercise():
-#     try:
-#         # Campos de texto
-#         title = request.form.get("title")
-#         category = request.form.get("category")
-#         objective = request.form.get("objective")
-#         description = request.form.get("description")
-#         duration = request.form.get("duration")
-#         repetitions = request.form.get("repetitions")
-#         difficulty = request.form.get("difficulty")
-#         feedback = request.form.get("feedback")
-#         notes = request.form.get("notes")
+@utente_bp.route("/rehabilitation/<string:utenteId>/exercises", methods=["POST"])
+def create_exercise(utenteId):
+    """
+    Cria um novo exercício de reabilitação para um utente específico.
+
+    """
+    try:
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith("Bearer "):
+            return jsonify({"error": "Token ausente"}), 401
+
+        try:
+            token = token.replace("Bearer ", "")
+            decoded = decode_token(token)
+            therapistId = decoded['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
+        health_user = utente_model.get_health_user_by_id(utenteId)
+        if not health_user:
+            return jsonify({"error": "Utente não encontrado"}), 404
         
-#         # Passos (JSON)
-#         steps = request.form.get("steps")
-#         if steps:
-#             import json
-#             steps = json.loads(steps)
-#         else:
-#             steps = []
+        casa_viva_user = user_model.get_user_by_email(health_user['email'])
 
-#         # Ficheiros
-#         def save_files(files, subfolder):
-#             paths = []
-#             folder_path = os.path.join(app.config["UPLOAD_FOLDER"], subfolder)
-#             os.makedirs(folder_path, exist_ok=True)
-#             for file in files:
-#                 filename = secure_filename(file.filename)
-#                 file_path = os.path.join(folder_path, filename)
-#                 file.save(file_path)
-#                 paths.append(file_path)
-#             return paths
+        if not casa_viva_user:
+            return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+        
+        # Dados do formulário
+        # Campos de texto
+        data = request.get_json()
+        title = data.get("title")
+        category = data.get("category")
+        objective = data.get("objective")
+        description = data.get("description")
+        duration = data.get("duration")
+        repetitions = data.get("repetitions")
+        difficulty = data.get("difficulty")
+        feedback = data.get("feedback")
+        notes = data.get("notes")
 
-#         images = save_files(request.files.getlist("images"), "images")
-#         videos = save_files(request.files.getlist("videos"), "videos")
-#         audios = save_files(request.files.getlist("audios"), "audios")
+        # Passos (JSON)
+        steps = data.get("steps")
+        if steps:
+            import json
+            steps = json.loads(steps)
+        else:
+            steps = []
 
-#         # Cria documento
-#         exercise = {
-#             "title": title,
-#             "category": category,
-#             "objective": objective,
-#             "description": description,
-#             "duration": duration,
-#             "repetitions": repetitions,
-#             "difficulty": difficulty,
-#             "feedback": feedback,
-#             "notes": notes,
-#             "steps": steps,
-#             "images": images,
-#             "videos": videos,
-#             "audios": audios,
-#         }
+        # Ficheiros
+        def save_files1(files, subfolder):
+            paths = []
+            folder_path = os.path.join( current_app.config["UPLOAD_FOLDER"], subfolder)
+            os.makedirs(folder_path, exist_ok=True)
+            for file in files:
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(folder_path, filename)
+                file.save(file_path)
+                paths.append(file_path)
+            return paths
 
-#         # Insere no MongoDB
-#         result = exercises_collection.insert_one(exercise)
-#         exercise["_id"] = str(result.inserted_id)
+        def save_files(files, subfolder, userName=None):
+            """
+            Guarda múltiplos ficheiros e retorna os caminhos relativos (para o frontend).
+            
+            :param files: lista de ficheiros (request.files.getlist(...))
+            :param subfolder: subpasta (ex: "articulation", "prosody", "reaprendizagem")
+            :param userName: nome do utente (opcional, se quiseres organizar por utilizador)
+            :return: lista de caminhos relativos (para o React/HTML usar nas <img>)
+            """
+            paths = []
+            
+            # Pasta base configurada no Flask (ex: "static/uploads")
+            folder_path = os.path.join(
+                current_app.config["UPLOAD_FOLDER"], 
+                userName if userName else "", 
+                subfolder
+            )
+            os.makedirs(folder_path, exist_ok=True)
 
-#         return jsonify({"success": True, "exercise": exercise}), 201
+            for file in files:
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(folder_path, filename)
+                file.save(file_path)
 
-#     except Exception as e:
-#         print(e)
-#         return jsonify({"success": False, "error": str(e)}), 500
+                # caminho relativo acessível pelo frontend
+                rel_path = os.path.relpath(file_path, current_app.static_folder)
+                paths.append(f"/static/{rel_path.replace(os.sep, '/')}")
+            
+            return paths
+
+        images = save_files(request.files.getlist("images"), "images", userName=casa_viva_user['name'])
+        videos = save_files(request.files.getlist("videos"), "videos", userName=casa_viva_user['name'])
+        audios = save_files(request.files.getlist("audios"), "audios", userName=casa_viva_user['name'])
+
+
+        document = CreatDocumentToDB()
+
+        doc = document.rehabilitationExerciseDocument(title=title, category=category, objective=objective, description=description, duration=duration, repetitions=repetitions, difficulty=difficulty, feedback=feedback, notes=notes, steps=steps, images=images, videos=videos, audios=audios, user=casa_viva_user['_id'], userName=casa_viva_user['name'], therapist=therapistId)
+
+        exerciseId = exercise_model.createRehabilitationExercise(doc)
+
+        if exerciseId:
+            return jsonify({"success": True, "exercise": exerciseId}), 201
+
+        return jsonify({"success": False, "error": "Failed to create exercise"}), 500
+
+    except Exception as e:
+        print(e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 # # Rota para listar exercícios
-# @app.route("/api/exercises", methods=["GET"])
+# @app.route("/reabilitation/<string:utenteId>/exercises", methods=["GET"])
 # def list_exercises():
 #     try:
 #         exercises = list(exercises_collection.find())

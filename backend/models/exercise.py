@@ -307,3 +307,14 @@ def delete_status_analysis(user_id):
     return result.deleted_count > 0
 
 
+#:::::::::::::::::::::Reabilitation::::::::::::::::::::::::::::::::::::
+
+def createRehabilitationExercise(data):
+    """
+    Create a new rehabilitation exercise.
+    :param data: The data for the rehabilitation exercise.
+    :return: The ID of the created exercise.
+    """
+    rehabilitation_exercises = mongo.db.rehabilitation
+    result = rehabilitation_exercises.insert_one(data)
+    return str(result.inserted_id)

@@ -40,6 +40,7 @@ CORS(app)
 # Configurações
 app.config["MONGO_URI"] = "mongodb://localhost:27017/Casa_Viva"
 app.config["SECRET_KEY"] = SECRET_KEY
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 # Inicializa Mongo
 # mongo = PyMongo(app)
