@@ -411,8 +411,50 @@ export default function ExerciseForm() {
     if (type === "audios") setAudios(audios.filter((_, i) => i !== index));
   };
 
+  // const onSubmit = async (data) => {
+  //   const formData = new FormData();
+  //   console.log("Dados do formulário:", data);
+
+
+  //   Object.keys(data).forEach((key) => {
+  //     if (key === "steps") {
+  //       formData.append("steps", JSON.stringify(data.steps));
+  //     } else {
+  //       formData.append(key, data[key]);
+  //     }
+  //   });
+
+  //   images.forEach(({ file }) => formData.append("images", file));
+  //   videos.forEach(({ file }) => formData.append("videos", file));
+  //   audios.forEach(({ file }) => formData.append("audios", file));
+
+  //   console.log("FormData preparado para envio:", formData);
+
+  //   try {
+  //     const response = await api.post(`/utente/rehabilitation/${id}/exercises/`, formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     if (response.ok) {
+  //       alert("Exercício salvo com sucesso!");
+  //       reset();
+  //       setImages([]);
+  //       setVideos([]);
+  //       setAudios([]);
+  //     } else {
+  //       alert("Erro ao salvar exercício");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Erro na conexão com o servidor");
+  //   }
+  // };
+
   const onSubmit = async (data) => {
     const formData = new FormData();
+    console.log("Dados do formulário:", data);
 
     Object.keys(data).forEach((key) => {
       if (key === "steps") {
@@ -426,14 +468,16 @@ export default function ExerciseForm() {
     videos.forEach(({ file }) => formData.append("videos", file));
     audios.forEach(({ file }) => formData.append("audios", file));
 
-    try {
-      const response = await api.post(`/utente/${id}/exercicio/`, formData);
-    //   const res = await fetch("http://localhost:5000/api/exercises", {
-    //     method: "POST",
-    //     body: formData,
-    //   });
+    console.log("FormData preparado para envio:", [...formData.entries()]); // para ver conteúdo
 
-      if (response.ok) {
+    try {
+      const response = await api.post(
+        `/utente/rehabilitation/${id}/exercises/`,
+        formData
+        // 👇 NÃO definir manualmente Content-Type!
+      );
+
+      if (response.status === 200 || response.status === 201) {
         alert("Exercício salvo com sucesso!");
         reset();
         setImages([]);
@@ -447,6 +491,7 @@ export default function ExerciseForm() {
       alert("Erro na conexão com o servidor");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 px-4">
@@ -572,7 +617,7 @@ export default function ExerciseForm() {
                 )}
               </div>
             ))}
-            <Button type="button" onClick={() => append({ instruction: "" })} variant="outline" className="mt-2">
+            <Button type="button" onClick={() => append({ instruction: "" })} variant="outline" className="mt-2 rounded">
               <Plus className="w-4 h-4 mr-1" /> Adicionar Passo
             </Button>
           </div>
@@ -591,7 +636,13 @@ export default function ExerciseForm() {
             </SelectContent>
           </Select>
           <div className="flex gap-4"></div>
-          <Textarea placeholder="Feedback esperado" {...register("feedback")} className="w-full mb-3" />
+          <span
+            className="text-gray-400 cursor-pointer"
+            title="O que o terapeuta espera como resultado do utente. Ex: 'Pronunciar a palavra sem omissões', 'Sustentar a vogal por 5s'."
+          >
+            ℹ️
+          </span>
+          <Textarea placeholder="Feedback esperado"  {...register("feedback")} className="w-full mb-3" />
           <Textarea placeholder="Notas do terapeuta" {...register("notes")} className="w-full mb-3" />
 
           <Button type="submit" className="w-full rounded " disabled={isSubmitting}>

@@ -318,3 +318,14 @@ def createRehabilitationExercise(data):
     rehabilitation_exercises = mongo.db.rehabilitation
     result = rehabilitation_exercises.insert_one(data)
     return str(result.inserted_id)
+
+
+def getRehabilitationExercise(userId):
+    """
+    Get the rehabilitation exercises for a user.
+    :param userId: The ID of the user.
+    :return: A list of rehabilitation exercises.
+    """
+    rehabilitation_exercises = mongo.db.rehabilitation
+    exercises = rehabilitation_exercises.find({ "user": ObjectId(userId)})
+    return list(exercises)

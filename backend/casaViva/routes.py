@@ -788,6 +788,46 @@ def delete_status_analysis():
     return jsonify({"message": "Status de análise deletado com sucesso."}), 200
 
 
+@casaViva_bp.route("/rehabilitation/exercise/<user_id>", methods=["GET"])
+def get_all_rehabilitation_exercise(user_id):
+    """
+    Get the rehabilitation exercises for a user.
+    :return: JSON response with the rehabilitation exercises.
+    """
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith("Bearer "):
+        return jsonify({"error": "Token ausente"}), 401
+
+    try:
+        token = token.replace("Bearer ", "")
+        decoded = decode_token(token)
+        userId = decoded['user_id']
+        username = decoded['user_name']
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expirado"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Token inválido"}), 401
+
+    exercises = exercise_model.getRehabilitationExercise(userId)
+
+    if not exercises:
+        return jsonify({"error": "Exercícios não encontrados"}), 404
+    
+    if isinstance(exercises, Cursor):
+        exercises = list(exercises)
+    
+    if exercises:
+        for exercise in exercises:
+            if exercise.get('exerciseId'):
+                new_exercise = exercise_model.get_exercise_by_id(exercise['exerciseId'])
+                if new_exercise:
+                    del new_exercise['_id']  # <- remove o campo _id do dict
+                    exercise.update(new_exercise)  # <- modifica o dict da lista
+                    del exercise['exerciseId']  # <- remove o campo exerciseId do dict
+
+    return jsonify(exercises), 200
+
+
 
 
 

@@ -1227,7 +1227,7 @@ def delete_relatorio(reportId):
 # exercises_collection = db["exercises"]
 
 # # Rota para criar exercício
-@utente_bp.route("/rehabilitation/<string:utenteId>/exercises", methods=["POST"])
+@utente_bp.route("/rehabilitation/<string:utenteId>/exercises/", methods=["POST"])
 def create_exercise(utenteId):
     """
     Cria um novo exercício de reabilitação para um utente específico.
@@ -1258,7 +1258,12 @@ def create_exercise(utenteId):
         
         # Dados do formulário
         # Campos de texto
-        data = request.get_json()
+        data = request.form.to_dict()
+        print("Dados recebidos:", data)
+
+        if not data:
+            return jsonify({"error": "Dados ausentes"}), 400
+
         title = data.get("title")
         category = data.get("category")
         objective = data.get("objective")
@@ -1322,6 +1327,8 @@ def create_exercise(utenteId):
         images = save_files(request.files.getlist("images"), "images", userName=casa_viva_user['name'])
         videos = save_files(request.files.getlist("videos"), "videos", userName=casa_viva_user['name'])
         audios = save_files(request.files.getlist("audios"), "audios", userName=casa_viva_user['name'])
+
+        
 
 
         document = CreatDocumentToDB()

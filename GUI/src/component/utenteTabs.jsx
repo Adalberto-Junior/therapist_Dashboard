@@ -16,7 +16,7 @@ export default function UtenteTabs() {
   // else if (path.includes("/analise/glota")) value = "4";
   else if (path.includes("/analise/prosodia")) value = "5";
   // else if (path.includes("/analise/fonologica")) value = "6";
-  // else if (path.includes("/analise/reaprendizagem")) value = "7";
+  else if (path.includes("/reabilitacao")) value = "7";
   else if (path.includes("/exercicios")) value = "8";
 
   const handleChange = (event, newValue) => {
@@ -26,7 +26,7 @@ export default function UtenteTabs() {
     // if (newValue === "4") navigate(`/utente/${id}/analise/glota`);
     if (newValue === "5") navigate(`/utente/${id}/analise/prosodia`);
     // if (newValue === "6") navigate(`/utente/${id}/analise/fonologica`);
-    // if (newValue === "7") navigate(`/utente/${id}/analise/reaprendizagem`);
+    if (newValue === "7") navigate(`/utente/${id}/reabilitacao`);
     // if (newValue === "7") navigate(`/utente/${id}/adicionar_exercicio`);
     if (newValue === "8") navigate(`/utente/${id}/exercicios`);
   };
@@ -81,13 +81,13 @@ export default function UtenteTabs() {
               '&.Mui-selected': {
                 color: 'lightgreen',
               },
-            }}/>
-          <Tab label="Reaprendizagem" value="7" sx={{
+            }}/> */}
+          <Tab label="Reabilitação" value="7" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {
                 color: 'lightgreen',
               },
-            }}/> */}
+            }}/>
           <Tab label="Exercícios" value="8" sx={{
               color: 'rgba(255, 255, 255, 0.6)', // não selecionado
               '&.Mui-selected': {

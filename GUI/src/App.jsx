@@ -119,7 +119,7 @@ export default function App() {
               <Route path="analise/prosodia" element={<ProsodyResultPage />} />
               <Route path="analise/glota" element={<GlottalResult />} />
               <Route path="analise/fonologica" element={<PhonologicalResult />} />
-              <Route path="analise/reaprendizagem" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
+              <Route path="reabilitacao" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />
