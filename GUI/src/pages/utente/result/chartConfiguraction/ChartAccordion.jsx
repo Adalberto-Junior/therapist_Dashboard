@@ -2,6 +2,8 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import { translateKey } from "./translateKey.jsx";
 import { chartConfig } from "./chartConfig.jsx";
+import {HistogramChart, F0Chart} from "../../../../component/chart.jsx";
+
 
 export function ChartAccordion({ groupedData }) {
     // console.log("Grouped Data:", groupedData);
@@ -194,8 +196,8 @@ export function DisplayChart({
             return renderF0BoxChart(chartPayload, idx,"Boxplot",false);
           case "Boxplot": {
             const { data, valueKey } = chartPayload;
-            console.log("Data:",data)
-            console.log("valueskeeee: ",valueKey)
+            // console.log("Data:",data)
+            // console.log("valueskeeee: ",valueKey)
             return renderBoxChart(data, idx, valueKey, false);
           }
           case "Intensityplot":
@@ -303,6 +305,7 @@ function renderGroupedAcousticChart(data, idx, oneChart = false) {
 
 function renderF0BoxChart(data, idx, oneChart = false) {
   const { chartComponent: ChartComponent } = chartConfig.F0Boxplot;
+
   
   if (oneChart) {
     return (
@@ -399,33 +402,54 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
   if (oneChart) {
     const transformedData = normalizeData(data);
     return (
-      <div key={`BoxPlot-${idx}`} className="grid gap-4">
-        <ChartComponent data={transformedData} />
+      <div key={`BoxPlot-${idx}`} className="grid gap-6">
+        <ChartComponent  parameterName={valueKey} data={transformedData} />
+        {/* Histograma único combinando todos os valores */}
+         {/* Só mostra histograma se for jitter ou shimmer */}
+        {(valueKey === "Jitter" || valueKey === "Shimmer") && (
+          <HistogramChart values={Object.values(transformedData).flat()} label={valueKey} />
+        )}
+        {/* <HistogramChart
+          values={Object.values(transformedData).flat()}
+          label={valueKey}
+        /> */}
       </div>
     );
   } else {
-    // group into pairs but normalize each subgroup
+    // Agrupa de 2 em 2
     const paired = [];
     for (let i = 0; i < data.length; i += 2) {
       paired.push(data.slice(i, i + 2));
     }
 
     return (
-      <div key={`BoxPlot-${idx}`} className="grid gap-6">
+      <div key={`BoxPlot-${idx}`} className="grid gap-8">
         {paired.map((subset, pairIdx) => {
           const transformed = normalizeData(subset);
           return (
             <div
               key={`chart-pair-${pairIdx}`}
-              className={`grid grid-cols-${Object.keys(transformed).length} gap-4`}
+              className={`grid grid-cols-${Object.keys(transformed).length} gap-6`}
             >
               {Object.entries(transformed).map(([label, values]) => (
                 <div
                   key={`chart-${label}-${pairIdx}`}
-                  className="border p-4 rounded shadow"
+                  className="border p-4 rounded-xl shadow-md"
                 >
-                  <h3 className="text-lg font-semibold mb-2">{label}</h3>
-                  <ChartComponent data={{ [label]: values }} />
+                  <h3 className="text-lg font-semibold mb-4">{label}</h3>
+                  {/* Boxplot */}
+                  <ChartComponent  parameterName={valueKey} data={{ [label]: values }} />
+                  {/* Histograma para este conjunto */}
+                  <div className="mt-4">
+                    {/* <h4 className="text-md font-semibold mb-2">Histograma de {label}</h4> */}
+                    {/* <HistogramChart values={values} label={valueKey} /> */}
+                    {/* Histograma individual, só se for jitter/shimmer */}
+                    {(valueKey === "Jitter" || valueKey === "Shimmer") && (
+                      <div className="mt-4">
+                        <HistogramChart values={values} label={valueKey} />
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -435,6 +459,58 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
     );
   }
 }
+
+// function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
+//   const { chartComponent: ChartComponent } = chartConfig.Boxplot;
+//   console.log("renderBoxChart - data:", data);
+
+//   const normalizeData = (arr) =>
+//     arr.reduce((acc, item) => {
+//       acc[item.id] = Array.isArray(item[valueKey])
+//         ? item[valueKey]
+//         : [item[valueKey]];
+//       return acc;
+//     }, {});
+
+//   if (oneChart) {
+//     const transformedData = normalizeData(data);
+//     return (
+//       <div key={`BoxPlot-${idx}`} className="grid gap-4">
+//         <ChartComponent data={transformedData} />
+//       </div>
+//     );
+//   } else {
+//     // group into pairs but normalize each subgroup
+//     const paired = [];
+//     for (let i = 0; i < data.length; i += 2) {
+//       paired.push(data.slice(i, i + 2));
+//     }
+
+//     return (
+//       <div key={`BoxPlot-${idx}`} className="grid gap-6">
+//         {paired.map((subset, pairIdx) => {
+//           const transformed = normalizeData(subset);
+//           return (
+//             <div
+//               key={`chart-pair-${pairIdx}`}
+//               className={`grid grid-cols-${Object.keys(transformed).length} gap-4`}
+//             >
+//               {Object.entries(transformed).map(([label, values]) => (
+//                 <div
+//                   key={`chart-${label}-${pairIdx}`}
+//                   className="border p-4 rounded shadow"
+//                 >
+//                   <h3 className="text-lg font-semibold mb-2">{label}</h3>
+//                   <ChartComponent data={{ [label]: values }} />
+//                 </div>
+//               ))}
+//             </div>
+//           );
+//         })}
+//       </div>
+//     );
+//   }
+// }
 
 
 function IntensityChartWrapper(data, idx) {
@@ -458,5 +534,58 @@ function IntensityChartWrapper(data, idx) {
       ))}
     </div>
   );
+}
+
+
+
+export function RenderF0LineChart({data, idx, oneChart = false}) {
+  if (!data || data.length === 0) return null;
+  console.log("RenderF0LineChart - data:", data);
+
+  if (oneChart) {
+    // Mostra todos os F0 num único gráfico (pode ser útil para comparação)
+    const combined = data.flatMap((d) =>
+      d.F0.map((val, i) => ({ id: d.id, timeIndex: i, f0: val }))
+    );
+
+    return (
+      <div key={`F0Chart-${idx}`} className="grid gap-4">
+        <F0Chart
+          f0={combined.map((d) => d.f0)}
+          timeStepMs={5} // altera se o teu frame period não for 5 ms
+        />
+      </div>
+    );
+  } else {
+
+    // Divide os dados em pares para mostrar lado a lado
+    const pairedEntries = [];
+    for (let i = 0; i <  data.F0Boxplot.length; i += 2) {
+      pairedEntries.push(data.F0Boxplot.slice(i, i + 2));
+    }
+
+    console.log("pairedEntries: ", pairedEntries);
+
+    return (
+      <div key={`F0Chart-${idx}`} className="grid gap-6">
+        {pairedEntries.map((pair, pairIdx) => (
+          <div
+            key={`chart-pair-${pairIdx}`}
+            className={`grid grid-cols-${pair.length} gap-4`}
+          >
+            {pair.map((d) => (
+              <div key={`chart-${d.id}`} className="border p-4 rounded shadow">
+                <h3 className="text-lg font-semibold mb-2">{d.id}</h3>
+                <F0Chart
+                  f0={d.F0}
+                  timeStepMs={5} // altera se necessário
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
 

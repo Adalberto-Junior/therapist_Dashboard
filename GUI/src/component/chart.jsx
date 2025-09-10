@@ -967,6 +967,7 @@ export function AcousticSpaceD3V2({ data }) {
 
 export function Boxplot({ data, width = 500, height = 300 }) {
   const svgRef = useRef();
+  console.log("Boxplot data:", data);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
@@ -1128,6 +1129,179 @@ export function Boxplot({ data, width = 500, height = 300 }) {
   return <svg ref={svgRef}></svg>;
 }
 
+// F0 ao longo do tempo
+
+export function F0Chart ({ data, f0, startTimeMs = 0, timeStepMs = 5, maWindowMs = 200 }) {
+  const svgRef = useRef();
+
+  useEffect(() => {
+    if ((!data || data.length === 0) && (!f0 || f0.length === 0)) return;
+
+    // Se o usuário passou `data` no formato [{ id, F0: [...] }]
+    // usamos a primeira entrada (ou todas se no futuro quiser comparar várias).
+    const f0Array = f0 || (Array.isArray(data) ? data[0].F0 : []);
+    if (!f0Array || f0Array.length === 0) return;
+
+    const width = 800;
+    const height = 400;
+    const margin = { top: 40, right: 30, bottom: 50, left: 60 };
+
+    // Limpar SVG antes de redesenhar
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .style("width", "100%")
+      .style("height", "auto");
+
+    // Criar dataset com tempo em segundos
+    const dataPoints = f0Array.map((val, i) => ({
+      time: (startTimeMs + i * timeStepMs) / 1000,
+      f0: val > 0 ? val : NaN, // tratamos não-vozeado como NaN
+    }));
+
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent(dataPoints, (d) => d.time))
+      .nice()
+      .range([margin.left, width - margin.right]);
+
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(dataPoints, (d) => d.f0) || 200])
+      .nice()
+      .range([height - margin.bottom, margin.top]);
+
+    // Eixos
+    const xAxis = (g) =>
+      g
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x))
+        .call((g) => g.append("text")
+          .attr("x", width / 2)
+          .attr("y", 40)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "middle")
+          .text("Tempo (s)")
+        );
+
+    const yAxis = (g) =>
+      g
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y))
+        .call((g) => g.append("text")
+          .attr("x", -margin.left + 10)
+          .attr("y", margin.top - 20)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "start")
+          .attr("font-weight", "bold")
+          .text("f0 (Hz)")
+        );
+
+    svg.append("g").call(xAxis);
+    svg.append("g").call(yAxis);
+
+    // Linha principal
+    const line = d3
+      .line()
+      .defined((d) => !isNaN(d.f0))
+      .x((d) => x(d.time))
+      .y((d) => y(d.f0));
+
+    svg
+      .append("path")
+      .datum(dataPoints)
+      .attr("fill", "none")
+      .attr("stroke", "#2563eb")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    // Média móvel
+    const windowSize = Math.max(1, Math.round(maWindowMs / timeStepMs));
+    const movingAverage = dataPoints.map((d, i) => {
+      const start = Math.max(0, i - Math.floor(windowSize / 2));
+      const end = Math.min(dataPoints.length, i + Math.floor(windowSize / 2));
+      const slice = dataPoints.slice(start, end).filter((p) => !isNaN(p.f0));
+      const mean = slice.length > 0 ? d3.mean(slice, (p) => p.f0) : NaN;
+      return { time: d.time, f0: mean };
+    });
+
+    const maLine = d3
+      .line()
+      .defined((d) => !isNaN(d.f0))
+      .x((d) => x(d.time))
+      .y((d) => y(d.f0));
+
+    svg
+      .append("path")
+      .datum(movingAverage)
+      .attr("fill", "none")
+      .attr("stroke", "orange")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-dasharray", "4 2")
+      .attr("d", maLine);
+
+    // Tooltip
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "rgba(0,0,0,0.7)")
+      .style("color", "white")
+      .style("padding", "4px 8px")
+      .style("border-radius", "4px")
+      .style("font-size", "12px")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    const focus = svg
+      .append("circle")
+      .attr("r", 4)
+      .attr("fill", "red")
+      .style("opacity", 0);
+
+    svg
+      .append("rect")
+      .attr("fill", "transparent")
+      .attr("pointer-events", "all")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("width", width - margin.left - margin.right)
+      .attr("height", height - margin.top - margin.bottom)
+      .on("mousemove", function (event) {
+        const [mx] = d3.pointer(event);
+        const time = x.invert(mx);
+        const i = d3.bisector((d) => d.time).left(dataPoints, time);
+        const d = dataPoints[i];
+        if (!d || isNaN(d.f0)) {
+          tooltip.style("opacity", 0);
+          focus.style("opacity", 0);
+          return;
+        }
+        focus
+          .attr("cx", x(d.time))
+          .attr("cy", y(d.f0))
+          .style("opacity", 1);
+        tooltip
+          .style("opacity", 1)
+          .html(`<b>${d.time.toFixed(2)} s</b><br/>f₀: ${d.f0.toFixed(2)} Hz`)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 20}px`);
+      })
+      .on("mouseleave", () => {
+        tooltip.style("opacity", 0);
+        focus.style("opacity", 0);
+      });
+
+    return () => tooltip.remove();
+  }, [data, f0, startTimeMs, timeStepMs, maWindowMs]);
+
+  return <svg ref={svgRef}></svg>;
+};
+
+
+
 
 // export function Boxplot({ data, width = 500, height = 300 }) {
 //   const svgRef = useRef();
@@ -1280,15 +1454,18 @@ export function Boxplot({ data, width = 500, height = 300 }) {
 //   return <svg ref={svgRef}></svg>;
 // }
 
-export function PauseBoxplot({ data, width = 500, height = 300 }) {
+
+
+export function PauseBoxplot({ data, parameterName, width = 500, height = 300 }) {
   const svgRef = useRef();
+  console.log("BoxParam: ", data, parameterName)
 
   useEffect(() => {
-    if (!data || Object.keys(data).length === 0) return;
+    if (!data || !Array.isArray(data) || data.length === 0) return;
 
     d3.select(svgRef.current).selectAll("*").remove();
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const margin = { top: 40, right: 30, bottom: 50, left: 60 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -1301,11 +1478,183 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // 🔑 Normalize data: if array, convert to { id: values[] }
+    // Ordenar os valores para calcular quartis
+    const values = data.slice().sort(d3.ascending);
+    const q1 = d3.quantile(values, 0.25);
+    const median = d3.quantile(values, 0.5);
+    const q3 = d3.quantile(values, 0.75);
+    const localMin = d3.min(values);
+    const localMax = d3.max(values);
+
+    const yScale = d3.scaleLinear()
+      .domain([localMin, localMax])
+      .nice()
+      .range([innerHeight, 0]);
+
+    // Como só há uma categoria, centramos o boxplot
+    const center = innerWidth / 2;
+    const boxWidth = 40;
+
+    // Grid
+    plotArea.append("g")
+      .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""))
+      .call(g => g.selectAll(".tick line").attr("stroke", "#e0e0e0"))
+      .call(g => g.select(".domain").remove());
+
+    // Eixo Y
+    plotArea.append("g").call(d3.axisLeft(yScale));
+
+    // Label eixo Y
+    plotArea.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -innerHeight / 2)
+      .attr("y", -45)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "14px")
+      .text(
+        parameterName === "pauseDurations" ? "Duração (s)" :
+        parameterName === "Jitter" ? "Jitter (%)" :
+        parameterName === "Shimmer" ? "Shimmer (%)" : "Valor"
+      );
+
+    // Eixo X (só uma categoria)
+    plotArea.append("g")
+      .attr("transform", `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(d3.scaleBand().domain([parameterName]).range([center - boxWidth, center + boxWidth])))
+      .selectAll("text")
+      .style("text-anchor", "middle");
+
+    // Título
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", 20)
+      .attr("text-anchor", "middle")
+      .style("fill", "#111")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text(
+        parameterName === "pause"
+          ? "Distribuição das Durações de Pausa"
+          : parameterName === "Jitter"
+          ? "Distribuição do Jitter"
+          : parameterName === "Shimmer"
+          ? "Distribuição do Shimmer"
+          : "Distribuição"
+      );
+
+    // Tooltip
+    const tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("padding", "6px 10px")
+      .style("background", "#fff")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "6px")
+      .style("box-shadow", "0 2px 8px rgba(0,0,0,0.2)")
+      .style("pointer-events", "none")
+      .style("font-size", "12px")
+      .style("visibility", "hidden");
+
+    // Caixa
+    plotArea.append("rect")
+      .attr("x", center - boxWidth / 2)
+      .attr("y", yScale(q3))
+      .attr("height", yScale(q1) - yScale(q3))
+      .attr("width", boxWidth)
+      .attr("stroke", "black")
+      .attr("fill", "#69b3a2")
+      .on("mouseover", () => {
+        tooltip.style("visibility", "visible")
+          .html(`
+            <strong>${parameterName}</strong><br/>
+            Min: ${localMin.toFixed(3)}<br/>
+            Q1: ${q1.toFixed(3)}<br/>
+            Mediana: ${median.toFixed(3)}<br/>
+            Q3: ${q3.toFixed(3)}<br/>
+            Max: ${localMax.toFixed(3)}
+          `);
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("top", `${event.pageY - 40}px`)
+          .style("left", `${event.pageX + 20}px`);
+      })
+      .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+    // Mediana
+    plotArea.append("line")
+      .attr("x1", center - boxWidth / 2)
+      .attr("x2", center + boxWidth / 2)
+      .attr("y1", yScale(median))
+      .attr("y2", yScale(median))
+      .attr("stroke", "black");
+
+    // Whiskers
+    plotArea.append("line")
+      .attr("x1", center)
+      .attr("x2", center)
+      .attr("y1", yScale(localMin))
+      .attr("y2", yScale(q1))
+      .attr("stroke", "black");
+
+    plotArea.append("line")
+      .attr("x1", center)
+      .attr("x2", center)
+      .attr("y1", yScale(q3))
+      .attr("y2", yScale(localMax))
+      .attr("stroke", "black");
+
+    // Caps
+    plotArea.append("line")
+      .attr("x1", center - boxWidth / 4)
+      .attr("x2", center + boxWidth / 4)
+      .attr("y1", yScale(localMin))
+      .attr("y2", yScale(localMin))
+      .attr("stroke", "black");
+
+    plotArea.append("line")
+      .attr("x1", center - boxWidth / 4)
+      .attr("x2", center + boxWidth / 4)
+      .attr("y1", yScale(localMax))
+      .attr("y2", yScale(localMax))
+      .attr("stroke", "black");
+
+    return () => tooltip.remove();
+  }, [data, width, height, parameterName]);
+
+  return <svg ref={svgRef}></svg>;
+}
+
+
+
+export function ParameterBoxplot({ data, parameterName, width = 550, height = 350 }) {
+  const svgRef = useRef();
+  
+
+  useEffect(() => {
+    if (!data || Object.keys(data).length === 0) return;
+
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    const margin = { top: 50, right: 30, bottom: 50, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height);
+
+    const plotArea = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // 🔑 Normaliza dados
     let normalized = {};
     if (Array.isArray(data)) {
       data.forEach(item => {
-        const [key, values] = Object.entries(item)[0]; // e.g. {id:..., pausedurations:[...]}
+        const [key, values] = Object.entries(item)[0];
         const label = item.id || key;
         normalized[label] = Array.isArray(values) ? values : [values];
       });
@@ -1340,15 +1689,58 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
       .call(g => g.selectAll(".tick line").attr("stroke", "#e0e0e0"))
       .call(g => g.select(".domain").remove());
 
-    // Y Axis
+    // Eixo Y
     plotArea.append("g").call(d3.axisLeft(yScale));
 
-    // X Axis
+    // Label do eixo Y
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", 20)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "14px")
+      .text(
+        parameterName === "pausedurations" ? "Duração (s)" :
+        parameterName === "Jitter" ? "Jitter (%)" :
+        parameterName === "Shimmer" ? "Shimmer (%)" : "Valor"
+      );
+
+    // Eixo X
     plotArea.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale));
 
-    const boxWidth = 30;
+    // Label do eixo X
+    svg.append("text")
+      .attr("x", margin.left + innerWidth / 2)
+      .attr("y", height - 10)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "14px")
+      .text(
+        parameterName === "pausedurations" ? "Pausas" :
+        parameterName === "Jitter" ? "Jitter" :
+        parameterName === "Shimmer" ? "Shimmer" : "Parâmetro"
+      );
+
+    // Título do gráfico
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", 25)
+      .attr("text-anchor", "middle")
+      .style("fill", "#111")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text(
+        parameterName === "pausedurations"
+          ? "Distribuição das Durações de Pausa"
+          : parameterName === "Jitter"
+          ? "Distribuição do Jitter"
+          : parameterName === "Shimmer"
+          ? "Distribuição do Shimmer"
+          : "Distribuição"
+      );
 
     const tooltip = d3.select("body")
       .append("div")
@@ -1361,8 +1753,8 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
       .style("font-size", "12px")
       .style("visibility", "hidden");
 
-    console.log("Categoria (normalized): ", categories);
-
+    // Boxplot
+    const boxWidth = 30;
     categories.forEach(key => {
       const values = normalized[key].slice().sort(d3.ascending);
       const q1 = d3.quantile(values, 0.25);
@@ -1373,7 +1765,7 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
       const center = xScale(key) + xScale.bandwidth() / 2;
       const color = colorScale(key);
 
-      // Draw box, whiskers, median...
+      // Caixa
       plotArea.append("rect")
         .attr("x", center - boxWidth / 2)
         .attr("y", yScale(q3))
@@ -1398,7 +1790,7 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
         })
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-      // Median line
+      // Linha da mediana
       plotArea.append("line")
         .attr("x1", center - boxWidth / 2)
         .attr("x2", center + boxWidth / 2)
@@ -1437,10 +1829,11 @@ export function PauseBoxplot({ data, width = 500, height = 300 }) {
         .attr("stroke", "black");
     });
 
-  }, [data, width, height]);
+  }, [data, parameterName, width, height]);
 
   return <svg ref={svgRef}></svg>;
 }
+
 
 
 export function PauseBoxplot1({ data, width = 400, height = 300 }) {
@@ -1536,6 +1929,162 @@ export function PauseBoxplot1({ data, width = 400, height = 300 }) {
 }
 
 
+// export function IntensityChart({ data, width = 800, height = 300 }) {
+//   const svgRef = useRef();
+//   const [tooltip, setTooltip] = useState(null);
+//   const [hoverData, setHoverData] = useState(null);
+
+//   if (!data || data.length === 0) return null;
+
+//   useEffect(() => {
+//     const svg = d3.select(svgRef.current);
+//     svg.selectAll("*").remove();
+
+//     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+
+//     svg.attr("width", width).attr("height", height);
+
+//     const x = d3
+//       .scaleLinear()
+//       .domain(d3.extent(data, (d) => d.time))
+//       .range([margin.left, width - margin.right]);
+
+//     const y = d3
+//       .scaleLinear()
+//       .domain([d3.min(data, (d) => d.db) - 5, d3.max(data, (d) => d.db) + 5])
+//       .range([height - margin.bottom, margin.top]);
+
+//     const line = d3
+//       .line()
+//       .x((d) => x(d.time))
+//       .y((d) => y(d.db));
+
+//     const zoom = d3.zoom().scaleExtent([1, 10]).on("zoom", (event) => {
+//       const transform = event.transform;
+//       const newX = transform.rescaleX(x);
+//       const newLine = d3
+//         .line()
+//         .x((d) => newX(d.time))
+//         .y((d) => y(d.db));
+
+//       svg.selectAll("path").attr("d", newLine(data));
+//       svg.select(".x-axis").call(d3.axisBottom(newX));
+//     });
+
+//     svg.call(zoom);
+
+//     svg
+//       .append("path")
+//       .datum(data)
+//       .attr("fill", "none")
+//       .attr("stroke", "orange")
+//       .attr("stroke-width", 2)
+//       .attr("d", line);
+
+//     svg
+//       .append("g")
+//       .attr("transform", `translate(0,${height - margin.bottom})`)
+//       .attr("class", "x-axis")
+//       .call(d3.axisBottom(x));
+
+//     svg
+//       .append("g")
+//       .attr("transform", `translate(${margin.left},0)`)
+//       .call(d3.axisLeft(y));
+
+//     // Hover interativo
+//     svg
+//       .append("rect")
+//       .attr("width", width)
+//       .attr("height", height)
+//       .attr("fill", "transparent")
+//       .on("mousemove", function (event) {
+//         const [mx] = d3.pointer(event);
+//         const time = x.invert(mx);
+//         const pontoMaisProximo = data.reduce((a, b) =>
+//           Math.abs(b.time - time) < Math.abs(a.time - time) ? b : a
+//         );
+//         setHoverData(pontoMaisProximo);
+//       })
+//       .on("mouseleave", () => setHoverData(null));
+
+//     // Estatísticas
+//     const valoresValidos = data.filter((d) => typeof d.db === "number" && !isNaN(d.db));
+
+//     const mediaRaw = d3.mean(valoresValidos, (d) => d.db);
+//     const maxRaw = d3.max(valoresValidos, (d) => d.db);
+//     const minRaw = d3.min(valoresValidos, (d) => d.db);
+
+//     const media = mediaRaw !== undefined ? mediaRaw.toFixed(2) : "N/A";
+//     const max = maxRaw !== undefined ? maxRaw.toFixed(2) : "N/A";
+//     const min = minRaw !== undefined ? minRaw.toFixed(2) : "N/A";
+
+//     setTooltip({ media, max, min });
+//   }, [data]);
+
+//   return (
+//     <div
+//       style={{
+//         display: "flex",
+//         alignItems: "flex-start",
+//         gap: "16px",
+//       }}
+//     >
+//       {/* Container do gráfico + hover */}
+//       <div style={{ position: "relative" }}>
+//         <svg ref={svgRef}></svg>
+
+//         {hoverData && (
+//           <div
+//             style={{
+//               position: "absolute",
+//               top: 10,
+//               right: 10,
+//               background: "#e0f7fa",
+//               padding: "8px",
+//               border: "1px solid #aaa",
+//               borderRadius: "6px",
+//               fontSize: "13px",
+//             }}
+//           >
+//             {typeof hoverData.db === "number" && typeof hoverData.time === "number" && (
+//               <div>
+//                 <strong>🕒 {hoverData.time.toFixed(2)}s</strong>
+//                 <br />
+//                 Intensidade: {hoverData.db.toFixed(2)} dB
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+
+//       {/* Sidebar fixa à direita */}
+//       {tooltip && (
+//         <div
+//           style={{
+//             background: "#fff8dc",
+//             padding: "12px",
+//             border: "1px solid #ccc",
+//             borderRadius: "8px",
+//             fontSize: "14px",
+//             boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+//             minWidth: "160px",
+//             height: 150, // mesma altura do gráfico
+//           }}
+//         >
+//           <strong>📊 Estatísticas:</strong>
+//           <br />
+//           Média: {tooltip.media} dB
+//           <br />
+//           Máximo: {tooltip.max} dB
+//           <br />
+//           Mínimo: {tooltip.min} dB
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
 export function IntensityChart({ data, width = 800, height = 300 }) {
   const svgRef = useRef();
   const [tooltip, setTooltip] = useState(null);
@@ -1547,7 +2096,7 @@ export function IntensityChart({ data, width = 800, height = 300 }) {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const margin = { top: 30, right: 30, bottom: 50, left: 60 };
 
     svg.attr("width", width).attr("height", height);
 
@@ -1588,16 +2137,50 @@ export function IntensityChart({ data, width = 800, height = 300 }) {
       .attr("stroke-width", 2)
       .attr("d", line);
 
+    // Eixo X
     svg
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .attr("class", "x-axis")
       .call(d3.axisBottom(x));
 
+    // Rótulo eixo X
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height - 10)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "14px")
+      .text("Tempo (s)");
+
+    // Eixo Y
     svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y));
+
+    // Rótulo eixo Y
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", 15)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "14px")
+      .text("Intensidade (dB)");
+
+    // Título do gráfico
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top - 10)
+      .attr("text-anchor", "middle")
+      .style("fill", "#111")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Intensidade da Voz ao Longo do Tempo");
 
     // Hover interativo
     svg
@@ -1630,13 +2213,7 @@ export function IntensityChart({ data, width = 800, height = 300 }) {
   }, [data]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "flex-start",
-        gap: "16px",
-      }}
-    >
+    <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
       {/* Container do gráfico + hover */}
       <div style={{ position: "relative" }}>
         <svg ref={svgRef}></svg>
@@ -1654,13 +2231,9 @@ export function IntensityChart({ data, width = 800, height = 300 }) {
               fontSize: "13px",
             }}
           >
-            {typeof hoverData.db === "number" && typeof hoverData.time === "number" && (
-              <div>
-                <strong>🕒 {hoverData.time.toFixed(2)}s</strong>
-                <br />
-                Intensidade: {hoverData.db.toFixed(2)} dB
-              </div>
-            )}
+            <strong>🕒 {hoverData.time.toFixed(2)}s</strong>
+            <br />
+            Intensidade: {hoverData.db.toFixed(2)} dB
           </div>
         )}
       </div>
@@ -1676,7 +2249,7 @@ export function IntensityChart({ data, width = 800, height = 300 }) {
             fontSize: "14px",
             boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             minWidth: "160px",
-            height: 150, // mesma altura do gráfico
+            height: 150,
           }}
         >
           <strong>📊 Estatísticas:</strong>
@@ -1816,3 +2389,121 @@ export function ComparacaoIntensidade  ({ audioA, audioB, nomeA = "Áudio A", no
 };
 
 
+export  function HistogramChart({ values, label = "Valor" }) {
+  const svgRef = useRef();
+
+  useEffect(() => {
+    if (!values || values.length === 0) return;
+
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+
+    const width = 600;
+    const height = 350;
+    const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+
+    const x = d3
+      .scaleLinear()
+      .domain([0, d3.max(values)])
+      .range([margin.left, width - margin.right]);
+
+    // ✅ Usando d3.bin() em vez de d3.histogram()
+    const bin = d3.bin()
+      .domain(x.domain())
+      .thresholds(20);
+
+    const bins = bin(values);
+
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(bins, (d) => d.length)])
+      .nice()
+      .range([height - margin.bottom, margin.top]);
+
+    // Tooltip
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("border", "1px solid #ccc")
+      .style("padding", "6px 10px")
+      .style("border-radius", "6px")
+      .style("box-shadow", "0px 2px 6px rgba(0,0,0,0.15)")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    svg
+      .selectAll("rect")
+      .data(bins)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => x(d.x0))
+      .attr("y", (d) => y(d.length))
+      .attr("width", (d) => Math.max(0, x(d.x1) - x(d.x0) - 1))
+      .attr("height", (d) => y(0) - y(d.length))
+      .attr("fill", "#3b82f6")
+      .attr("rx", 4)
+      .on("mouseover", function (event, d) {
+        tooltip
+          .style("opacity", 1)
+          .html(
+            `<strong>Intervalo:</strong> ${d.x0.toFixed(2)} - ${d.x1.toFixed(
+              2
+            )}<br/><strong>Frequência:</strong> ${d.length}`
+          );
+        d3.select(this).attr("fill", "#2563eb");
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("left", event.pageX + 10 + "px")
+          .style("top", event.pageY - 20 + "px");
+      })
+      .on("mouseout", function () {
+        tooltip.style("opacity", 0);
+        d3.select(this).attr("fill", "#3b82f6");
+      });
+
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x));
+
+    svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y));
+
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height - 10)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#333")
+      .style("font-size", "14px")
+      .text(`${label} (variabilidade)`);
+
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", 15)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#333")
+      .style("font-size", "14px")
+      .text("Frequência (nº de quadros)");
+
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top - 10)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#666")
+      .style("font-size", "12px")
+      .text("Cada valor corresponde a um quadro de 40 ms (deslocamento de 20 ms)");
+
+    return () => tooltip.remove();
+  }, [values, label]);
+
+  return <svg ref={svgRef} width={600} height={350}></svg>;
+}

@@ -5,8 +5,8 @@ import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
 import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
-import {groupF0ToBoxplot, groupFeatureToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
-import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
+import {groupF0ToBoxplot, groupFeatureToBoxplot,groupDataToIntensityplot} from "../chartConfiguraction/groupChartData.jsx";
+import {ChartAccordion, DisplayChart, RenderF0LineChart} from "../chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
 const BACKEND_URL = "http://localhost:5000";
@@ -39,9 +39,10 @@ export default function ProsodyResultPage() {
 
     const data = groupF0ToBoxplot(filtered);
     const pauseDurations = groupFeatureToBoxplot(filtered,"pausedurations");
+    const intensityData = groupDataToIntensityplot(filtered);
 
-    console.log("Filtered: ", filtered);
-    
+    console.log("f0data: ", data);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -262,87 +263,90 @@ export default function ProsodyResultPage() {
             <div className="mb-4">
             {filtered.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 dark:text-white">F0</h2>
-                <DisplayChart groupedData={data} />
+                <h2 className="text-xl font-semibold mb-4 dark:text-white">F0 ao longo do tempo</h2>
+                {/* <DisplayChart groupedData={data} /> */}
+                <RenderF0LineChart data={data} idx={1} />
+                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Intensidade</h2>
+                <DisplayChart groupedData={intensityData} />
                 <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Duração de pausa</h2>
                 <DisplayChart groupedData={pauseDurations} />
-<h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">
-  Métricas de Velocidade e Fluência da Fala
-</h2>
+                <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">
+                Métricas de Velocidade e Fluência da Fala
+                </h2>
 
-<table className="min-w-9/12 mx-auto border-collapse border border-gray-400 dark:border-zinc-500 shadow-md rounded-lg overflow-hidden">
-  <thead>
-    <tr className="bg-green-300 dark:bg-gray-600 sticky top-0 z-10">
-      {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Passo</th> */}
-      {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Categoria</th> */}
-      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Métrica</th>
-      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Valor</th>
-      <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Unidade</th>
-    </tr>
-  </thead>
+                <table className="min-w-9/12 mx-auto border-collapse border border-gray-400 dark:border-zinc-500 shadow-md rounded-lg overflow-hidden">
+                <thead>
+                    <tr className="bg-green-300 dark:bg-gray-600 sticky top-0 z-10">
+                    {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Passo</th> */}
+                    {/* <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Categoria</th> */}
+                    <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-left">Métrica</th>
+                    <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Valor</th>
+                    <th className="border border-gray-400 dark:border-zinc-500 px-4 py-2 text-center">Unidade</th>
+                    </tr>
+                </thead>
 
-  <tbody>
-    {filtered.map((data) => {
-      const speechRateResults = data.no_static_result?.filter(item => item.SpeechRate) || [];
+                <tbody>
+                    {filtered.map((data) => {
+                    const speechRateResults = data.no_static_result?.filter(item => item.SpeechRate) || [];
 
-      if (speechRateResults.length === 0) return null; // nenhum SpeechRate neste passo
+                    if (speechRateResults.length === 0) return null; // nenhum SpeechRate neste passo
 
-      return (
-        <React.Fragment key={data.step}>
-          {/* Linha de cabeçalho do passo */}
-          <tr className="bg-green-200 dark:bg-green-600 font-semibold">
-            <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2" colSpan={5}>
-              Passo: {data.step.replace(/_/g, " ")}
-            </td>
-          </tr>
+                    return (
+                        <React.Fragment key={data.step}>
+                        {/* Linha de cabeçalho do passo */}
+                        <tr className="bg-green-200 dark:bg-green-600 font-semibold">
+                            <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2" colSpan={5}>
+                            Passo: {data.step.replace(/_/g, " ")}
+                            </td>
+                        </tr>
 
-          {speechRateResults.map((result, rIdx) => {
-            const metrics = result.SpeechRate;
+                        {speechRateResults.map((result, rIdx) => {
+                            const metrics = result.SpeechRate;
 
-            return Object.entries(metrics)
-              .filter(([_, value]) => !Array.isArray(value)) // remove listas
-              .map(([metric, value], idx) => {
-                const unitMatch = metric.match(/\((.*?)\)/);
-                const unit = unitMatch ? unitMatch[1] : "";
+                            return Object.entries(metrics)
+                            .filter(([_, value]) => !Array.isArray(value)) // remove listas
+                            .map(([metric, value], idx) => {
+                                const unitMatch = metric.match(/\((.*?)\)/);
+                                const unit = unitMatch ? unitMatch[1] : "";
 
-                const toTitleCase = (str) => {
-                    return str
-                        .toLowerCase()
-                        .replace(/\b\p{L}/gu, (l) => l.toUpperCase())
-                        .trim();
-                };
+                                const toTitleCase = (str) => {
+                                    return str
+                                        .toLowerCase()
+                                        .replace(/\b\p{L}/gu, (l) => l.toUpperCase())
+                                        .trim();
+                                };
 
-                const cleanedName = toTitleCase(metric.replace(/\(.*?\)/g, "").replace(/_/g, " "));
+                                const cleanedName = toTitleCase(metric.replace(/\(.*?\)/g, "").replace(/_/g, " "));
 
-                // let category = "";
-                // if (["Duração Total", "Tempo Falado", "Nº Pausas", "Duração Média Pausa", "Pausa Min"].includes(cleanedName)) {
-                //   category = "Duração";
-                // } else if (["Sps Total", "Sps Articulação"].includes(cleanedName)) {
-                //   category = "Ritmo / Fluência";
-                // } else if (["Sílabas"].includes(cleanedName)) {
-                //   category = "Sílabas";
-                // } else if (["Intensidade Min", "Pitch Min"].includes(cleanedName)) {
-                //   category = "Intensidade / Pitch";
-                // } else {
-                //   category = "Outros";
-                // }
+                                // let category = "";
+                                // if (["Duração Total", "Tempo Falado", "Nº Pausas", "Duração Média Pausa", "Pausa Min"].includes(cleanedName)) {
+                                //   category = "Duração";
+                                // } else if (["Sps Total", "Sps Articulação"].includes(cleanedName)) {
+                                //   category = "Ritmo / Fluência";
+                                // } else if (["Sílabas"].includes(cleanedName)) {
+                                //   category = "Sílabas";
+                                // } else if (["Intensidade Min", "Pitch Min"].includes(cleanedName)) {
+                                //   category = "Intensidade / Pitch";
+                                // } else {
+                                //   category = "Outros";
+                                // }
 
-                return (
-                  <tr key={`${data.step}-${rIdx}-${idx}`} className="odd:bg-gray-100 odd:dark:bg-gray-500">
-                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2"></td> */}
-                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{category}</td> */}
-                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2">{cleanedName}</td>
-                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{value}</td>
-                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{unit}</td>
-                  </tr>
-                );
-              });
-          })}
-        </React.Fragment>
-      );
-    })}
-  </tbody>
-</table>
+                                return (
+                                <tr key={`${data.step}-${rIdx}-${idx}`} className="odd:bg-gray-100 odd:dark:bg-gray-500">
+                                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2"></td> */}
+                                    {/* <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{category}</td> */}
+                                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2">{cleanedName}</td>
+                                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{value}</td>
+                                    <td className="border border-gray-300 dark:border-zinc-400 px-4 py-2 text-center">{unit}</td>
+                                </tr>
+                                );
+                            });
+                        })}
+                        </React.Fragment>
+                    );
+                    })}
+                </tbody>
+                </table>
 
 
 

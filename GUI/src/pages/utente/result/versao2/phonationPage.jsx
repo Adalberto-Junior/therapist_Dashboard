@@ -5,7 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
 import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
-import {groupFeatureToBoxplot,groupDataToIntensityplot} from "../chartConfiguraction/groupChartData.jsx";
+import {groupFeatureToBoxplot,groupDataToIntensityplot, groupF0ToBoxplot} from "../chartConfiguraction/groupChartData.jsx";
 import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
 import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
@@ -40,10 +40,8 @@ export default function PhonotionResultPage() {
     const JitterData = groupFeatureToBoxplot(filtered,"Jitter");
     const ShimmerData = groupFeatureToBoxplot(filtered,"Shimmer");
     const intensityData = groupDataToIntensityplot(filtered);
-    // const intensityData = groupFeatureToBoxplot(filtered,"intensidade");
+    const F0Data = groupF0ToBoxplot(filtered);
 
-
-    console.log("DataNoProsodia: ",intensityData)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -221,7 +219,7 @@ export default function PhonotionResultPage() {
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-zinc-900 px-4">
         <div className="flex-1 p-1">
-            <div className="text-4xl font-bold text-center mb-1 p-3 text-gray-900 dark:text-white">Resultados de Prosódia</div>
+            <div className="text-4xl font-bold text-center mb-1 p-3 text-gray-900 dark:text-white">Resultados de Fonação</div>
             {/* <div className="flex items-center gap-4 mb-3">
                 <span className="text-lg dark:text-white">Modo de Comparação</span>
 
@@ -270,8 +268,11 @@ export default function PhonotionResultPage() {
                     <DisplayChart groupedData={JitterData} />
                     <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Shimmer</h2>
                     <DisplayChart groupedData={ShimmerData} />
-                    <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Intensidade da fala</h2>
-                    <DisplayChart groupedData={intensityData} />
+                    <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">F0</h2>
+                    <DisplayChart groupedData={F0Data} />
+
+                    {/* <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Intensidade da fala</h2>
+                    <DisplayChart groupedData={intensityData} /> */}
 
                      <h2 className="text-xl font-semibold mb-3 p-3 dark:text-white">Tempo Maximo de Fonação</h2>
                     {/* <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600"> */}
