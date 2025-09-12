@@ -1345,6 +1345,113 @@ def create_exercise(utenteId):
     except Exception as e:
         print(e)
         return jsonify({"success": False, "error": str(e)}), 500
+    
+
+@utente_bp.route("/rehabilitation/<string:utenteId>/exercises/", methods=["GET"])
+def list_exercises(utenteId):
+    """
+    Lista todos os exercícios de reabilitação para um utente específico.
+
+    """
+    try:
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith("Bearer "):
+            return jsonify({"error": "Token ausente"}), 401
+
+        try:
+            token = token.replace("Bearer ", "")
+            decoded = decode_token(token)
+            therapistId = decoded['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
+        health_user = utente_model.get_health_user_by_id(utenteId)
+        if not health_user:
+            return jsonify({"error": "Utente não encontrado"}), 404
+        
+        casa_viva_user = user_model.get_user_by_email(health_user['email'])
+
+        if not casa_viva_user:
+            return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
+
+        exercises = exercise_model.getRehabilitationExercise(casa_viva_user['_id'])
+
+        if exercises:
+            for e in exercises:
+                e["_id"] = str(e["_id"])
+        
+        return jsonify(exercises), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+@utente_bp.route("/rehabilitation/exercises/<string:exerciseId>", methods=["GET"])
+def get_exercise_rehabilitation(exerciseId):
+    """
+    Obtém um exercício de reabilitação específico pelo seu ID.
+
+    """
+    try:
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith("Bearer "):
+            return jsonify({"error": "Token ausente"}), 401
+
+        try:
+            token = token.replace("Bearer ", "")
+            decoded = decode_token(token)
+            therapistId = decoded['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
+        exercise = exercise_model.getRehabilitationExerciseById(exerciseId)
+
+        if not exercise:
+            return jsonify({"error": "Exercício não encontrado"}), 404
+        
+        exercise["_id"] = str(exercise["_id"])
+        
+        return jsonify(exercise), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@utente_bp.route("/rehabilitation/exercises/<string:exerciseId>", methods=["DELETE"])
+def delete_exercise_rehabilitation(exerciseId):
+    """
+    Deleta um exercício de reabilitação específico pelo seu ID.
+
+    """
+    try:
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith("Bearer "):
+            return jsonify({"error": "Token ausente"}), 401
+
+        try:
+            token = token.replace("Bearer ", "")
+            decoded = decode_token(token)
+            therapistId = decoded['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
+        exercise = exercise_model.deleteRehabilitationExercise(exerciseId)
+
+        if not exercise:
+            return jsonify({"error": "Exercício não encontrado"}), 404
+        
+        return jsonify({"message": "Exercício deletado com sucesso"}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 # # Rota para listar exercícios
 # @app.route("/reabilitation/<string:utenteId>/exercises", methods=["GET"])

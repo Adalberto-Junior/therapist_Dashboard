@@ -32,60 +32,9 @@ import GenericExerciseDetail from "./pages/utente/exercise/GenericExerciseDetail
 import EditarGenericExercicioForm from "./pages/utente/exercise/editGenericExercise.jsx";
 import UtenteTabsLayout from "./layouts/UtenteTabsLayout";
 import ExerciseForm from "./pages/utente/reabilitation/exerciseForm.jsx";
-
-// export default function App() {
-//   // const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
-
-//   // const handleLogin = () => setIsLoggedIn(true);
-//   // const handleLogout = () => {
-//   //   localStorage.removeItem('token');
-//   //   setIsLoggedIn(false);
-//   // };
-
-//   const isAuth = localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
-
-//   return (
-//     <BrowserRouter>
-//       {isAuth && <LabTabs />}
-//       <Routes>
-//         {isAuth ? (
-//           <>
-//             <Route path="/" element={<Home />} />
-//             <Route path="utente" element={<AllUtente />}/> 
-//             <Route path="exercicios/genericos" element={<AllGenericExercise/>} />
-            
-
-//             <Route path="me" element={<Profile />} />
-//             {/* Utente Tabs Layout para rotas que compartilham o componente UtenteTabs */}
-//             <Route path="utente/:id" element={<UtenteTabsLayout />}>
-//               <Route path="informacao" element={<HealthUserInformation />} />
-//               <Route path="relatorio" element={<ReportList />} />
-//               <Route path="relatorio/edit/:id_" element={<EditReport />} />
-//               <Route path="editar" element={<EditUtente />} />
-//               <Route path="analise/articulacao" element={<ArticulationResult />} />
-//               <Route path="analise/fonacao" element={<PhonotionResult />} />
-//               <Route path="analise/prosodia" element={<ProsodyResult />} />
-//               <Route path="analise/glota" element={<GlottalResult />} />
-//               <Route path="analise/reaprendizagem" element={<ReplearningResult />} />
-//               <Route path="exercicios" element={<AllExercise />} />
-//               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
-//               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />
-//               {/* Adicione outras subtabs aqui */}
-//             </Route>
-
-//             <Route path="*" element={<NoPage />} />
-//           </>
-//         ) : (
-//           <>
-//             <Route path="/" element={<LoginForm />} />
-//             <Route path="register" element={<RegisterForm />} />
-//             <Route path="*" element={<NoPage />} />
-//           </>
-//         )}
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
+import ExerciseList from "./pages/utente/reabilitation/ExercisesList.jsx";
+import ExerciseDetails from "./pages/utente/reabilitation/ExerciseDetails.jsx";
+import ExerciseEdit from "./pages/utente/reabilitation/ExerciseEdit.jsx"; 
 
 export default function App() {
   const isAuth = localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
@@ -119,7 +68,10 @@ export default function App() {
               <Route path="analise/prosodia" element={<ProsodyResultPage />} />
               <Route path="analise/glota" element={<GlottalResult />} />
               <Route path="analise/fonologica" element={<PhonologicalResult />} />
-              <Route path="reabilitacao" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
+              <Route path="reabilitacao" element={<ExerciseList />} />
+              <Route path="reabilitacao/novo-exercicio" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
+              <Route path="reabilitacao/exercicio/:exerciseId" element={<ExerciseDetails />} />
+              <Route path="reabilitacao/exercicio/editar/:exerciseId" element={<ExerciseEdit />} />
               <Route path="exercicios" element={<AllExercise />} />
               <Route path="exercicio/:id_" element={<ExerciseDetail />} />
               <Route path="exercicio/editar/:id_" element={<EditarExercicioForm />} />

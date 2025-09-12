@@ -329,3 +329,23 @@ def getRehabilitationExercise(userId):
     rehabilitation_exercises = mongo.db.rehabilitation
     exercises = rehabilitation_exercises.find({ "user": ObjectId(userId)})
     return list(exercises)
+
+def getRehabilitationExerciseById(exercise_id):
+    """
+    Get a rehabilitation exercise by its ID.
+    :param exercise_id: The ID of the exercise.
+    :return: The rehabilitation exercise data as a dictionary.
+    """
+    rehabilitation_exercises = mongo.db.rehabilitation
+    return rehabilitation_exercises.find_one({"_id": ObjectId(exercise_id)})
+
+
+def deleteRehabilitationExercise(exercise_id):
+    """
+    Delete a rehabilitation exercise by its ID.
+    :param exercise_id: The ID of the exercise to delete.
+    :return: True if the deletion was successful, False otherwise.
+    """
+    rehabilitation_exercises = mongo.db.rehabilitation
+    result = rehabilitation_exercises.delete_one({"_id": ObjectId(exercise_id)})
+    return result.deleted_count > 0

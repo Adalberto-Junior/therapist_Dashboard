@@ -788,8 +788,8 @@ def delete_status_analysis():
     return jsonify({"message": "Status de análise deletado com sucesso."}), 200
 
 
-@casaViva_bp.route("/rehabilitation/exercise/<user_id>", methods=["GET"])
-def get_all_rehabilitation_exercise(user_id):
+@casaViva_bp.route("/rehabilitation/exercise", methods=["GET"])
+def get_all_rehabilitation_exercise():
     """
     Get the rehabilitation exercises for a user.
     :return: JSON response with the rehabilitation exercises.
