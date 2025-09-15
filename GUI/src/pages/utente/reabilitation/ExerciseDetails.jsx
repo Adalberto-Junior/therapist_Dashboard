@@ -1,6 +1,161 @@
+// import { useEffect, useState } from "react";
+// import { useParams, useNavigate } from "react-router-dom";
+// import api from "../../../api";
+
+// export default function ExerciseDetails() {
+//   const { id, exerciseId } = useParams();
+//   const [exercise, setExercise] = useState(null);
+//   const navigate = useNavigate();
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const BACKEND_URL = "http://localhost:5000";
+
+
+//   useEffect(() => {
+//     async function fetchExercise() {
+//       try {
+//         const res = await api.get(`/utente/rehabilitation/exercises/${exerciseId}`);
+//         setExercise(res.data);
+//       } catch (err) {
+//         setError(err);
+//         console.error("Erro ao buscar exercício:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+//     fetchExercise();
+//   }, [id, exerciseId]);
+
+//   const handleDelete = async () => {
+//     if (confirm("Tem certeza que deseja eliminar este exercício?")) {
+//       try {
+//         await api.delete(`/utente/rehabilitation/exercises/${exerciseId}`);
+//         navigate(-1); // Volta para a página anterior
+//       } catch (err) {
+//         console.error("Erro ao eliminar exercício:", err);
+//       }
+//     }
+//   };
+
+//    if (loading){
+//         return(
+//          <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//             <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+//         </div>
+//         );
+//     }
+//     if (error) {
+//       return (
+//         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//           <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Erro ao carregar exercício: {error.message}</p>
+//         </div>
+//       );
+//     }
+//     if (!exercise) {
+//       return (
+//         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+//           <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Exercício não encontrado</p>
+//         </div>
+//       );
+//     }
+
+//   return (
+//     <div className="p-6">
+//         {error && <p className="text-red-500 mb-4">Erro ao carregar exercício: {error.message}</p>}
+//       <h1 className="text-2xl font-bold">{exercise.title}</h1>
+//       <p><strong>Categoria:</strong> {exercise.category}</p>
+//       <p><strong>Objetivo:</strong> {exercise.objective}</p>
+//       <p><strong>Descrição:</strong> {exercise.description}</p>
+//       <p><strong>Duração:</strong> {exercise.duration} min</p>
+//       <p><strong>Repetições:</strong> {exercise.repetitions}</p>
+//       <p><strong>Dificuldade:</strong> {exercise.difficulty}</p>
+//       <p><strong>Feedback:</strong> {exercise.feedback}</p>
+//       <p><strong>Notas do terapeuta:</strong> {exercise.notes}</p>
+//       <p><strong>Nome do Utente:</strong> {exercise.userName}</p>
+
+//       {(exercise.images?.length > 0 || exercise.videos?.length > 0 || exercise.audios?.length > 0) && (
+//         <div>
+//           <h2 className="text-xl font-semibold mt-4">Mídia</h2>
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//             {exercise.images && exercise.images.length > 0 && (
+//               <div>
+//                 <h3 className="font-semibold">Imagens</h3>
+//                 {exercise.images.map((imgUrl, idx) => (
+//                   <img
+//                     key={idx}
+//                     src={`${BACKEND_URL}${imgUrl}`}
+//                     alt={`Imagem ${idx + 1}`}
+//                     className="w-full h-auto rounded-lg"
+//                   />
+//                 ))}
+//               </div>
+//             )}
+//             {exercise.videos && exercise.videos.length > 0 && (
+//               <div>
+//                 <h3 className="font-semibold">Vídeos</h3>
+//                 {exercise.videos.map((vidUrl, idx) => (
+//                   <video
+//                     key={idx}
+//                     src={`${BACKEND_URL}${vidUrl}`}
+//                     controls
+//                     className="w-full h-auto rounded-lg"
+//                   />
+//                 ))}
+//               </div>
+//             )}
+//             {exercise.audios && exercise.audios.length > 0 && (
+//               <div>
+//                 <h3 className="font-semibold">Áudios</h3>
+//                 {exercise.audios.map((audioUrl, idx) => (
+//                   <audio
+//                     key={idx}
+//                     src={`${BACKEND_URL}${audioUrl}`}
+//                     controls
+//                     className="w-full h-auto rounded-lg"
+//                   />
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       )}
+//       <h2 className="text-xl font-semibold mt-4">Passos</h2>
+//       <ul className="list-disc pl-5">
+//         {exercise.steps?.map((step, idx) => (
+//           <li key={idx}>{step.instruction}</li>
+//         ))}
+//       </ul>
+
+//       {/* Mostra outros campos como dificuldade, passos, etc */}
+      
+//       <div className="flex gap-4 mt-4">
+//         <button
+//           onClick={() => navigate(`/utente/${id}/reabilitacao/exercicio/editar/${exerciseId}`)}
+//           className="bg-yellow-500 text-white px-4 py-2 rounded"
+//         >
+//           Editar
+//         </button>
+//         <button
+//           onClick={handleDelete}
+//           className="bg-red-600 text-white px-4 py-2 rounded"
+//         >
+//           Eliminar
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../api";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Loader2, Edit, Trash2, ImageIcon, Video, Volume2 } from "lucide-react";
+import { Tag, Target, FileText, Clock, Repeat, Gauge, MessageSquare, StickyNote, User } from "lucide-react";
+import { ListChecks } from "lucide-react";
 
 export default function ExerciseDetails() {
   const { id, exerciseId } = useParams();
@@ -8,9 +163,7 @@ export default function ExerciseDetails() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  console.log("ID do utente:", id);
-  console.log("ID do exercício:", exerciseId);
+  const BACKEND_URL = "http://localhost:5000";
 
   useEffect(() => {
     async function fetchExercise() {
@@ -31,69 +184,225 @@ export default function ExerciseDetails() {
     if (confirm("Tem certeza que deseja eliminar este exercício?")) {
       try {
         await api.delete(`/utente/rehabilitation/exercises/${exerciseId}`);
-        navigate(-1); // Volta para a página anterior
+        navigate(-1);
       } catch (err) {
         console.error("Erro ao eliminar exercício:", err);
       }
     }
   };
 
-   if (loading){
-        return(
-         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
-        </div>
-        );
-    }
-    if (error) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-          <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Erro ao carregar exercício: {error.message}</p>
-        </div>
-      );
-    }
-    if (!exercise) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-          <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Exercício não encontrado</p>
-        </div>
-      );
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+        <p className="text-lg font-semibold dark:text-white">Carregando exercício...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+        <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+          Erro ao carregar exercício: {error.message}
+        </p>
+      </div>
+    );
+  }
+
+  if (!exercise) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+        <p className="text-lg font-semibold dark:text-white">
+          Exercício não encontrado.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6">
-        {error && <p className="text-red-500 mb-4">Erro ao carregar exercício: {error.message}</p>}
-      <h1 className="text-2xl font-bold">{exercise.title}</h1>
-      <p><strong>Objetivo:</strong> {exercise.objective}</p>
-      <p><strong>Descrição:</strong> {exercise.description}</p>
-      <p><strong>Duração:</strong> {exercise.duration} min</p>
-      <p><strong>Feedback:</strong> {exercise.feedback}</p>
-      <p><strong>Notas do terapeuta:</strong> {exercise.notes}</p>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold">{exercise.title}</CardTitle>
+        </CardHeader>
+        
 
-      <h2 className="text-xl font-semibold mt-4">Passos</h2>
-      <ul className="list-disc pl-5">
-        {exercise.steps?.map((step, idx) => (
-          <li key={idx}>{step.instruction}</li>
-        ))}
-      </ul>
+<CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <Tag className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Categoria</span>
+      <p className="text-base font-semibold text-gray-900 dark:text-white">{exercise.category}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <Target className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Objetivo</span>
+      <p className="text-base font-semibold">{exercise.objective}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm md:col-span-2">
+    <FileText className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Descrição</span>
+      <p className="text-base">{exercise.description}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <Clock className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Duração</span>
+      <p className="text-base font-semibold">{exercise.duration} min</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <Repeat className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Repetições</span>
+      <p className="text-base font-semibold">{exercise.repetitions}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <Gauge className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Dificuldade</span>
+      <p className="text-base font-semibold">{exercise.difficulty}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm md:col-span-2">
+    <MessageSquare className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Feedback</span>
+      <p className="text-base">{exercise.feedback}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm md:col-span-2">
+    <StickyNote className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Notas do Terapeuta</span>
+      <p className="text-base">{exercise.notes}</p>
+    </div>
+  </div>
+
+  <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm">
+    <User className="text-primary w-5 h-5 mt-1" />
+    <div>
+      <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Utente</span>
+      <p className="text-base font-semibold">{exercise.userName}</p>
+    </div>
+  </div>
+</CardContent>
 
 
-      {/* Mostra outros campos como dificuldade, passos, etc */}
-      
-      <div className="flex gap-4 mt-4">
-        <button
+      </Card>
+
+      {(exercise.images?.length > 0 || exercise.videos?.length > 0 || exercise.audios?.length > 0) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Mídia</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {exercise.images?.length > 0 && (
+                <div>
+                  <h3 className="flex items-center gap-2 font-semibold mb-2"><ImageIcon size={18}/> Imagens</h3>
+                  <div className="space-y-2">
+                    {exercise.images.map((imgUrl, idx) => (
+                      <img
+                        key={idx}
+                        src={`${BACKEND_URL}${imgUrl}`}
+                        alt={`Imagem ${idx + 1}`}
+                        className="w-full rounded-xl shadow"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {exercise.videos?.length > 0 && (
+                <div>
+                  <h3 className="flex items-center gap-2 font-semibold mb-2"><Video size={18}/> Vídeos</h3>
+                  <div className="space-y-2">
+                    {exercise.videos.map((vidUrl, idx) => (
+                      <video
+                        key={idx}
+                        src={`${BACKEND_URL}${vidUrl}`}
+                        controls
+                        className="w-full rounded-xl shadow"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {exercise.audios?.length > 0 && (
+                <div>
+                  <h3 className="flex items-center gap-2 font-semibold mb-2"><Volume2 size={18}/> Áudios</h3>
+                  <div className="space-y-2">
+                    {exercise.audios.map((audioUrl, idx) => (
+                      <audio
+                        key={idx}
+                        src={`${BACKEND_URL}${audioUrl}`}
+                        controls
+                        className="w-full"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {exercise.steps?.length > 0 && (
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <ListChecks className="text-primary w-5 h-5" />
+            <CardTitle className="text-xl">Passos</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {exercise.steps.map((step, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-zinc-800 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white text-sm font-bold shrink-0">
+                  {idx + 1}
+                </div>
+                <p className="text-base text-gray-800 dark:text-gray-200">
+                  {step.instruction}
+                </p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="flex gap-4 justify-end">
+        <Button
           onClick={() => navigate(`/utente/${id}/reabilitacao/exercicio/editar/${exerciseId}`)}
-          className="bg-yellow-500 text-white px-4 py-2 rounded"
+          variant="outline"
+          className="flex items-center gap-2 rounded"
         >
-          Editar
-        </button>
-        <button
+          <Edit size={16}/> Editar
+        </Button>
+        <Button
           onClick={handleDelete}
-          className="bg-red-600 text-white px-4 py-2 rounded"
+          variant="destructive"
+          className="flex items-center gap-2 rounded"
         >
-          Eliminar
-        </button>
+          <Trash2 size={16}/> Eliminar
+        </Button>
       </div>
     </div>
   );
 }
+
