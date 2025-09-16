@@ -607,7 +607,10 @@ export default function AllExercise() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {exercises.map((exercise) => (
-              <Card key={exercise._id.$oid || exercise._id} className="hover:shadow-md">
+              <Card 
+                 key={exercise._id.$oid || exercise._id}
+                 className="hover:shadow-lg transition-shadow cursor-pointer"
+                 onClick={() => handleOpen(exercise._id.$oid || exercise._id)}>
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold">{exercise.name}</CardTitle>
                 </CardHeader>
@@ -616,7 +619,7 @@ export default function AllExercise() {
                   <p><strong>Descrição:</strong> {exercise.description}</p>
                 </CardContent>
                 <CardFooter className="flex justify-end ">
-                  <Button size="sm" className={"rounded"} onClick={() => handleOpen(exercise._id.$oid || exercise._id)}>
+                  <Button size="sm"  className="hover:bg-primary hover:text-white rounded">
                     Abrir
                   </Button>
                 </CardFooter>
