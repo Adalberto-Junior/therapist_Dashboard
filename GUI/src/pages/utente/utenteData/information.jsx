@@ -1282,9 +1282,9 @@ export default function HealthUserInformation() {
       {/* Botão flutuante */}
       <button
         onClick={() => setMostrarFormulario(true)}
-        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded shadow-xl transition-transform hover:scale-105"
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-1 rounded shadow-xl transition-transform hover:scale-105"      
       >
-        {/* <Plus className="w-6 h-6" />*/} Novo Relatório 
+        <Plus className="w-6 h-6" /> Novo Relatório 
       </button>
 
       {/* Modal */}

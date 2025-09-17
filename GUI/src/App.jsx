@@ -66,10 +66,11 @@ export default function App() {
               {/* <Route path="analise/fonacao" element={<PhonotionResult />} /> */}
               {/* <Route path="analise/prosodia" element={<ProsodyResult />} /> */}
               <Route path="analise/prosodia" element={<ProsodyResultPage />} />
-              <Route path="analise/glota" element={<GlottalResult />} />
-              <Route path="analise/fonologica" element={<PhonologicalResult />} />
+              {/* <Route path="analise/glota" element={<GlottalResult />} />
+              <Route path="analise/fonologica" element={<PhonologicalResult />} /> */}
+              {/* <Route path="analise/reaprendizagem" element={<ReplearningResult/>} /> */}
               <Route path="reabilitacao" element={<ExerciseList />} />
-              <Route path="reabilitacao/novo-exercicio" element={<ExerciseForm />} />  {/*TODO: VER ISSO AQUI*/}
+              <Route path="reabilitacao/novo-exercicio" element={<ExerciseForm />} />  
               <Route path="reabilitacao/exercicio/:exerciseId" element={<ExerciseDetails />} />
               <Route path="reabilitacao/exercicio/editar/:exerciseId" element={<ExerciseEdit />} />
               <Route path="exercicios" element={<AllExercise />} />
