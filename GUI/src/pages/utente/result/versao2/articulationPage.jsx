@@ -809,7 +809,11 @@ export default function ArticulationResultPage() {
               Espaço Acústico
             </h2>
             <DisplayChart groupedData={chartData} />
-
+            <div className="text-sm text-gray-600 dark:text-gray-400 mt-3 m-2">
+              {compareMode
+                ? "Visualizando múltiplas datas."
+                : `Visualizando resultados de ${selectedDate}.`}
+            </div>
             {!compareMode && (
               <Accordion defaultActiveKey="x">
                 <Accordion.Item eventKey="0">
