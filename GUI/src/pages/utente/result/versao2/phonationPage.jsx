@@ -718,7 +718,7 @@ export default function PhonotionResultPage() {
       const imagens = item.pathToChart?.slice(0, 4) || [];
       return (
         <div key={item.step} className="mb-6">
-          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step}</h4>
+          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step.replace(/_/g, " ")}</h4>
           {imagens.length === 0 ? (
             <p className="text-red-500">Imagens não encontradas.</p>
           ) : (
@@ -742,7 +742,7 @@ export default function PhonotionResultPage() {
   const renderExerciseAudio = () =>
     filtered.map((item) => (
       <div key={item.step} className="mb-6">
-        <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step}</h4>
+        <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step.replace(/_/g, " ")}</h4>
         {item.pathToRecord ? (
           <audio controls src={`${BACKEND_URL}${item.pathToRecord}`} className="w-full" />
         ) : (
@@ -803,7 +803,7 @@ export default function PhonotionResultPage() {
                 <tbody>
                   {filtered.map((data) => (
                     <tr key={`tmf-${data.step}`} className="odd:bg-gray-50 odd:dark:bg-zinc-700">
-                      <td className="border px-4 py-2">{data.step}</td>
+                      <td className="border px-4 py-2">{data.step.replace(/_/g, " ")}</td>
                       <td className="border px-4 py-2 text-center">
                         {data.static_result
                           ?.filter((item) => item.TMF !== undefined)

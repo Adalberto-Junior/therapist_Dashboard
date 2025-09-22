@@ -292,7 +292,7 @@ function renderGroupedAcousticChart(data, idx, oneChart = false) {
           <div key={`chart-pair-${pairIdx}`} className="grid grid-cols-2 gap-4">
             {pair.map(([date, dateData]) => (
               <div key={`chart-${date}`} className="border p-4 rounded shadow">
-                <h3 className="text-lg font-semibold mb-2">{date}</h3>
+                <h3 className="text-lg font-semibold mb-2">{date.replace(/_/g, " ")}</h3>
                 <ChartComponent data={dateData} />
               </div>
             ))}
@@ -333,7 +333,7 @@ function renderF0BoxChart(data, idx, oneChart = false) {
           >
             {pair.map(([label, f0Values]) => (
               <div key={`chart-${label}`} className="border p-4 rounded shadow">
-                <h3 className="text-lg font-semibold mb-2">{label}</h3>
+                <h3 className="text-lg font-semibold mb-2">{label.replace(/_/g, " ")}</h3>
                 <ChartComponent data={f0Values} />
               </div>
             ))}
@@ -437,7 +437,7 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
                   key={`chart-${label}-${pairIdx}`}
                   className="border p-4 rounded-xl shadow-md"
                 >
-                  <h3 className="text-lg font-semibold mb-4">{label}</h3>
+                  <h3 className="text-lg font-semibold mb-4">{label.replace(/_/g, " ")}</h3>
                   {/* Boxplot */}
                   <ChartComponent  parameterName={valueKey} data={{ [label]: values }} />
                   {/* Histograma para este conjunto */}
@@ -529,7 +529,7 @@ function IntensityChartWrapper(data, idx) {
     <div className="grid gap-6">
       {data.map((d, idx) => (
         <div key={`Intensityplot-${d.id || idx}`} className="grid gap-4">
-          <h3 className="text-lg font-semibold">Gráfico de Intensidade – {d.id}</h3>
+          <h3 className="text-lg font-semibold">Gráfico de Intensidade – {d.id.replace(/_/g, " ")}</h3>
           <ChartComponent data={d.Intensidade} width={800} height={300} />
         </div>
       ))}
@@ -541,7 +541,7 @@ function IntensityChartWrapper(data, idx) {
 
 export function RenderF0LineChart({data, idx, oneChart = false}) {
   if (!data || data.length === 0)  return <div>Nenhum dado para exibir</div>;
-  console.log("RenderF0LineChart - data:", data);
+  // console.log("RenderF0LineChart - data:", data);
 
   if (oneChart) {
     // Mostra todos os F0 num único gráfico (pode ser útil para comparação)
@@ -576,7 +576,7 @@ export function RenderF0LineChart({data, idx, oneChart = false}) {
           >
             {pair.map((d) => (
               <div key={`chart-${d.id}`} className="border p-4 rounded shadow">
-                <h3 className="text-lg font-semibold mb-2">{d.id}</h3>
+                <h3 className="text-lg font-semibold mb-2">{d.id.replace(/_/g, " ")}</h3>
                 <F0Chart
                   f0={d.F0}
                   timeStepMs={5} // altera se necessário

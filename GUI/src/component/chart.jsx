@@ -832,7 +832,7 @@ export function AcousticSpaceD3({ data = [] }) {
       .on("mouseover", (event, d) => {
         tooltip.transition().duration(150).style("opacity", 1);
         tooltip
-          .html(`<strong>${d.id}</strong><br>F1: ${d.F1} Hz<br>F2: ${d.F2} Hz`)
+          .html(`<strong>${d.id.replace(/_/g, " ")}</strong><br>F1: ${d.F1} Hz<br>F2: ${d.F2} Hz`)
           .style("left", `${event.pageX + 10}px`)
           .style("top", `${event.pageY - 30}px`);
       })
@@ -847,7 +847,7 @@ export function AcousticSpaceD3({ data = [] }) {
       .attr("y", d => yScale(d.F1) - 10)
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
-      .text(d => d.id);
+      .text(d => d.id.replace(/_/g, " "));
 
     // Limpeza do tooltip ao desmontar o componente
     return () => tooltip.remove();
@@ -1270,7 +1270,7 @@ export function AcousticSpaceD3V2({ data }) {
         tooltip.transition().duration(150).style("opacity", 1);
         tooltip
           .html(
-            `<strong>${d.id}</strong><br/>F1: ${d.F1} Hz<br/>F2: ${d.F2} Hz<br/>Data: ${
+            `<strong>${d.id.replace(/_/g, " ")}</strong><br/>F1: ${d.F1} Hz<br/>F2: ${d.F2} Hz<br/>Data: ${
               d.label || "-"
             }`
           )
@@ -1290,7 +1290,7 @@ export function AcousticSpaceD3V2({ data }) {
       .attr("text-anchor", "middle")
       .attr("font-size", "12px")
       .attr("fill", "#333")
-      .text((d) => d.id);
+      .text((d) => d.id.replace(/_/g, " "));
 
     // --- Legenda ---
     const legend = svg
@@ -1730,7 +1730,7 @@ export function Boxplot({ data, width = 900, height = 500 }) {
           tooltip.transition().duration(150).style("opacity", 1);
           tooltip
             .html(
-              `<strong>${key}</strong><br/>
+              `<strong>${key.replace(/_/g, " ")}</strong><br/>
               Min: ${localMin}<br/>
               Q1: ${q1}<br/>
               Median: ${median}<br/>
@@ -2882,7 +2882,12 @@ export function PauseBoxplot({
 
 export function ParameterBoxplot({ data, parameterName, width = 550, height = 350 }) {
   const svgRef = useRef();
-  
+
+  if (parameterName === "pausedurations") {
+    // Configurações específicas para "pausedurations"
+    width = 800;
+    height = 500;
+  }
 
   useEffect(() => {
     if (!data || Object.keys(data).length === 0) return;
@@ -3028,7 +3033,7 @@ export function ParameterBoxplot({ data, parameterName, width = 550, height = 35
         .on("mouseover", () => {
           tooltip.style("visibility", "visible")
             .html(`
-              <strong>${key}</strong><br/>
+              <strong>${key.replace(/_/g, " ")}</strong><br/>
               Min: ${localMin}<br/>
               Q1: ${q1}<br/>
               Median: ${median}<br/>

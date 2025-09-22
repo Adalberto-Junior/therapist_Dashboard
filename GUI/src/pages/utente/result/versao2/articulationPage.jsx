@@ -1008,7 +1008,7 @@ export default function ArticulationResultPage() {
       const imagens = item.pathToChart?.slice(0, 4) || [];
       return (
         <div key={item.step} className="mb-6">
-          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step}</h4>
+          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step.replace(/_/g, " ")}</h4>
           {imagens.length === 0 ? (
             <p className="text-red-500">Imagens não encontradas.</p>
           ) : (
@@ -1033,7 +1033,7 @@ export default function ArticulationResultPage() {
       const audio = item.pathToRecord;
       return (
         <div key={item.step} className="mb-6">
-          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step}</h4>
+          <h4 className="font-semibold mb-2 dark:text-white">Passo {item.step.replace(/_/g, " ")}</h4>
           {audio ? (
             <audio controls src={`${BACKEND_URL}${audio}`} className="w-full" />
           ) : (

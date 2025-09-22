@@ -596,13 +596,13 @@
 // }
 
 
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../../../api";
 import Accordion from "react-bootstrap/Accordion";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Card, CardContent } from "../../../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Button } from "../../../../components/ui/button";
 
 import { RenderF0LineChart, DisplayChart } from "../chartConfiguraction/ChartAccordion.jsx";
@@ -730,6 +730,100 @@ export default function ProsodyResultPage() {
       </div>
     ));
 
+
+
+const SpeechRateMetrics = ({ filtered }) => {
+  return (
+    <Card className="shadow-lg rounded-2xl">
+      <CardHeader className="border-b">
+        <CardTitle className="text-2xl font-bold text-center dark:text-white">
+          Métricas de Velocidade e Fluência da Fala
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead className="sticky top-0 z-10 bg-green-300 dark:bg-gray-700">
+            <tr>
+              <th className="px-4 py-2 text-left border-b border-gray-300 dark:border-zinc-600">
+                Métrica
+              </th>
+              <th className="px-4 py-2 text-center border-b border-gray-300 dark:border-zinc-600">
+                Valor
+              </th>
+              <th className="px-4 py-2 text-center border-b border-gray-300 dark:border-zinc-600">
+                Unidade
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filtered.map((data) => {
+              const speechRateResults =
+                data.no_static_result?.filter((item) => item.SpeechRate) || [];
+
+              if (speechRateResults.length === 0) return null;
+
+              return (
+                <React.Fragment key={data.step}>
+                  {/* Cabeçalho de cada passo */}
+                  <tr className="bg-green-200 dark:bg-green-600 font-semibold">
+                    <td
+                      className="px-4 py-2 border-y border-gray-300 dark:border-zinc-600"
+                      colSpan={3}
+                    >
+                      Passo: {data.step.replace(/_/g, " ")}
+                    </td>
+                  </tr>
+
+                  {speechRateResults.map((result, rIdx) => {
+                    const metrics = result.SpeechRate;
+
+                    return Object.entries(metrics)
+                      .filter(([_, value]) => !Array.isArray(value))
+                      .map(([metric, value], idx) => {
+                        const unitMatch = metric.match(/\((.*?)\)/);
+                        const unit = unitMatch ? unitMatch[1] : "";
+
+                        const toTitleCase = (str) =>
+                          str
+                            .toLowerCase()
+                            .replace(/\b\p{L}/gu, (l) => l.toUpperCase())
+                            .trim();
+
+                        const cleanedName = toTitleCase(
+                          metric.replace(/\(.*?\)/g, "").replace(/_/g, " ")
+                        );
+
+                        return (
+                          <tr
+                            key={`${data.step}-${rIdx}-${idx}`}
+                            className="odd:bg-gray-50 odd:dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          >
+                            <td className="px-4 py-2 border-b border-gray-200 dark:border-zinc-700">
+                              {cleanedName}
+                            </td>
+                            <td className="px-4 py-2 text-center border-b border-gray-200 dark:border-zinc-700">
+                              {value}
+                            </td>
+                            <td className="px-4 py-2 text-center border-b border-gray-200 dark:border-zinc-700">
+                              {unit}
+                            </td>
+                          </tr>
+                        );
+                      });
+                  })}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900">
@@ -756,14 +850,21 @@ export default function ProsodyResultPage() {
       {filtered.length > 0 ? (
         <Card className="p-6 shadow-md">
           <CardContent>
+            {/* F0 ao longo do tempo */}
             <h2 className="text-xl font-semibold mb-4 dark:text-white">F0 ao longo do tempo</h2>
             <RenderF0LineChart data={f0Data} idx={1} />
 
-            <h2 className="text-xl font-semibold mt-6 mb-3 dark:text-white">Intensidade</h2>
+            {/* Intensidade */}
+            {/* <h2 className="text-xl font-semibold mt-6 mb-3 dark:text-white">Intensidade</h2> */}
             <DisplayChart groupedData={intensityData} />
 
+            {/* Duração de pausa */}
             <h2 className="text-xl font-semibold mt-6 mb-3 dark:text-white">Duração de pausa</h2>
             <DisplayChart groupedData={pauseDurations} />
+
+            {/* Tabela de métricas */}
+            <SpeechRateMetrics filtered={filtered} />
+
 
             <Accordion defaultActiveKey="x" className="mb-6 mt-6">
               <Accordion.Item eventKey="0">

@@ -392,7 +392,7 @@
 // }
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -447,6 +447,16 @@ export default function AllGenericExercise() {
     novo: ["description", "label", "value", "ID"],
   };
 
+  const mapTipo = useCallback((tipo) => {
+      return {
+        palavras: 'Repetição de Palavras',
+        frases: 'Repetição de Frases',
+        leitura: 'Atividades de Leitura',
+        discurso: 'Discurso Espontâneo',
+        diadococinesia: 'Diadococinésia'
+      }[tipo] || tipo;
+    }, []);
+
   const appendStep = () => {
     if (type === "novo") {
       append({ description: "", id: "", pairs: [{ label: "", value: "" }] });
@@ -471,6 +481,7 @@ export default function AllGenericExercise() {
       if (typeof data.typeOfProcessing === "string") {
         data.typeOfProcessing = [data.typeOfProcessing];
       }
+      data.type = mapTipo(data.type);
       await api.post(`/utente/exercicio/`, data);
       alert("Exercício adicionado com sucesso!");
       setMostrarFormulario(false);
@@ -516,10 +527,10 @@ export default function AllGenericExercise() {
   }
 
   return (
-    <div className="min-h-200 mx-auto space-y-6">
+    <div className="min-h-189 mx-auto overflow-y-auto space-y-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold dark:text-white flex items-center gap-2">
+          <h1 className="text-4xl font-bold dark:text-white flex items-center gap-2">
             <ClipboardList className="w-7 h-7 text-primary" />
             Lista dos Exercícios
           </h1>
@@ -634,20 +645,20 @@ export default function AllGenericExercise() {
                           </div>
                         );
                       })}
-                      <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
+                      <Button className="bg-red-600 hover:bg-red-700 rounded" type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
                         <Trash2 size={16} className="mr-1" /> Remover
                       </Button>
                     </div>
                   ))}
-                  <Button type="button" variant="secondary" onClick={appendStep}>
+                  <Button type="button" className="bg-green-600 hover:bg-green-700 rounded" variant="secondary" onClick={appendStep}>
                     <Plus size={16} className="mr-1" /> Adicionar passo
                   </Button>
                 </div>
 
                 {/* Botões */}
                 <div className="flex justify-between mt-4">
-                  <Button type="submit" className="bg-green-600 hover:bg-green-700">Adicionar</Button>
-                  <Button type="button" variant="secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</Button>
+                  <Button type="submit" className="bg-green-600 hover:bg-green-700 rounded">Adicionar</Button>
+                  <Button type="button" className="bg-gray-600 hover:bg-gray-700 rounded" variant="secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</Button>
                 </div>
               </form>
             </div>
