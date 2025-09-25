@@ -422,6 +422,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { ModeToggle } from "../../components/mode-toggle";
+import { Pencil, Trash2, Plus, FileText, ArrowLeft, User, Loader2 } from "lucide-react";
 
 export default function Profile() {
   const [perfil, setPerfil] = useState(null);
@@ -500,13 +501,14 @@ export default function Profile() {
   const tarefasFeitas = notasOrdenadas.filter((n) => n.done);
 
   if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900">
-        <p className="text-2xl font-semibold text-center dark:text-white">
-          Carregando...
-        </p>
-      </div>
-    );
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-900">
+          <Loader2 className="animate-spin w-10 h-10 text-primary mb-3" />
+          <p className="text-lg font-semibold dark:text-white">
+            Carregando os dados da sua conta...
+          </p>
+        </div>
+      );
 
   if (error)
     return (

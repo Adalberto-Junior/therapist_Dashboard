@@ -485,7 +485,8 @@ import { useEffect, useState } from "react";
 import api from "../../../api.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import html2pdf from "html2pdf.js";
-import { ArrowLeft, Pencil, Trash2, FileDown, ShieldCheck, X } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, FileDown, ShieldCheck, X, Loader2 } from "lucide-react";
+
 
 export default function ReportList() {
   const [relatorios, setRelatorios] = useState([]);
@@ -658,14 +659,14 @@ export default function ReportList() {
     reaprendizagem: "Reaprendizagem",
   };
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-900">
-        <p className="text-xl text-gray-600 dark:text-white animate-pulse">
-          Carregando relatórios...
-        </p>
-      </div>
-    );
+  if (loading) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-zinc-900">
+          <Loader2 className="animate-spin w-10 h-10 text-primary mb-3" />
+          <p className="text-lg font-semibold dark:text-white">Carregando os dados...</p>
+        </div>
+      );
+    }
 
   if (error)
     return (

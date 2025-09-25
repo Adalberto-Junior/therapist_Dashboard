@@ -484,7 +484,7 @@ export default function EditarGenericExercicioForm() {
 
   return (
     <div className="min-h-screen flex justify-center items-start bg-gray-100 dark:bg-zinc-900 p-4 overflow-y-auto">
-      <div className="w-full max-w-3xl bg-white dark:bg-zinc-800 shadow-lg rounded-2xl p-6 space-y-6">
+      <div className="w-full max-w-3xl m-10 bg-white dark:bg-zinc-800 shadow-lg rounded-2xl p-6 space-y-6">
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
           ✏️ Editar Exercício
         </h2>
@@ -566,10 +566,10 @@ export default function EditarGenericExercicioForm() {
                   options={[
                     { label: "Articulação", value: "articulation" },
                     { label: "Fonação", value: "phonation" },
-                    { label: "Glota", value: "glotta" },
+                    // { label: "Glota", value: "glotta" },
                     { label: "Prosódia", value: "prosody" },
-                    { label: "Reaprendizagem", value: "relearning" },
-                    { label: "Fonológico", value: "phonological" },
+                    // { label: "Reaprendizagem", value: "relearning" },
+                    // { label: "Fonológico", value: "phonological" },
                   ]}
                   placeholder="Selecione os tipos de processamento"
                   filter
@@ -614,6 +614,8 @@ export default function EditarGenericExercicioForm() {
                           {...register(`steps.${index}.${key}`, {
                             required: true,
                           })}
+                          lang="pt"
+                          rows={6}
                           className="w-full p-2 border rounded-lg dark:bg-zinc-600 dark:text-white"
                         />
                       ) : (
@@ -630,7 +632,7 @@ export default function EditarGenericExercicioForm() {
                 <button
                   type="button"
                   onClick={() => remove(index)}
-                  className="text-red-500 flex items-center gap-1 hover:underline"
+                  className="text-red-500 flex items-center rounded gap-1 hover:underline"
                 >
                   <Trash2 size={16} /> Remover
                 </button>
@@ -640,7 +642,7 @@ export default function EditarGenericExercicioForm() {
             <button
               type="button"
               onClick={appendStep}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             >
               <Plus size={16} /> Adicionar passo
             </button>
@@ -650,14 +652,14 @@ export default function EditarGenericExercicioForm() {
           <div className="flex justify-between pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               <Save size={16} /> Guardar
             </button>
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              className="flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               <X size={16} /> Cancelar
             </button>

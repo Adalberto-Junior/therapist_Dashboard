@@ -1091,7 +1091,7 @@ import api from "../../../api.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { MultiSelect } from "primereact/multiselect";
-import { Pencil, Trash2, Plus, FileText, ArrowLeft, User } from "lucide-react";
+import { Pencil, Trash2, Plus, FileText, ArrowLeft, User, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
@@ -1180,8 +1180,9 @@ export default function HealthUserInformation() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-900">
-        <p className="text-lg font-semibold text-gray-700 dark:text-gray-200 animate-pulse">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-900">
+        <Loader2 className="animate-spin w-10 h-10 text-primary mb-3" />
+        <p className="text-lg font-semibold dark:text-white">
           Carregando dados do utente...
         </p>
       </div>

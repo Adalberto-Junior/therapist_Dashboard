@@ -183,7 +183,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Save, X } from "lucide-react";
+import { Save, X, Loader2 } from "lucide-react";
 import api from "../../../api";
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
@@ -237,12 +237,13 @@ export default function EditUtente() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-900">
-        <p className="text-lg font-semibold text-gray-700 dark:text-gray-200 animate-pulse">Carregando dados...</p>
-      </div>
-    );
-  }
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-zinc-900">
+          <Loader2 className="animate-spin w-10 h-10 text-primary mb-3" />
+          <p className="text-lg font-semibold dark:text-white">Carregando os dados...</p>
+        </div>
+      );
+    }
 
   if (error) {
     return (

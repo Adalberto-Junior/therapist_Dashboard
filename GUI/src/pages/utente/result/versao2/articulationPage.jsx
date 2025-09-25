@@ -946,7 +946,12 @@ export default function ArticulationResultPage() {
           ))}
         </select>
 
+        <h6 className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+          Usa Ctrl + clique para selecionar múltiplas datas.
+        </h6>
+
         <div className="flex flex-wrap gap-2 mb-4">
+          
           {uniqueDates.length > 1 && (
             <Button variant="secondary" className="rounded" onClick={() => setSelectedDates(uniqueDates)}>
               Selecionar todas
@@ -1124,14 +1129,14 @@ export default function ArticulationResultPage() {
             {!compareMode && (
               <Accordion defaultActiveKey="x">
                 <Accordion.Item eventKey="0">
-                  <Accordion.Header>Gráficos extraídos do sistema</Accordion.Header>
+                  <Accordion.Header>📊 Gráficos extraídos do sistema</Accordion.Header>
                   <Accordion.Body>
                     {renderChartImages()}
                   </Accordion.Body>
                 </Accordion.Item>
 
                 <Accordion.Item eventKey="1">
-                  <Accordion.Header>Áudios dos exercícios</Accordion.Header>
+                  <Accordion.Header>🎧 Áudios dos exercícios</Accordion.Header>
                   <Accordion.Body>
                     {renderExerciseAudio()}
                   </Accordion.Body>
