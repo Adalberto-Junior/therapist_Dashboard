@@ -301,7 +301,7 @@ export function StepFields({
             type="button"
             variant="destructive"
             onClick={() => remove(index)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 rounded"
           >
             <Trash2 size={16} /> Remover passo
           </Button>
