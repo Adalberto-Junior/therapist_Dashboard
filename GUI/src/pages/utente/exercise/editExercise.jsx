@@ -981,7 +981,7 @@ export default function EditarExercicioForm() {
             </div>
 
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              * Campos obrigatórios
+              <span className="text-red-500">*</span> Campos obrigatórios
             </p>
 
             <CardFooter className="flex justify-between gap-3 pt-4">

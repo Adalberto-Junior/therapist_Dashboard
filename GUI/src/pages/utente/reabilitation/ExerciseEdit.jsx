@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../api";
-import ExerciseForm from "./ExerciseForm";
+import ExerciseForm from "./exerciseForm2";
 
 export default function ExerciseEdit() {
   const { id, exerciseId } = useParams();
@@ -11,8 +11,9 @@ export default function ExerciseEdit() {
   useEffect(() => {
     async function fetchExercise() {
       try {
-        const res = await api.get(`/utente/rehabilitation/${id}/exercises/${exerciseId}`);
+        const res = await api.get(`/utente/rehabilitation/exercises/${exerciseId}`);
         setExercise(res.data);
+        console.log("Fetched Exercise:", res.data);
       } catch (err) {
         console.error("Erro ao buscar exercício para edição:", err);
       }
@@ -34,7 +35,7 @@ export default function ExerciseEdit() {
   };
 
   if (!exercise) return <p>Carregando...</p>;
-
+  console.log("Exercise Data:", exercise);
   return (
     <ExerciseForm
       defaultValues={exercise}

@@ -808,7 +808,7 @@ export default function PhonotionResultPage() {
                         {data.static_result
                           ?.filter((item) => item.TMF !== undefined)
                           .map((item, idx) => (
-                            <div key={idx}>{item.TMF}</div>
+                            <div key={idx}>{item.TMF.toFixed(3)}</div>
                           ))}
                       </td>
                       <td className="border px-4 py-2 text-center">Segundos</td>

@@ -1,15 +1,15 @@
 
 import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
-import { Select, SelectTrigger, SelectContent, SelectItem } from "../../../components/ui/select";
+import { Select, SelectTrigger,SelectValue, SelectContent, SelectItem } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
 import api from "../../../api";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -59,7 +59,7 @@ export default function ExerciseForm() {
     },
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "steps",
   });
@@ -84,7 +84,7 @@ export default function ExerciseForm() {
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-    console.log("Dados do formulário:", data);
+    // console.log("Dados do formulário:", data);
 
     Object.keys(data).forEach((key) => {
       if (key === "steps") {
@@ -138,7 +138,7 @@ export default function ExerciseForm() {
           />
           {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
 
-          <Select {...register("category")}
+          {/* <Select {...register("category")}
             className="mb-2"
           >
             <SelectTrigger>Categoria</SelectTrigger>
@@ -152,7 +152,28 @@ export default function ExerciseForm() {
               <SelectItem value="Reaprendizagem">Reaprendizagem</SelectItem>
             </SelectContent>
             
-          </Select>
+          </Select> */}
+
+          <Controller
+            name="category"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange} className="mb-2">
+                <SelectTrigger>
+                  <SelectValue placeholder="Categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Articulação">Articulação</SelectItem>
+                  <SelectItem value="Fonação">Fonação</SelectItem>
+                  <SelectItem value="Prosódia">Prosódia</SelectItem>
+                  <SelectItem value="Orofaciais">Orofaciais</SelectItem>
+                  <SelectItem value="Linguagem e Cognição">Linguagem e Cognição</SelectItem>
+                  <SelectItem value="Fluência">Fluência</SelectItem>
+                  <SelectItem value="Reaprendizagem">Reaprendizagem</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
 
           <div className="flex gap-4"></div>
 
@@ -245,11 +266,22 @@ export default function ExerciseForm() {
                 {errors.steps?.[index]?.instruction && (
                   <p className="text-red-500 text-sm">{errors.steps[index].instruction.message}</p>
                 )}
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-2 rounded bg-red-500"
+                  onClick={() => remove(field.id)}
+                >
+                  <Minus className="w-4 h-4 mr-1" /> Remover Passo
+                </Button>
+
               </div>
             ))}
-            <Button type="button" onClick={() => append({ instruction: "" })} variant="outline" className="mt-2 rounded">
+            <Button type="button" onClick={() => append({ instruction: "" })} variant="outline" className="mt-2 rounded bg-green-400">
               <Plus className="w-4 h-4 mr-1" /> Adicionar Passo
             </Button>
+            
+
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -257,14 +289,30 @@ export default function ExerciseForm() {
             <Input type="number" placeholder="Repetições" {...register("repetitions")} />
           </div>
 
-          <Select {...register("difficulty")}>
+          {/* <Select {...register("difficulty")}>
             <SelectTrigger>Dificuldade</SelectTrigger>
             <SelectContent>
               <SelectItem value="Iniciante">Iniciante</SelectItem>
               <SelectItem value="Intermédio">Intermédio</SelectItem>
               <SelectItem value="Avançado">Avançado</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
+          <Controller
+            name="difficulty"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange} className="mb-2">
+                <SelectTrigger>
+                  <SelectValue placeholder="Dificuldade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Iniciante">Iniciante</SelectItem>
+                  <SelectItem value="Intermédio">Intermédio</SelectItem>
+                  <SelectItem value="Avançado">Avançado</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
           <div className="flex gap-4"></div>
           <span
             className="text-gray-400 cursor-pointer"
@@ -280,7 +328,7 @@ export default function ExerciseForm() {
           </Button>
           <div className="flex gap-4"></div>
           <Button type="button" variant="outline" className="w-full rounded bg-blue-600" onClick={() => navigate(-1)}>
-            Cancelar
+            Fechar
           </Button>
         </form>
       </CardContent>
@@ -288,6 +336,24 @@ export default function ExerciseForm() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // import { useState, useEffect } from "react";

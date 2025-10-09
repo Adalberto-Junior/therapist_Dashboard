@@ -658,6 +658,9 @@ export default function ProsodyResultPage() {
   );
   const intensityData = useMemo(() => groupDataToIntensityplot(filtered), [filtered]);
 
+  console.log("Intensity Data: ", intensityData);
+  console.log("filtered: ", filtered);
+
   /** 🗑️ Eliminar resultados */
   const handleDelete = async () => {
     const typeOfProcessing = filtered.find((item) => item.date === selectedDate)?.processing_type;
