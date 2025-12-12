@@ -293,7 +293,7 @@ def get_status_analysis(user_id):
     """
     
     # mongo = app.extensions['pymongo']
-    return mongo.db.diagnosticProgress.find_one({"user_id": user_id})
+    return mongo.db.diagnosticProgress.find_one({"user": ObjectId(user_id)})
 
 def delete_status_analysis(user_id):
     """

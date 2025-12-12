@@ -17,6 +17,18 @@ from models import exercise as exercise_model
 from models import recording as recording_model
 from models import result as result_model
 
+
+def convert_to_ObjectId(obj):
+    """Converte string para ObjectId se aplicável."""
+    try:
+        if isinstance(obj, str):
+            return ObjectId(obj)
+        return obj
+    except Exception as e:
+        print(f"Erro ao converter {obj} para ObjectId: {e}")
+        return None
+
+
 #todo: add the Scheduling model
 def decode_token(token):
     """
@@ -276,6 +288,8 @@ def get_exercise_by_processing_type(processing_type):
 
     exercises = exercise_model.get_exercise_by_processingType_and_userId(processing_type, userId)
 
+    print(exercises)
+
     if not exercises:
         return jsonify({"error": "Exercícios não encontrados"}), 404
     
@@ -290,6 +304,8 @@ def get_exercise_by_processing_type(processing_type):
                     del new_exercise['_id']  # <- remove o campo _id do dict
                     exercise.update(new_exercise)  # <- modifica o dict da lista
                     del exercise['exerciseId']  # <- remove o campo exerciseId do dict
+    
+    print(exercises)
     
     return jsonify(exercises), 200
 
@@ -714,6 +730,26 @@ def pause_analysis():
 
     data = request.get_json()
     print(data)
+
+
+    if 'user' in data:
+        data['user'] = convert_to_ObjectId(data['user'])
+    if 'exercise' in data:
+        if 'state' in data and data['state'] == 'middle':
+            data['exercise'] = convert_to_ObjectId(data['exercise'])
+        else:
+            for idx, exerId in enumerate(data['exercise']):
+                data['exercise'][idx] = convert_to_ObjectId(exerId)
+    
+    if "audio" in data:
+        for values in data["audio"].values():
+            for audio_data in values:
+                audio_data["id"] = (
+                    convert_to_ObjectId(audio_data["id"])
+                    if audio_data.get("id", "").strip()
+                    else audio_data.get("id")
+                )
+    print(data)
     
     # if not data or "recording_id" not in data:
     #     return jsonify({"error": "Dados inválidos ou em falta."}), 400
@@ -749,6 +785,7 @@ def get_status_analysis():
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
+    print(userId)
     status = exercise_model.get_status_analysis(userId)
 
     if not status:
