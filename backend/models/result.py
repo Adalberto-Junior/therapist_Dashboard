@@ -12,6 +12,36 @@ sys.path.append("..")
 from extensions import mongo
 
 
+def normalize_object_id(value):
+    """
+    Aceita:
+    - ObjectId
+    - string '6866...'
+    - string "{'$oid': '6866...'}"
+    - dict {'$oid': '6866...'}
+    """
+    if isinstance(value, ObjectId):
+        return value
+
+    if isinstance(value, dict) and "$oid" in value:
+        return ObjectId(value["$oid"])
+
+    if isinstance(value, str):
+        # Caso: "{'$oid': '6866...'}"
+        if value.startswith("{") and "$oid" in value:
+            try:
+                value = value.replace("'", '"')
+                parsed = json.loads(value)
+                return ObjectId(parsed["$oid"])
+            except Exception:
+                pass
+
+        return ObjectId(value)
+
+    raise ValueError(f"Formato de ObjectId inválido: {value}")
+
+
+
 def create_result(data):
     """
     Create a new result in the database.
@@ -103,9 +133,9 @@ def update_reported_views(report_id):
 
     results = mongo.db.health_user_relatory
     results.update_one(
-        {"_id": ObjectId(report_id)},
+        {"_id": normalize_object_id(report_id)},
         {"$inc": {"views": 1}}
     )
-    return results.find_one({"_id": ObjectId(report_id)})
+    return results.find_one({"_id": normalize_object_id(report_id)})
 
 

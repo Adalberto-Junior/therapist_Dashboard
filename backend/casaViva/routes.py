@@ -680,6 +680,7 @@ def update_report_views():
     Update the views of a reported result.
     :return: JSON response with the updated report data.
     """
+
     token = request.headers.get('Authorization')
     if not token or not token.startswith("Bearer "):
         return jsonify({"error": "Token ausente"}), 401
@@ -695,8 +696,16 @@ def update_report_views():
         return jsonify({"error": "Token inválido"}), 401
     
     data = request.get_json()
+   
     if not data:
         return jsonify({"error": "Dados inválidos ou em falta."}), 400
+    
+    if isinstance(data, (str, bytes, bytearray)):
+        data = json.loads(data)
+    elif not isinstance(data, dict):
+        raise TypeError("Formato de dados inválido")
+
+    updated_report = None
     
     for id_str, new_views in data.items():
         # report_id = ObjectId(id_str)

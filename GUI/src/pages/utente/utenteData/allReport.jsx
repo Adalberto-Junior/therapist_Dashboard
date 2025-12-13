@@ -817,6 +817,19 @@ export default function ReportList() {
                     <strong>Nota Interna:</strong> {rel.internal_note}
                   </p>
                 )}
+                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400 pt-2">
+                  <p>
+                    <strong>Status:</strong> {rel.status}
+                  </p>
+                  <p>
+                    <strong>Visualizações:</strong> {rel.views || 0}  
+                  </p>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <strong>Criado em:</strong>{" "}
+                  {new Date(rel.created_at).toLocaleDateString()}
+                </div>
+                
               </div>
 
               {/* Ações */}
