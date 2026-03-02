@@ -254,22 +254,6 @@ export function groupPhonactionData(staticData = [], config) {
             value: numericValue
           });
         }
-
-        // Exemplo de uso para linha (se precisares disso também)
-        // if (chartType === "line") {
-        //   const group = matchResult[1]; // ou outro agrupador
-        //   const numericValue = parseFloat(value);
-        //   if (isNaN(numericValue)) return;
-
-        //   if (!result[chartType][group]) {
-        //     result[chartType][group] = [];
-        //   }
-
-        //   result[chartType][group].push({
-        //     name: key,
-        //     value: numericValue
-        //   });
-        // }
       });
     });
   });

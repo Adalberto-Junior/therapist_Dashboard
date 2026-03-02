@@ -1,159 +1,58 @@
 import React, { useEffect, useState } from "react";
-import api from "../../../api";
+import api from "../../../../api";
 import { useParams } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx";
-import {chartConfig} from "./chartConfiguraction/chartConfig.jsx";
-import {groupChartData, groupBBEonBBEoffData, groupNotBBEonBBEoffData,groupPhonactionData} from "./chartConfiguraction/groupChartData.jsx";
-import {ChartAccordion, DisplayChart} from "./chartConfiguraction/ChartAccordion.jsx";
-import {RadarChart, BarChart, StaticBarChart} from "../../../component/chart.jsx"
+import { RadarChart, BarChart, StaticBarChart } from "../../../../component/chart.jsx";
+import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
+import {groupChartData, groupBBEonBBEoffData, groupNotBBEonBBEoffData} from "../chartConfiguraction/groupChartData.jsx";
+import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
+import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
 
+
+// Traduções de chave
 const keyTranslations = {
-    static_result: "Resultados Estáticos",
-    no_static_result: "Resultados não Estáticos",
-    "avg_BBEon_1": "Média BBEon 1",
-    "avg_BBEon_2": "Média BBEon 2",
-    "avg_BBEon_3": "Média BBEon 3",
-    "avg_BBEon_4": "Média BBEon 4",
-    $oid: "ID do Objeto",
-    id: "Identificador",
-    date: "Data",
-    // Adicione outros conforme necessário
+  static_result: "Resultados Estáticos",
+  no_static_result: "Resultados não Estáticos",
+  "avg_BBEon_1": "Média BBEon 1",
+  "avg_BBEon_2": "Média BBEon 2",
+  "avg_BBEon_3": "Média BBEon 3",
+  "avg_BBEon_4": "Média BBEon 4",
+  $oid: "ID do Objeto",
+  id: "Identificador",
+  date: "Data",
 };
 
 function translateKey(key) {
-    return keyTranslations[key] || key.replace(/_/g, " ");
+  return keyTranslations[key] || key.replace(/_/g, " ");
 }
 
-// export default function PhonotionResult() {
-//     const [results, setResults] = useState([]);
-//     const [selectedDate, setSelectedDate] = useState(null);
-//     const { id } = useParams();
 
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             try {
-//                 const response = await api.get(`/utente/${id}/analise/fonacao`);
-//                 setResults(response.data);
-//                 if (response.data.length > 0) {
-//                     setSelectedDate(response.data[0].date); 
-//                 }
-//             } catch (error) {
-//                 console.error("Erro ao buscar dados:", error);
-//             }
-//         };
-//         fetchData();
-//     }, [id]);
-//     // Criar uma lista única de datas sem duplicação
-//     const uniqueDates = [...new Set(results.map((res) => res.date))];
-//     const filtered = results.filter((res) => res.date === selectedDate);
-   
-
-//     // Agrupa dados estáticos para Radar
-//     function buildRadarData(staticArr) {
-//         const groups = {};
-//         staticArr.forEach(obj => {
-//         Object.entries(obj).forEach(([k, v]) => {
-//             const prefix = k.replace(/_\d+$/, '');
-//             const num = parseFloat(v);
-//             groups[prefix] = groups[prefix] || [];
-//             groups[prefix].push(num);
-//         });
-//         });
-//         return Object.entries(groups).map(([axis, vals]) => ({
-//         axis,
-//         value: vals.reduce((a, b) => a + b, 0) / vals.length
-//         }));
-//     }
-
-//     // Agrupa dados não estáticos para Barras
-//     function buildBarData(nonStaticArr) {
-//         const result = {};
-//         nonStaticArr.forEach(obj => {
-//         Object.entries(obj).forEach(([k, arr]) => {
-//             result[k] = (arr || []).map(x => parseFloat(x));
-//         });
-//         });
-//         return result;
-//     }
-//     return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
-//       <div className="flex-1 p-1">
-//         <div className=" container w-full max-w-xl bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
-//           <h1 className="text-2xl font-bold text-center mb-5">Resultados de Fonação</h1>
-
-//           <select
-//             className="mb-4 p-2 border rounded w-full"
-//             value={selectedDate || ''}
-//             onChange={e => setSelectedDate(e.target.value)}
-//           >
-//             {uniqueDates.map((d, i) => (
-//               <option key={i} value={d}>{d}</option>
-//             ))}
-//           </select>
-
-//           {filtered.length ? (
-//             <Accordion alwaysOpen>
-//               {filtered.map((item, idx) => {
-//                 // const radarData = buildRadarData(item.static_result || []);
-//                 // const barGroups = buildBarData(item.no_static_result || []);
-//                 const groupedData = groupChartData(item.static_result || [], item.no_static_result || [], chartConfig);
-                
-//                 return (
-//                   <Accordion.Item eventKey={idx.toString()} key={idx}>
-//                     <Accordion.Header>{`Step ${idx + 1}`}</Accordion.Header>
-//                     <Accordion.Body>
-
-//                       {/* Dados Numéricos */}
-//                       <div className="mb-6">
-//                         <h2 className="text-lg font-semibold mb-2">Números</h2>
-//                         {/** Reutilize seu Accordion recursivo aqui se quiser **/}
-//                         <RecursiveAccordion data={item} />
-//                       </div>
-//                       {/* Dados em Gráficos */}
-//                       {/* <div className="mb-6">
-//                         <h2 className="text-lg font-semibold mb-2">Gráficos</h2>
-//                         <ChartAccordion radarData={radarData} barGroups={barGroups}/>
-//                       </div> */}
-//                       <div className="mb-6">
-//                         <ChartAccordion groupedData={groupedData} />
-//                       </div>
-//                     </Accordion.Body>
-//                   </Accordion.Item>
-//                 );
-//               })}
-//             </Accordion>
-//           ) : (
-//             <p className="text-center mt-5">Nenhum dado disponível para essa data.</p>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-export default function PhonotionResult() {
+export default function ArticulationResult() {
   const [results, setResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const BACKEND_URL = "http://localhost:5000";
 
   useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get(`/utente/${id}/analise/fonacao`);
-                setResults(response.data);
-                if (response.data.length > 0) {
-                  setSelectedDate(response.data[response.data.length - 1].date);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            }
-        };
-        fetchData();
-    }, [id]);
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/utente/${id}/analise/articulacao`);
+        setResults(response.data);
+        if (response.data.length > 0) {
+          setSelectedDate(response.data[response.data.length - 1].date);
+        }
+      } catch (error) {
+        setError(error);
+        console.error("Erro ao buscar dados:", error);
+      }finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
 
   const handleDelete = async () => {
     const typeOfProcessing = filtered.find(item => item.date === selectedDate)?.processing_type;
@@ -197,10 +96,19 @@ export default function PhonotionResult() {
 
   const radarLabels = ['bbeon', 'bbeoff'];
 
+  const customChartConfig = {
+      ...chartConfig,
+      radar: {
+        ...chartConfig.radar,
+        match: /^avg ([a-zA-Z]+)_/, // versão específica apenas nesta página
+      }
+  };
+
   const allRadarGroupedData = filtered.reduce((acc, item, index) => {
     const staticResult = item.static_result || [];
-    // console.log("Static Result: ", staticResult);
-    const grouped = groupPhonactionData(staticResult, chartConfig);
+
+    
+    const grouped = groupBBEonBBEoffData(staticResult, customChartConfig);
 
     Object.entries(grouped).forEach(([type, charts]) => {
       if (!acc[type]) acc[type] = {};
@@ -214,11 +122,25 @@ export default function PhonotionResult() {
     return acc;
   }, {});
 
-
+  if (loading){
+        return(
+         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+            <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Loading...</p>
+        </div>
+        );
+    }
+    // if (error) {
+    //      return (
+    //         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
+    //             <p className="text-2xl font-semibold text-center  dark:text-white mb-6">Error: {error.message}</p>
+    //         </div>
+    //      ) 
+    // }
+    
   return (
     <div className="min-h-screen min-w-screen items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
-        <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Fonação</div>
+        <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Articulação</div>
 
         <select
           className="mb-4 p-2 border rounded w-full bg-white text-black border-gray-300 dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
@@ -238,8 +160,9 @@ export default function PhonotionResult() {
                   <h2 className="text-lg font-semibold mb-3">Dados Numéricos Relevantes</h2>
                   {filtered.map((item, idx) => {
                     const staticResult = item.static_result || [];
-                    const camposImportantes = ["avg Shimmer", "avg Jitter", "avg apq", "avg ppq","avg DF0", "avg DDF0","avg logE"];
+                    const camposImportantes = ["avg DF1", "avg F1", "avg DDF1", "avg F2", "avg DF2", "avg DDF2"];
                     const dadosRelevantes = staticResult.filter(obj => camposImportantes.includes(Object.keys(obj)[0]));
+
                     const prioridade = campo => {
                       if (campo.includes("DDF")) return 3;
                       if (campo.includes("DF")) return 2;
@@ -272,7 +195,7 @@ export default function PhonotionResult() {
                                 <tr key={idxs} className="odd:bg-gray-100 odd:dark:bg-gray-300">
                                   <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">{translateKey(chave)}</td>
                                   <td className="border border-gray-400 dark:border-zinc-500 px-4 py-2">
-                                    {typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(3) : 'N/A'}
+                                    {typeof valor === 'number' && !isNaN(valor) ? valor.toFixed(2) : 'N/A'}
                                   </td>
                                 </tr>
                               );
@@ -284,9 +207,10 @@ export default function PhonotionResult() {
                   })}
                 </div>
               </div>
+              {/* Gráficos de Radar */}
               <div className="w-full md:basis-4/5  bg-white dark:bg-zinc-700 p-6 rounded shadow">
                 <h2 className="text-xl font-bold mb-4">Gráficos</h2>
-                <h3 className="text-md font-semibold mb-3"></h3>
+                <h3 className="text-md font-semibold mb-3">bbeon & bbeoff</h3>
                 {/* <div className="grid grid-cols-1 md:grid-cols-2  "> */}
                   {Object.keys(allRadarGroupedData).map((type) => (
                     <div key={type} className="w-full min-w-0">
@@ -297,14 +221,27 @@ export default function PhonotionResult() {
                       />
                     </div>
                   ))}
-                {/* Outros Gráficos de Radar */}
-                {/* <Accordion defaultActiveKey="x" className="mt-6">
+                {/* </div> */}
+                {/* <h3 className="text-md font-semibold mb-3">Radar: bbeon & bbeoff</h3>
+                {filtered.map((item, idx) => {
+                  const staticResult = item.static_result || [];
+                  const groupedData = groupBBEonBBEoffData(staticResult, chartConfig);
+                  
+                  return (
+                    <div key={idx} className="mb-6 items-center">
+                      <h4 className="font-semibold mb-1">Passo {idx + 1}</h4>
+                      <DisplayChart groupedData={groupedData} filterRadarOnly={false} labels={radarLabels} />
+                    </div>
+                  );
+                })} */}
+
+                <Accordion defaultActiveKey="x" className="mt-6">
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>Outros Gráficos de Radar</Accordion.Header>
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
                         const staticResult = item.static_result || [];
-                        const groupedData = groupNotBBEonBBEoffData(staticResult, chartConfig);
+                        const groupedData = groupNotBBEonBBEoffData(staticResult, customChartConfig);
                         return (
                           <div key={idx} className="mb-6">
                             <h4 className="font-semibold mb-1">Passo {item.step}</h4>
@@ -314,7 +251,7 @@ export default function PhonotionResult() {
                       })}
                     </Accordion.Body>
                   </Accordion.Item>
-                </Accordion> */}
+                </Accordion>
 
                 <Accordion defaultActiveKey="x" className="mt-6">
                   <Accordion.Item eventKey="0">
@@ -322,8 +259,8 @@ export default function PhonotionResult() {
                     <Accordion.Body>
                       {filtered.map((item, idx) => {
                         const nonStaticResult = item.no_static_result || [];
-                        const groupedData = groupChartData([], nonStaticResult, chartConfig, 40);
-                        console.log("grouped data: ", groupedData)
+                        const groupedData = groupChartData([], nonStaticResult, chartConfig);
+                        // console.log("grouped data: ", groupedData)
                         return (
                           <div key={idx} className="mb-6">
                             <h4 className="font-semibold mb-1">Passo {item.step}</h4>
@@ -380,7 +317,9 @@ export default function PhonotionResult() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
-              
+
+
+
               </div>
             </div>
 
@@ -420,3 +359,7 @@ export default function PhonotionResult() {
     </div>
   );
 }
+
+
+
+

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import api from "../../../api";
+import api from "../../../../api";
 import { useParams } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { RecursiveAccordion } from "./chartConfiguraction/RecursiveAccordion.jsx";
-import {chartConfig} from "./chartConfiguraction/chartConfig.jsx";
-import {ChartAccordion, DisplayChart} from "./chartConfiguraction/ChartAccordion.jsx";
-import {RadarChart, BarChart, StaticBarChart} from "../../../component/chart.jsx"
-import {groupChartData, groupAllData, groupNotBBEonBBEoffData} from "./chartConfiguraction/groupChartData.jsx";
+import { RecursiveAccordion } from "../chartConfiguraction/RecursiveAccordion.jsx";
+import {chartConfig} from "../chartConfiguraction/chartConfig.jsx";
+import {ChartAccordion, DisplayChart} from "../chartConfiguraction/ChartAccordion.jsx";
+import {groupChartData, groupBBEonBBEoffData, groupNotBBEonBBEoffData} from "../chartConfiguraction/groupChartData.jsx";
 
 const keyTranslations = {
     static_result: "Resultados Estáticos",
@@ -27,7 +26,7 @@ function translateKey(key) {
 }
 
 
-export default function PhonologicalResult() {
+export default function GlottalResult() {
   const [results, setResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const { id } = useParams();
@@ -36,7 +35,7 @@ export default function PhonologicalResult() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get(`/utente/${id}/analise/fonologica`);
+        const response = await api.get(`/utente/${id}/analise/glotal`);
         setResults(response.data);
         if (response.data.length > 0) {
           setSelectedDate(response.data[response.data.length - 1].date);
@@ -92,7 +91,7 @@ export default function PhonologicalResult() {
 
   const allRadarGroupedData = filtered.reduce((acc, item, index) => {
     const staticResult = item.static_result || [];
-    const grouped = groupAllData(staticResult, chartConfig,"prosody");
+    const grouped = groupBBEonBBEoffData(staticResult, chartConfig);
 
     Object.entries(grouped).forEach(([type, charts]) => {
       if (!acc[type]) acc[type] = {};
@@ -110,7 +109,7 @@ export default function PhonologicalResult() {
   return (
     <div className="min-h-screen min-w-screen items-center justify-center bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="flex-1 p-1">
-        <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Prosódia</div>
+        <div className="text-4xl font-bold text-center mb-5 p-3 text-gray-900 dark:text-white">Resultados de Glota</div>
 
         <select
           className="mb-4 p-2 border rounded w-full bg-white text-black border-gray-300 dark:bg-zinc-800 dark:text-white dark:border-zinc-600"
@@ -285,6 +284,7 @@ export default function PhonologicalResult() {
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
+
               </div>
             </div>
 
