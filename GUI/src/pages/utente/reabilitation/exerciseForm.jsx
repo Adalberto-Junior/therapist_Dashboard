@@ -98,7 +98,7 @@ export default function ExerciseForm() {
     videos.forEach(({ file }) => formData.append("videos", file));
     audios.forEach(({ file }) => formData.append("audios", file));
 
-    console.log("FormData preparado para envio:", [...formData.entries()]); // para ver conteúdo
+    // console.log("FormData preparado para envio:", [...formData.entries()]); // para ver conteúdo
 
     try {
       const response = await api.post(

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function ExerciseForm({ defaultValues = {}, onSubmit, onCancel, isEdit = false }) {
   const navigate = useNavigate();
 
-  console.log("Default Values:", defaultValues);
+  // console.log("Default Values:", defaultValues);
 
   const {
     register,

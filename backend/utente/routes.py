@@ -13,7 +13,9 @@
 from flask import request, jsonify, current_app, make_response
 from pymongo.cursor import Cursor
 from werkzeug.security import generate_password_hash, check_password_hash
-from bson.objectid import ObjectId
+# from bson.objectid import ObjectId
+from bson import ObjectId
+from bson.errors import InvalidId
 import bcrypt
 import jwt
 import datetime
@@ -40,13 +42,8 @@ def decode_token(token):
         return jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
     except jwt.ExpiredSignatureError:
         return None
-    
-@utente_bp.route('/', methods=['POST'])
-def register_utente():
-    """
-    Register a new health user.
-    :return: JSON response with the user ID and a success message.
-    """
+
+def verifyAuth():
     token = request.headers.get('Authorization')
     if not token or not token.startswith("Bearer "):
         return jsonify({"error": "Token ausente"}), 401
@@ -59,7 +56,53 @@ def register_utente():
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
+    
+    return therapist_id
 
+def is_objectid(value):
+    """
+    Verifica se o valor é um ObjectId válido do MongoDB.
+    Aceita tanto instâncias ObjectId quanto strings no formato correto.
+    """
+    # Caso já seja uma instância de ObjectId
+    if isinstance(value, ObjectId):
+        return True
+    
+    # Caso seja string, tenta converter
+    if isinstance(value, str):
+        try:
+            ObjectId(value)  # Tentativa de conversão
+            return True
+        except (InvalidId, TypeError):
+            return False
+    
+    return False 
+    
+@utente_bp.route('/', methods=['POST'])
+def register_utente():
+    """
+    Register a new health user.
+    :return: JSON response with the user ID and a success message.
+    """
+   
+
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
+
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapist_id = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+    therapist_id = verifyAuth()
+    
+    if not is_objectid(therapist_id):
+        return jsonify({"error": "Falha na autenticação"}), 401
+    
     data = request.get_json()
     name = data.get('name')
     email = data.get('email').lower()
@@ -77,6 +120,8 @@ def register_utente():
     doc = docuemnto.healthUserDocument(name=name, email=email, date_of_birth=date_birth, observation=observation, medical_condition=medical_condition, therapist=therapist_id, health_user_number=health_user_number, cellphone=cellphone, address=address)
     health_user_id = utente_model.create_health_user(doc)
 
+
+
     return jsonify({"message": "Utente registrado com sucesso", "id": str(health_user_id)}), 201
 
 @utente_bp.route('/', methods=['GET'])
@@ -85,18 +130,28 @@ def get_utente():
     Get the health users information by Therapist ID.
     :return: JSON response with the health users information.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # print("estou aqui no get Utente 1")
+
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
+
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
+    
+    # print("estou aqui no get Utente")
 
     health_users = utente_model.get_all_health_users_by_therapist(therapistId)
 
@@ -115,18 +170,23 @@ def get_utente_by_id(user_id):
     :param user_id: The ID of the health user.
     :return: JSON response with the health user information.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     health_user = utente_model.get_health_user_by_id(user_id)
 
@@ -151,18 +211,22 @@ def update_utente(user_id):
     :param user_id: The ID of the health user.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+    
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     data = request.get_json()
     name = data.get('name')
@@ -192,18 +256,22 @@ def delete_utente(user_id):
     :param user_id: The ID of the health user.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+    
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     health_user = utente_model.get_health_user_by_id(user_id)
 
@@ -221,18 +289,22 @@ def get_utente_by_name(health_user_name):
     :param health_user_name: The name of the health user.
     :return: JSON response with the health user information.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -249,18 +321,22 @@ def get_analise_fonacao(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -297,19 +373,23 @@ def get_analise_articulacao(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the articulation analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
 
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
+    
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
     health_user = utente_model.get_health_user_by_id(user_id)
@@ -344,18 +424,22 @@ def get_analise_prosodia(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the prosody analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -391,18 +475,22 @@ def get_analise_glotal(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the glottal analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -438,18 +526,22 @@ def get_analise_reaprendizado(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the replearning analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -485,18 +577,22 @@ def get_analise_fonologica(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the phonological analysis results.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -533,18 +629,22 @@ def delete_analise(user_id, analise_Id):
     :param analise_Id: The ID of the analysis result to be deleted.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -573,18 +673,22 @@ def delete_analise_by_type_and_date(user_id, type_of_processing, date):
     :param date: The date of the analysis results to be deleted.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -611,18 +715,22 @@ def get_exercicios(user_id):
     :param user_id: The id of the health user.
     :return: JSON response with the exercises.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
@@ -665,18 +773,22 @@ def get_exercicio(exercise_id):
     :param exercise_id: The id of the health user.
     :return: JSON response with the exercise.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     exercise = exercise_model.get_exercise_by_id(exercise_id)
 
@@ -701,18 +813,22 @@ def get_all_exercicio():
     Get the exercises in the database.
     :return: JSON response with the exercises.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     exercises = exercise_model.get_exerciseGeneric(therapistId)
 
@@ -722,7 +838,7 @@ def get_all_exercicio():
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
     
-    print(exercises)
+    # print(exercises)
 
     return jsonify(exercises), 200
 
@@ -733,21 +849,25 @@ def get_all_exercise_by_type(type):
     :param type: The type of the exercise.
     :return: JSON response with the exercises.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     exercises = exercise_model.get_exercise_by_type(type)
-    print(exercises)
+    # print(exercises)
 
     if not exercises:
         return jsonify({"error": "Exercícios não encontrados"}), 404
@@ -755,7 +875,7 @@ def get_all_exercise_by_type(type):
     if isinstance(exercises, Cursor):
         exercises = list(exercises)
     
-    print(exercises)
+    # print(exercises)
 
     return jsonify(exercises), 200
 
@@ -767,19 +887,23 @@ def add_exercicio(user_id):
     :param user_id: The name of the health user.
     :return: JSON response with the exercise ID and a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
 
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
+    
     # health_user = utente_model.get_health_user_by_username_and_therapist(health_user_name, therapistId)
 
     health_user = utente_model.get_health_user_by_id(user_id)
@@ -792,7 +916,7 @@ def add_exercicio(user_id):
         return jsonify({"error": "Utente não corresponde ao utilizador da casa viva"}), 404
 
     data = request.get_json()
-    print(data)
+    # print(data)
     if data.get('edit'):
         exercise_id = data.get('id')
         userId = data.get('userId')
@@ -825,18 +949,22 @@ def add_generic_exercicio():
     Add a new exercise in database.
     :return: JSON response with the exercise ID and a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     data = request.get_json()
     name = data.get('name')
@@ -863,19 +991,22 @@ def update_exercicio(exercise_id):
     :return: JSON response with a success message.
     """
     
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
     
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
     
     
     if not exercise_id:
@@ -885,7 +1016,7 @@ def update_exercicio(exercise_id):
         return jsonify({"error": "Exercício não encontrado"}), 404
 
     data = request.get_json()
-    print(data)
+    # print(data)
     name = data.get('name')
     type = data.get('type')
     description = data.get('description') if data.get('description') else None
@@ -912,18 +1043,22 @@ def delete_exercicio(exercise_id):
     :param exercise_id: The ID of the exercise to be deleted.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     exercise = exercise_model.delete_exercise(exercise_id)
 
@@ -992,18 +1127,22 @@ def generate_relatorio(utente_id):
     :param utente_id: The id of the health user.
     :return: JSON response with the report data.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
  
 
@@ -1058,18 +1197,22 @@ def get_relatorio(utente_id):
     :param utente_id: The id of the health user.
     :return: JSON response with the reports data.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     health_user = utente_model.get_health_user_by_id(utente_id)
     if not health_user:
@@ -1098,18 +1241,22 @@ def get_relatorio_by_id(reportId):
     :param reportId: The ID of the report to be retrieved.
     :return: JSON response with the report data.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
 
     relatory = utente_model.get_health_user_relatory_by_id(reportId)
 
@@ -1126,18 +1273,21 @@ def update_relatorio(reportId):
     :param reportId: The ID of the report to be updated.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
     
     
     data = request.get_json()
@@ -1187,18 +1337,23 @@ def delete_relatorio(reportId):
     :param reportId: The ID of the report to be deleted.
     :return: JSON response with a success message.
     """
-    token = request.headers.get('Authorization')
-    if not token or not token.startswith("Bearer "):
-        return jsonify({"error": "Token ausente"}), 401
+    # token = request.headers.get('Authorization')
+    # if not token or not token.startswith("Bearer "):
+    #     return jsonify({"error": "Token ausente"}), 401
 
-    try:
-        token = token.replace("Bearer ", "")
-        decoded = decode_token(token)
-        therapistId = decoded['user_id']
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+    # try:
+    #     token = token.replace("Bearer ", "")
+    #     decoded = decode_token(token)
+    #     therapistId = decoded['user_id']
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({"error": "Token expirado"}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({"error": "Token inválido"}), 401
+
+    therapistId = verifyAuth()
+    if not is_objectid(therapistId):
+        return jsonify({"error": "Falha na autenticação"}), 401
+
 
     relatory = utente_model.delete_health_user_relatory(reportId)
 
@@ -1234,18 +1389,22 @@ def create_exercise(utenteId):
 
     """
     try:
-        token = request.headers.get('Authorization')
-        if not token or not token.startswith("Bearer "):
-            return jsonify({"error": "Token ausente"}), 401
+        # token = request.headers.get('Authorization')
+        # if not token or not token.startswith("Bearer "):
+        #     return jsonify({"error": "Token ausente"}), 401
 
-        try:
-            token = token.replace("Bearer ", "")
-            decoded = decode_token(token)
-            therapistId = decoded['user_id']
-        except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token expirado"}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({"error": "Token inválido"}), 401
+        # try:
+        #     token = token.replace("Bearer ", "")
+        #     decoded = decode_token(token)
+        #     therapistId = decoded['user_id']
+        # except jwt.ExpiredSignatureError:
+        #     return jsonify({"error": "Token expirado"}), 401
+        # except jwt.InvalidTokenError:
+        #     return jsonify({"error": "Token inválido"}), 401
+
+        therapistId = verifyAuth()
+        if not is_objectid(therapistId):
+            return jsonify({"error": "Falha na autenticação"}), 401
 
         health_user = utente_model.get_health_user_by_id(utenteId)
         if not health_user:
@@ -1259,7 +1418,7 @@ def create_exercise(utenteId):
         # Dados do formulário
         # Campos de texto
         data = request.form.to_dict()
-        print("Dados recebidos:", data)
+        # print("Dados recebidos:", data)
 
         if not data:
             return jsonify({"error": "Dados ausentes"}), 400
@@ -1343,7 +1502,7 @@ def create_exercise(utenteId):
         return jsonify({"success": False, "error": "Failed to create exercise"}), 500
 
     except Exception as e:
-        print(e)
+        # print(e)
         return jsonify({"success": False, "error": str(e)}), 500
     
 
@@ -1354,18 +1513,22 @@ def list_exercises(utenteId):
 
     """
     try:
-        token = request.headers.get('Authorization')
-        if not token or not token.startswith("Bearer "):
-            return jsonify({"error": "Token ausente"}), 401
+        # token = request.headers.get('Authorization')
+        # if not token or not token.startswith("Bearer "):
+        #     return jsonify({"error": "Token ausente"}), 401
 
-        try:
-            token = token.replace("Bearer ", "")
-            decoded = decode_token(token)
-            therapistId = decoded['user_id']
-        except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token expirado"}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({"error": "Token inválido"}), 401
+        # try:
+        #     token = token.replace("Bearer ", "")
+        #     decoded = decode_token(token)
+        #     therapistId = decoded['user_id']
+        # except jwt.ExpiredSignatureError:
+        #     return jsonify({"error": "Token expirado"}), 401
+        # except jwt.InvalidTokenError:
+        #     return jsonify({"error": "Token inválido"}), 401
+
+        therapistId = verifyAuth()
+        if not is_objectid(therapistId):
+            return jsonify({"error": "Falha na autenticação"}), 401
 
         health_user = utente_model.get_health_user_by_id(utenteId)
         if not health_user:
@@ -1385,7 +1548,7 @@ def list_exercises(utenteId):
         return jsonify(exercises), 200
 
     except Exception as e:
-        print(e)
+        # print(e)
         return jsonify({"success": False, "error": str(e)}), 500
     
 @utente_bp.route("/rehabilitation/exercises/<string:exerciseId>", methods=["GET"])
@@ -1395,18 +1558,22 @@ def get_exercise_rehabilitation(exerciseId):
 
     """
     try:
-        token = request.headers.get('Authorization')
-        if not token or not token.startswith("Bearer "):
-            return jsonify({"error": "Token ausente"}), 401
+        # token = request.headers.get('Authorization')
+        # if not token or not token.startswith("Bearer "):
+        #     return jsonify({"error": "Token ausente"}), 401
 
-        try:
-            token = token.replace("Bearer ", "")
-            decoded = decode_token(token)
-            therapistId = decoded['user_id']
-        except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token expirado"}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({"error": "Token inválido"}), 401
+        # try:
+        #     token = token.replace("Bearer ", "")
+        #     decoded = decode_token(token)
+        #     therapistId = decoded['user_id']
+        # except jwt.ExpiredSignatureError:
+        #     return jsonify({"error": "Token expirado"}), 401
+        # except jwt.InvalidTokenError:
+        #     return jsonify({"error": "Token inválido"}), 401
+
+        therapistId = verifyAuth()
+        if not is_objectid(therapistId):
+            return jsonify({"error": "Falha na autenticação"}), 401
 
         exercise = exercise_model.getRehabilitationExerciseById(exerciseId)
 
@@ -1418,7 +1585,7 @@ def get_exercise_rehabilitation(exerciseId):
         return jsonify(exercise), 200
 
     except Exception as e:
-        print(e)
+        # print(e)
         return jsonify({"success": False, "error": str(e)}), 500
 
 @utente_bp.route("/rehabilitation/exercises/<string:exerciseId>", methods=["DELETE"])
@@ -1428,18 +1595,22 @@ def delete_exercise_rehabilitation(exerciseId):
 
     """
     try:
-        token = request.headers.get('Authorization')
-        if not token or not token.startswith("Bearer "):
-            return jsonify({"error": "Token ausente"}), 401
+        # token = request.headers.get('Authorization')
+        # if not token or not token.startswith("Bearer "):
+        #     return jsonify({"error": "Token ausente"}), 401
 
-        try:
-            token = token.replace("Bearer ", "")
-            decoded = decode_token(token)
-            therapistId = decoded['user_id']
-        except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token expirado"}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({"error": "Token inválido"}), 401
+        # try:
+        #     token = token.replace("Bearer ", "")
+        #     decoded = decode_token(token)
+        #     therapistId = decoded['user_id']
+        # except jwt.ExpiredSignatureError:
+        #     return jsonify({"error": "Token expirado"}), 401
+        # except jwt.InvalidTokenError:
+        #     return jsonify({"error": "Token inválido"}), 401
+
+        therapistId = verifyAuth()
+        if not is_objectid(therapistId):
+            return jsonify({"error": "Falha na autenticação"}), 401
 
         exercise = exercise_model.deleteRehabilitationExercise(exerciseId)
 
@@ -1449,7 +1620,7 @@ def delete_exercise_rehabilitation(exerciseId):
         return jsonify({"message": "Exercício deletado com sucesso"}), 200
 
     except Exception as e:
-        print(e)
+        # print(e)
         return jsonify({"success": False, "error": str(e)}), 500
 
 

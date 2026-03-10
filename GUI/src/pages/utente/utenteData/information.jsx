@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import api from "../../../api.jsx";
 import { useNavigate, useParams } from "react-router-dom";

@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import api from "../../api"; 
 import { useNavigate } from "react-router-dom";
-import '../../App.css'; // Importando o CSS tradicional
+import '../../App.css';
 
-export default function LoginForm () {
+export default function LoginForm ({ setIsAuth }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
@@ -14,9 +14,9 @@ export default function LoginForm () {
     try {
       const response = await api.post("/auth/login", data);
       localStorage.setItem("token", response.data.token);
-      
+
+      setIsAuth(true);
       navigate("/"); 
-      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error);
         if (error.response && error.response.status === 401) {

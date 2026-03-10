@@ -7,7 +7,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUsuario] = useState(null);
 
   useEffect(() => {
-    fetch("/api/usuarioAtual") // Exemplo: endpoint que retorna os dados do usuário logado
+    fetch("/api/usuarioAtual") 
       .then((res) => res.json())
       .then((data) => setUsuario(data));
   }, []);

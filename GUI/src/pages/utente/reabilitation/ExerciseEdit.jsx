@@ -31,7 +31,8 @@ export default function ExerciseEdit() {
   };
 
   const handleCancel = () => {
-    navigate(`/utente/${id}/exercises/${exerciseId}`);
+    // navigate(`/utente/${id}/exercises/${exerciseId}`);
+    navigate(-1)
   };
 
   if (!exercise) return <p>Carregando...</p>;

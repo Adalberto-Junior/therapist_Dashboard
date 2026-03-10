@@ -43,6 +43,7 @@ def decode_token(token):
     except jwt.ExpiredSignatureError:
         return None
 
+
 def hash_password(password):
     salt = bcrypt.gensalt()  # salt
     hashed = bcrypt.hashpw(password.encode(), salt)

@@ -3,24 +3,25 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import api from "../../api";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../../App.css';
 
 export default function RegisterForm () {
   const { register, handleSubmit,watch, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+
   // O método watch monitora o valor do campo "password"
   const senha = watch("password", "");
   
   const onSubmit = async (data) => {
     try {
       
-      console.log("Dados do formulário:", data);
+      
       const response = await api.post("/auth/register", data);
-      localStorage.setItem("token", response.data.token); // Armazena o token no localStorage
+
       
       alert("Utilizador registado com sucesso!");
-      navigate("/"); 
-      window.location.reload(); // Recarrega a página para refletir o estado autenticado
+      navigate("/login"); 
 
     } catch (error) {
       console.error("Erro ao registrar:", error);

@@ -288,7 +288,7 @@ def get_exercise_by_processing_type(processing_type):
 
     exercises = exercise_model.get_exercise_by_processingType_and_userId(processing_type, userId)
 
-    print(exercises)
+    # print(exercises)
 
     if not exercises:
         return jsonify({"error": "Exercícios não encontrados"}), 404
@@ -305,7 +305,7 @@ def get_exercise_by_processing_type(processing_type):
                     exercise.update(new_exercise)  # <- modifica o dict da lista
                     del exercise['exerciseId']  # <- remove o campo exerciseId do dict
     
-    print(exercises)
+    # print(exercises)
     
     return jsonify(exercises), 200
 
@@ -738,7 +738,7 @@ def pause_analysis():
         return jsonify({"error": "Token inválido"}), 401
 
     data = request.get_json()
-    print(data)
+    # print(data)
 
 
     if 'user' in data:
@@ -758,7 +758,7 @@ def pause_analysis():
                     if audio_data.get("id", "").strip()
                     else audio_data.get("id")
                 )
-    print(data)
+    # print(data)
     
     # if not data or "recording_id" not in data:
     #     return jsonify({"error": "Dados inválidos ou em falta."}), 400
@@ -794,7 +794,7 @@ def get_status_analysis():
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
 
-    print(userId)
+    # print(userId)
     status = exercise_model.get_status_analysis(userId)
 
     if not status:

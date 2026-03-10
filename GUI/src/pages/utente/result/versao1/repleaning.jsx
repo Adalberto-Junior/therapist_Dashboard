@@ -228,7 +228,7 @@ export default function ReplearningResult() {
                       {filtered.map((item, idx) => {
                         const nonStaticResult = item.no_static_result || [];
                         const groupedData = groupChartData([], nonStaticResult, chartConfig);
-                        console.log("grouped data: ", groupedData)
+                        // console.log("grouped data: ", groupedData)
                         return (
                           <div key={idx} className="mb-6">
                             <h4 className="font-semibold mb-1">Passo {item.step}</h4>

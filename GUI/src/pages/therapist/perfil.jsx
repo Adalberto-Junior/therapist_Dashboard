@@ -161,7 +161,7 @@ import api from "../../api";
 import { ModeToggle } from "../../components/mode-toggle";
 import { Pencil, Trash2, Plus, FileText, ArrowLeft, User, Loader2 } from "lucide-react";
 
-export default function Profile() {
+export default function Profile({ setIsAuth }) {
   const [perfil, setPerfil] = useState(null);
   const [notas, setNotas] = useState([]);
   const [novaNota, setNovaNota] = useState("");
@@ -193,8 +193,9 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
-    window.location.reload();
+    setIsAuth(false);
+    navigate("/login");
+    // window.location.reload();
   };
 
   const handleAdicionarNota = async () => {
@@ -209,7 +210,7 @@ export default function Profile() {
     };
     await api.post("/auth/notas", nova);
     setNovaNota("");
-    window.location.reload();
+    // window.location.reload();
   };
 
   const handleToggleDone = async (nota) => {

@@ -276,15 +276,15 @@ function renderGroupedAcousticChart(data, idx, oneChart = false) {
   } else {
     const { chartComponent: ChartComponent } = chartConfig.acousticSpaceCompared;
     const entries = Object.entries(data);
-    console.log("data: ", data)
-    console.log("Entries: ", entries)
+    // console.log("data: ", data)
+    // console.log("Entries: ", entries)
 
     // Group entries into pairs
     const pairedEntries = [];
     for (let i = 0; i < entries.length; i += 2) {
       pairedEntries.push(entries.slice(i, i + 2));
     }
-    console.log("paired: ",pairedEntries)
+    // console.log("paired: ",pairedEntries)
 
     return (
       <div key={`acousticSpaceGrouped-${idx}`} className="grid gap-6">
@@ -516,7 +516,7 @@ function renderBoxChart(data, idx, valueKey = "F0", oneChart = false) {
 
 function IntensityChartWrapper(data, idx) {
   const { chartComponent: ChartComponent } = chartConfig.Intensityplot;
-  console.log("IntensityChartWrapper: ", data);
+  // console.log("IntensityChartWrapper: ", data);
   if (!data || data.length === 0) {
     return (
       <div key={`IntensityChartWrapper-${idx}`} className="grid gap-6">
@@ -565,7 +565,7 @@ export function RenderF0LineChart({data, idx, oneChart = false}) {
       pairedEntries.push(data.F0Boxplot.slice(i, i + 2));
     }
 
-    console.log("pairedEntries: ", pairedEntries);
+    // console.log("pairedEntries: ", pairedEntries);
 
     return (
       <div key={`F0Chart-${idx}`} className="grid gap-6">

@@ -111,7 +111,7 @@ def login():
     #}
     # token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
     token = create_token(user['_id'], user['name'])
-    print(token)
+    # print(token)
     
     return jsonify({'token': token, 'user': {'id': str(user['_id']), 'name': user['name']}})
 
@@ -137,7 +137,7 @@ def get_profile():
 
     user = therapist_model.get_therapist_by_id(user_id)
 
-    print(user)
+    # print(user)
 
     if not user:
         return jsonify({"error": "Utilizador não encontrado"}), 404
