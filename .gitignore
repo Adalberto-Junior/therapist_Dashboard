@@ -13,7 +13,6 @@ Thumbs.db
 
 # Ignore environment and secret files
 .env
-.env/
 config.json
 
 # Ignore test file python 
