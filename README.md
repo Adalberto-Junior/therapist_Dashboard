@@ -8,9 +8,6 @@
     - Executar o Script [start.bat]
     - Acessar o localhost: http://localhost:5173/
 
-## Login de teste: 
-    - email: alice@gmail.com
-    - passe: Amor@saude24
 
 ## Ficheiros: 
     - backend/
